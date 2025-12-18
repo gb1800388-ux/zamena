@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Завуч.PRO v4.0</title>
+    <title>Завуч.PRO v5.0</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
         * { 
@@ -17,14 +17,20 @@
             overscroll-behavior-y: contain;
             padding-top: env(safe-area-inset-top);
             padding-bottom: env(safe-area-inset-bottom);
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+        }
+        
+        .glass {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
         }
         
         .swipe-container { 
             position: relative; 
             overflow: hidden; 
-            border-radius: 1.25rem; 
+            border-radius: 1.5rem; 
             margin-bottom: 0.75rem;
         }
         
@@ -47,13 +53,13 @@
         }
         
         .swipe-action { 
-            width: 70px;
+            width: 80px;
             height: 100%;
             color: white; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
-            font-size: 0.55rem; 
+            font-size: 0.6rem; 
             font-weight: 900;
             flex-direction: column;
             gap: 4px;
@@ -78,7 +84,7 @@
         .modal-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(15, 23, 42, 0.6);
+            background: rgba(15, 23, 42, 0.7);
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
             z-index: 100;
@@ -95,14 +101,12 @@
             left: 0;
             right: 0;
             background: white;
-            border-radius: 2rem 2rem 0 0;
-            padding: 1.5rem;
-            padding-bottom: calc(1.5rem + env(safe-area-inset-bottom));
+            border-radius: 2.5rem 2.5rem 0 0;
             z-index: 101;
             transform: translateY(100%);
-            transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            max-height: 95vh;
-            overflow-y: auto;
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            max-height: 90vh;
+            overflow: hidden;
         }
         
         .modal-sheet.active { transform: translateY(0); }
@@ -112,20 +116,20 @@
             height: 5px;
             background: #e2e8f0;
             border-radius: 3px;
-            margin: 0 auto 1.25rem;
+            margin: 12px auto;
         }
 
         .fab {
             position: fixed;
             bottom: calc(1.5rem + env(safe-area-inset-bottom));
             right: 1.5rem;
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
             color: white;
-            border-radius: 18px;
-            box-shadow: 0 8px 32px rgba(59, 130, 246, 0.5);
-            font-size: 32px;
+            border-radius: 50%;
+            box-shadow: 0 8px 32px rgba(245, 158, 11, 0.5);
+            font-size: 36px;
             font-weight: 300;
             z-index: 50;
             display: flex;
@@ -138,7 +142,174 @@
         
         .fab:active { transform: scale(0.92); }
         
-        .record-card { animation: slideIn 0.3s ease; }
+        /* Wizard Steps */
+        .wizard-step {
+            display: none;
+            animation: fadeSlide 0.4s ease;
+        }
+        
+        .wizard-step.active {
+            display: block;
+        }
+        
+        @keyframes fadeSlide {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @keyframes fadeSlideBack {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        .wizard-step.back {
+            animation: fadeSlideBack 0.4s ease;
+        }
+        
+        .progress-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            transition: all 0.3s ease;
+        }
+        
+        .progress-dot.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transform: scale(1.3);
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2);
+        }
+        
+        .progress-dot.done {
+            background: #10b981;
+        }
+        
+        .progress-line {
+            height: 3px;
+            background: #e2e8f0;
+            flex: 1;
+            margin: 0 4px;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        
+        .progress-line-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981, #667eea);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+        
+        .big-input {
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-align: center;
+            background: #f8fafc;
+            border: 3px solid #e2e8f0;
+            border-radius: 1.5rem;
+            padding: 1.25rem;
+            width: 100%;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        
+        .big-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+        
+        .class-btn {
+            padding: 1rem 1.5rem;
+            border-radius: 1rem;
+            font-weight: 800;
+            font-size: 1.1rem;
+            background: #f8fafc;
+            border: 3px solid #e2e8f0;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .class-btn:hover, .class-btn.active {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            transform: scale(1.05);
+        }
+        
+        .lesson-btn {
+            width: 52px;
+            height: 52px;
+            border-radius: 1rem;
+            font-weight: 900;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: #f8fafc;
+            border: 3px solid #e2e8f0;
+        }
+        
+        .lesson-btn.active {
+            background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+            transform: scale(1.1);
+        }
+        
+        .type-card {
+            flex: 1;
+            padding: 2rem 1rem;
+            border-radius: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 4px solid transparent;
+        }
+        
+        .type-card-window {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+        }
+        
+        .type-card-window.active {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            border-color: #1d4ed8;
+            transform: scale(1.02);
+            box-shadow: 0 8px 30px rgba(59, 130, 246, 0.4);
+        }
+        
+        .type-card-lesson {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+        }
+        
+        .type-card-lesson.active {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            border-color: #d97706;
+            transform: scale(1.02);
+            box-shadow: 0 8px 30px rgba(245, 158, 11, 0.4);
+        }
+        
+        .nav-btn {
+            padding: 1rem 2rem;
+            border-radius: 1rem;
+            font-weight: 800;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .nav-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .record-card { 
+            animation: slideIn 0.3s ease; 
+        }
         
         @keyframes slideIn {
             from { opacity: 0; transform: translateY(-10px); }
@@ -161,98 +332,25 @@
             flex: 1;
             padding: 0.75rem;
             font-weight: 700;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             text-align: center;
             border-radius: 0.75rem;
             transition: all 0.2s;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.03em;
         }
         
         .tab-btn.active {
             background: white;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-        
-        .type-selector {
-            display: flex;
-            gap: 0.5rem;
-        }
-        
-        .type-btn {
-            flex: 1;
-            padding: 1rem;
-            border-radius: 1rem;
-            font-weight: 900;
-            font-size: 1.25rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            border: 3px solid transparent;
-        }
-        
-        .type-btn-100 {
-            background: #eff6ff;
-            color: #3b82f6;
-        }
-        
-        .type-btn-100.active {
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-            color: white;
-            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
-        }
-        
-        .type-btn-50 {
-            background: #fffbeb;
-            color: #f59e0b;
-        }
-        
-        .type-btn-50.active {
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-            color: white;
-            box-shadow: 0 4px 20px rgba(245, 158, 11, 0.4);
-        }
-
-        .lesson-btn {
-            width: 42px;
-            height: 42px;
-            border-radius: 12px;
-            font-weight: 900;
-            font-size: 1.1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s;
-            background: #f1f5f9;
-            color: #64748b;
-        }
-        
-        .lesson-btn.active {
-            background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
-        }
 
         .completed-card {
-            opacity: 0.6;
-            background: #f8fafc !important;
+            opacity: 0.5;
         }
         
         .completed-card .swipe-item {
             background: #f8fafc;
-        }
-
-        .quick-template {
-            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
-            border: 2px dashed #86efac;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .quick-template:hover {
-            border-color: #22c55e;
-            transform: scale(1.02);
         }
 
         @media (min-width: 768px) {
@@ -263,9 +361,9 @@
                 transform: translate(-50%, 50%) scale(0.95);
                 opacity: 0;
                 width: 100%;
-                max-width: 500px;
-                border-radius: 2rem;
-                padding-bottom: 1.5rem;
+                max-width: 480px;
+                border-radius: 2.5rem;
+                max-height: 85vh;
             }
             
             .modal-sheet.active {
@@ -281,8 +379,6 @@
             body { 
                 padding: 0; 
                 background: white !important; 
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
             }
             .record-card { 
                 break-inside: avoid; 
@@ -290,110 +386,89 @@
                 box-shadow: none !important;
                 border: 1px solid #e2e8f0 !important;
             }
-            .print-header {
-                display: block !important;
-                text-align: center;
-                margin-bottom: 20px;
-                padding-bottom: 15px;
-                border-bottom: 2px solid #1e293b;
-            }
         }
-        
-        .print-header { display: none; }
 
-        .reason-tag {
-            font-size: 0.6rem;
-            padding: 2px 8px;
-            border-radius: 6px;
-            font-weight: 700;
-            text-transform: uppercase;
+        .summary-item {
+            background: white;
+            border-radius: 1rem;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            border: 2px solid #f1f5f9;
         }
         
-        .reason-sick { background: #fef2f2; color: #dc2626; }
-        .reason-training { background: #fefce8; color: #ca8a04; }
-        .reason-personal { background: #f0f9ff; color: #0284c7; }
-        .reason-business { background: #faf5ff; color: #9333ea; }
+        .summary-item.highlight {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+        }
     </style>
 </head>
 <body>
 
     <div class="max-w-2xl mx-auto px-4 py-6 pb-32">
         
-        <div class="print-header">
-            <h1 style="font-size: 24px; font-weight: bold; margin-bottom: 5px;">ЖУРНАЛ ЗАМЕН УРОКОВ</h1>
-            <p id="printPeriod" style="font-size: 14px; color: #64748b;"></p>
-            <p style="font-size: 12px; color: #94a3b8; margin-top: 5px;">Сформировано: <span id="printDate"></span></p>
-        </div>
-        
         <!-- Header -->
         <header class="flex justify-between items-center mb-5 no-print">
             <div>
-                <h1 class="text-2xl font-black tracking-tight">ЗАВУЧ<span class="text-blue-600">.PRO</span></h1>
-                <p class="text-[10px] text-slate-400 font-medium uppercase tracking-widest">Журнал замен v4.0</p>
+                <h1 class="text-2xl font-black tracking-tight text-white drop-shadow-lg">ЗАВУЧ<span class="text-yellow-300">.PRO</span></h1>
+                <p class="text-[10px] text-white/70 font-medium uppercase tracking-widest">Журнал замен v5.0</p>
             </div>
             <div class="flex gap-2">
-                <button onclick="openStats()" class="bg-purple-100 text-purple-600 text-xs font-bold px-3 py-2 rounded-xl">📈</button>
-                <button onclick="openReport()" class="bg-emerald-100 text-emerald-600 text-xs font-bold px-3 py-2 rounded-xl">📊</button>
-                <button onclick="openSettings()" class="bg-slate-100 text-slate-500 text-xs font-bold px-3 py-2 rounded-xl">⚙️</button>
+                <button onclick="openStats()" class="glass text-purple-600 text-xs font-bold px-3 py-2 rounded-xl shadow-lg">📈</button>
+                <button onclick="openReport()" class="glass text-emerald-600 text-xs font-bold px-3 py-2 rounded-xl shadow-lg">📊</button>
+                <button onclick="openSettings()" class="glass text-slate-500 text-xs font-bold px-3 py-2 rounded-xl shadow-lg">⚙️</button>
             </div>
         </header>
 
-        <!-- Tabs -->
-        <div class="bg-slate-100 p-1 rounded-2xl flex gap-1 mb-5 no-print">
-            <button class="tab-btn active" onclick="setTab('today')" id="tabToday">
-                📅 Сегодня <span id="todayCount" class="ml-1 bg-blue-600 text-white text-[10px] px-1.5 py-0.5 rounded-full">0</span>
-            </button>
-            <button class="tab-btn" onclick="setTab('all')" id="tabAll">
-                📋 Все записи
-            </button>
-            <button class="tab-btn" onclick="setTab('pending')" id="tabPending">
-                ⏳ Ожидают <span id="pendingCount" class="ml-1 bg-amber-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">0</span>
-            </button>
-        </div>
-
         <!-- Quick Stats -->
         <div class="grid grid-cols-4 gap-2 mb-5 no-print">
-            <div class="bg-white p-3 rounded-2xl shadow-sm border border-slate-100 text-center">
+            <div class="glass p-3 rounded-2xl shadow-lg text-center">
                 <div id="statTotal" class="text-xl font-black text-slate-700">0</div>
                 <div class="text-[8px] font-bold text-slate-400 uppercase">Всего</div>
             </div>
-            <div class="bg-gradient-to-br from-blue-50 to-blue-100 p-3 rounded-2xl shadow-sm border border-blue-200 text-center">
+            <div class="glass p-3 rounded-2xl shadow-lg text-center border-2 border-blue-300">
                 <div id="stat100" class="text-xl font-black text-blue-600">0</div>
                 <div class="text-[8px] font-bold text-blue-500 uppercase">🪟 Окна</div>
             </div>
-            <div class="bg-gradient-to-br from-amber-50 to-amber-100 p-3 rounded-2xl shadow-sm border border-amber-200 text-center">
+            <div class="glass p-3 rounded-2xl shadow-lg text-center border-2 border-amber-300">
                 <div id="stat50" class="text-xl font-black text-amber-600">0</div>
                 <div class="text-[8px] font-bold text-amber-500 uppercase">📚 Уроки</div>
             </div>
-            <div class="bg-gradient-to-br from-emerald-50 to-emerald-100 p-3 rounded-2xl shadow-sm border border-emerald-200 text-center">
+            <div class="glass p-3 rounded-2xl shadow-lg text-center border-2 border-emerald-300">
                 <div id="statCompleted" class="text-xl font-black text-emerald-600">0</div>
                 <div class="text-[8px] font-bold text-emerald-500 uppercase">✓ Готово</div>
             </div>
         </div>
 
-        <!-- Quick Templates -->
-        <div id="templatesSection" class="mb-5 no-print hidden">
-            <div class="flex items-center justify-between mb-2">
-                <span class="text-xs font-bold text-slate-400 uppercase">⚡ Быстрые шаблоны</span>
-                <button onclick="toggleTemplates()" class="text-xs text-slate-400">Скрыть</button>
-            </div>
-            <div id="templatesList" class="flex gap-2 overflow-x-auto pb-2"></div>
+        <!-- Tabs -->
+        <div class="glass p-1 rounded-2xl flex gap-1 mb-4 shadow-lg no-print">
+            <button class="tab-btn active" onclick="setTab('today')" id="tabToday">
+                📅 Сегодня <span id="todayCount" class="ml-1 bg-purple-600 text-white text-[10px] px-1.5 py-0.5 rounded-full">0</span>
+            </button>
+            <button class="tab-btn" onclick="setTab('all')" id="tabAll">
+                📋 Все
+            </button>
+            <button class="tab-btn" onclick="setTab('pending')" id="tabPending">
+                ⏳ Ждут <span id="pendingCount" class="ml-1 bg-amber-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">0</span>
+            </button>
         </div>
 
         <!-- Filter Bar -->
         <div class="mb-4 no-print">
             <div class="flex gap-2 mb-2">
                 <input type="text" id="search" placeholder="🔍 Поиск..." oninput="render()" 
-                    class="flex-1 bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none shadow-sm">
-                <select id="filterClass" onchange="render()" class="bg-white border border-slate-200 rounded-xl px-3 py-2 text-sm shadow-sm">
+                    class="flex-1 glass border border-white/50 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-purple-500 outline-none shadow-lg">
+                <select id="filterClass" onchange="render()" class="glass border border-white/50 rounded-xl px-3 py-2 text-sm shadow-lg">
                     <option value="">Все классы</option>
                 </select>
-                <button onclick="clearFilter()" class="bg-slate-200 px-3 rounded-xl text-xs font-bold text-slate-600">✕</button>
             </div>
             <div class="flex gap-2">
-                <input type="date" id="filterDateFrom" onchange="render()" class="flex-1 bg-white border border-slate-200 rounded-xl px-3 py-2 text-sm shadow-sm">
-                <span class="flex items-center text-slate-400 text-sm">—</span>
-                <input type="date" id="filterDateTo" onchange="render()" class="flex-1 bg-white border border-slate-200 rounded-xl px-3 py-2 text-sm shadow-sm">
+                <input type="date" id="filterDateFrom" onchange="render()" class="flex-1 glass border border-white/50 rounded-xl px-3 py-2 text-sm shadow-lg">
+                <span class="flex items-center text-white/70 text-sm">—</span>
+                <input type="date" id="filterDateTo" onchange="render()" class="flex-1 glass border border-white/50 rounded-xl px-3 py-2 text-sm shadow-lg">
+                <button onclick="clearFilter()" class="glass px-3 rounded-xl text-xs font-bold text-slate-600 shadow-lg">✕</button>
             </div>
         </div>
 
@@ -403,203 +478,258 @@
         <!-- Empty State -->
         <div id="emptyState" class="hidden text-center py-16">
             <div class="text-6xl mb-4">📋</div>
-            <div class="text-slate-400 font-bold uppercase text-sm mb-1">Нет записей</div>
-            <div class="text-slate-300 text-xs">Нажмите + чтобы добавить замену</div>
+            <div class="text-white/70 font-bold uppercase text-sm mb-1">Нет записей</div>
+            <div class="text-white/50 text-xs">Нажмите + чтобы добавить замену</div>
         </div>
     </div>
 
     <!-- FAB -->
-    <button onclick="openForm()" class="fab no-print">+</button>
+    <button onclick="openWizard()" class="fab no-print">+</button>
 
     <!-- Modal Overlay -->
-    <div id="modalOverlay" class="modal-overlay no-print" onclick="closeForm()"></div>
+    <div id="modalOverlay" class="modal-overlay no-print" onclick="closeWizard()"></div>
     
-    <!-- Modal Sheet - Add/Edit -->
+    <!-- Wizard Modal -->
     <div id="modalSheet" class="modal-sheet no-print" onclick="event.stopPropagation()">
         <div class="modal-handle"></div>
-        <div class="flex justify-between items-center mb-4">
-            <h3 id="modalTitle" class="text-lg font-black uppercase tracking-tight">➕ Новая замена</h3>
-            <button onclick="closeForm()" class="w-10 h-10 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-2xl">×</button>
+        
+        <!-- Progress Bar -->
+        <div class="px-6 pt-2 pb-4">
+            <div class="flex items-center justify-center" id="progressBar">
+                <div class="progress-dot active" data-step="1"></div>
+                <div class="progress-line"><div class="progress-line-fill" id="progress1"></div></div>
+                <div class="progress-dot" data-step="2"></div>
+                <div class="progress-line"><div class="progress-line-fill" id="progress2"></div></div>
+                <div class="progress-dot" data-step="3"></div>
+                <div class="progress-line"><div class="progress-line-fill" id="progress3"></div></div>
+                <div class="progress-dot" data-step="4"></div>
+                <div class="progress-line"><div class="progress-line-fill" id="progress4"></div></div>
+                <div class="progress-dot" data-step="5"></div>
+                <div class="progress-line"><div class="progress-line-fill" id="progress5"></div></div>
+                <div class="progress-dot" data-step="6"></div>
+            </div>
         </div>
-        <form id="mainForm" class="space-y-4">
-            <input type="hidden" id="editId">
+        
+        <div class="px-6 pb-8 overflow-y-auto" style="max-height: calc(90vh - 100px);">
             
-            <!-- Date & Lesson -->
-            <div class="flex gap-2">
-                <div class="flex-1">
-                    <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block">📅 Дата</label>
-                    <input type="date" id="fDate" required class="w-full bg-slate-100 p-3 rounded-xl font-bold text-blue-600">
+            <!-- Step 1: Date & Lesson -->
+            <div class="wizard-step active" data-step="1">
+                <div class="text-center mb-6">
+                    <div class="text-4xl mb-2">📅</div>
+                    <h3 class="text-xl font-black text-slate-800">Когда замена?</h3>
+                    <p class="text-sm text-slate-400">Выберите дату и номер урока</p>
                 </div>
-                <div>
-                    <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block">🔔 Урок</label>
-                    <div class="flex gap-1" id="lessonSelector">
-                        <div class="lesson-btn active" onclick="selectLesson(1)">1</div>
-                        <div class="lesson-btn" onclick="selectLesson(2)">2</div>
-                        <div class="lesson-btn" onclick="selectLesson(3)">3</div>
-                        <div class="lesson-btn" onclick="selectLesson(4)">4</div>
-                        <div class="lesson-btn" onclick="selectLesson(5)">5</div>
-                        <div class="lesson-btn" onclick="selectLesson(6)">6</div>
-                        <div class="lesson-btn" onclick="selectLesson(7)">7</div>
+                
+                <div class="mb-6">
+                    <input type="date" id="wDate" class="big-input">
+                </div>
+                
+                <div class="text-center mb-3">
+                    <span class="text-sm font-bold text-slate-500">Какой урок?</span>
+                </div>
+                
+                <div class="flex justify-center gap-2 mb-8" id="lessonSelector">
+                    <div class="lesson-btn active" onclick="selectLesson(1)">1</div>
+                    <div class="lesson-btn" onclick="selectLesson(2)">2</div>
+                    <div class="lesson-btn" onclick="selectLesson(3)">3</div>
+                    <div class="lesson-btn" onclick="selectLesson(4)">4</div>
+                    <div class="lesson-btn" onclick="selectLesson(5)">5</div>
+                    <div class="lesson-btn" onclick="selectLesson(6)">6</div>
+                    <div class="lesson-btn" onclick="selectLesson(7)">7</div>
+                </div>
+                
+                <button onclick="nextStep()" class="nav-btn w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg">
+                    Далее →
+                </button>
+            </div>
+            
+            <!-- Step 2: Class -->
+            <div class="wizard-step" data-step="2">
+                <div class="text-center mb-6">
+                    <div class="text-4xl mb-2">🏫</div>
+                    <h3 class="text-xl font-black text-slate-800">Какой класс?</h3>
+                    <p class="text-sm text-slate-400">Введите или выберите класс</p>
+                </div>
+                
+                <div class="mb-6">
+                    <input type="text" id="wClass" list="classes" placeholder="Например: 5А" class="big-input uppercase">
+                </div>
+                
+                <div class="flex flex-wrap justify-center gap-2 mb-8" id="quickClasses">
+                    <!-- Будут добавлены динамически -->
+                </div>
+                
+                <div class="flex gap-3">
+                    <button onclick="prevStep()" class="nav-btn flex-1 bg-slate-200 text-slate-600">← Назад</button>
+                    <button onclick="nextStep()" class="nav-btn flex-1 bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg">Далее →</button>
+                </div>
+            </div>
+            
+            <!-- Step 3: Subject -->
+            <div class="wizard-step" data-step="3">
+                <div class="text-center mb-6">
+                    <div class="text-4xl mb-2">📖</div>
+                    <h3 class="text-xl font-black text-slate-800">Какой предмет?</h3>
+                    <p class="text-sm text-slate-400">Начните вводить название</p>
+                </div>
+                
+                <div class="mb-6">
+                    <input type="text" id="wSubject" list="subjects" placeholder="Математика" class="big-input" autocomplete="off">
+                </div>
+                
+                <div class="flex flex-wrap justify-center gap-2 mb-8" id="quickSubjects">
+                    <!-- Будут добавлены динамически -->
+                </div>
+                
+                <div class="flex gap-3">
+                    <button onclick="prevStep()" class="nav-btn flex-1 bg-slate-200 text-slate-600">← Назад</button>
+                    <button onclick="nextStep()" class="nav-btn flex-1 bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg">Далее →</button>
+                </div>
+            </div>
+            
+            <!-- Step 4: Who is absent -->
+            <div class="wizard-step" data-step="4">
+                <div class="text-center mb-6">
+                    <div class="text-4xl mb-2">😷</div>
+                    <h3 class="text-xl font-black text-slate-800">Кто отсутствует?</h3>
+                    <p class="text-sm text-slate-400">ФИО учителя</p>
+                </div>
+                
+                <div class="mb-6">
+                    <input type="text" id="wWho" list="teachers" placeholder="Иванова А.П." class="big-input" autocomplete="off">
+                </div>
+                
+                <div class="flex flex-wrap justify-center gap-2 mb-8" id="quickTeachersWho">
+                    <!-- Будут добавлены динамически -->
+                </div>
+                
+                <div class="flex gap-3">
+                    <button onclick="prevStep()" class="nav-btn flex-1 bg-slate-200 text-slate-600">← Назад</button>
+                    <button onclick="nextStep()" class="nav-btn flex-1 bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg">Далее →</button>
+                </div>
+            </div>
+            
+            <!-- Step 5: Who replaces -->
+            <div class="wizard-step" data-step="5">
+                <div class="text-center mb-6">
+                    <div class="text-4xl mb-2">🦸</div>
+                    <h3 class="text-xl font-black text-slate-800">Кто заменяет?</h3>
+                    <p class="text-sm text-slate-400">ФИО учителя</p>
+                </div>
+                
+                <div class="mb-6">
+                    <input type="text" id="wBy" list="teachers" placeholder="Петрова М.И." class="big-input" autocomplete="off">
+                </div>
+                
+                <div class="flex flex-wrap justify-center gap-2 mb-8" id="quickTeachersBy">
+                    <!-- Будут добавлены динамически -->
+                </div>
+                
+                <div class="flex gap-3">
+                    <button onclick="prevStep()" class="nav-btn flex-1 bg-slate-200 text-slate-600">← Назад</button>
+                    <button onclick="nextStep()" class="nav-btn flex-1 bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg">Далее →</button>
+                </div>
+            </div>
+            
+            <!-- Step 6: Type & Summary -->
+            <div class="wizard-step" data-step="6">
+                <div class="text-center mb-4">
+                    <div class="text-4xl mb-2">💰</div>
+                    <h3 class="text-xl font-black text-slate-800">Тип оплаты</h3>
+                    <p class="text-sm text-slate-400">У заменяющего было окно или урок?</p>
+                </div>
+                
+                <div class="flex gap-3 mb-6">
+                    <div class="type-card type-card-window active" onclick="selectType('100')" id="typeCardWindow">
+                        <div class="text-5xl mb-2">🪟</div>
+                        <div class="text-2xl font-black">100%</div>
+                        <div class="text-xs font-bold opacity-70 uppercase mt-1">Было окно</div>
                     </div>
-                    <input type="hidden" id="fLesson" value="1">
-                </div>
-            </div>
-            
-            <!-- Type Selector -->
-            <div>
-                <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block">💰 Тип оплаты</label>
-                <div class="type-selector">
-                    <div class="type-btn type-btn-100 active" onclick="selectType('100')" id="typeBtn100">
-                        <div class="text-xl mb-0.5">🪟</div>
-                        <div>100%</div>
-                        <div class="text-[9px] font-medium opacity-80">ОКНО</div>
-                    </div>
-                    <div class="type-btn type-btn-50" onclick="selectType('50')" id="typeBtn50">
-                        <div class="text-xl mb-0.5">📚</div>
-                        <div>50%</div>
-                        <div class="text-[9px] font-medium opacity-80">УРОК</div>
+                    <div class="type-card type-card-lesson" onclick="selectType('50')" id="typeCardLesson">
+                        <div class="text-5xl mb-2">📚</div>
+                        <div class="text-2xl font-black">50%</div>
+                        <div class="text-xs font-bold opacity-70 uppercase mt-1">Был урок</div>
                     </div>
                 </div>
-                <input type="hidden" id="fType" value="100">
-            </div>
-
-            <!-- Class & Subject -->
-            <div class="flex gap-2">
-                <div class="w-24">
-                    <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block">🏫 Класс</label>
-                    <input list="classes" id="fClass" placeholder="5А" required class="w-full bg-slate-100 p-3 rounded-xl text-center font-bold">
+                
+                <!-- Summary -->
+                <div class="bg-slate-50 rounded-2xl p-4 mb-6">
+                    <div class="text-xs font-bold text-slate-400 uppercase mb-3">📋 Проверьте данные:</div>
+                    <div id="summaryContent">
+                        <!-- Заполняется динамически -->
+                    </div>
                 </div>
-                <div class="flex-1">
-                    <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block">📖 Предмет</label>
-                    <input list="subjects" id="fSubject" placeholder="Математика" required autocomplete="off" class="w-full bg-slate-100 p-3 rounded-xl">
-                </div>
-            </div>
-            
-            <!-- Teachers -->
-            <div>
-                <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block">😷 Кто отсутствует</label>
-                <input list="teachers" id="fWho" placeholder="ФИО отсутствующего" required autocomplete="off" class="w-full bg-slate-100 p-3 rounded-xl">
-            </div>
-            
-            <div>
-                <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block">🦸 Кто заменяет</label>
-                <input list="teachers" id="fBy" placeholder="ФИО заменяющего" required autocomplete="off" class="w-full bg-slate-100 p-3 rounded-xl">
-            </div>
-
-            <!-- Reason -->
-            <div>
-                <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block">📝 Причина отсутствия</label>
-                <div class="flex gap-2 flex-wrap">
-                    <label class="flex items-center gap-2 bg-red-50 px-3 py-2 rounded-xl cursor-pointer">
-                        <input type="radio" name="reason" value="sick" class="accent-red-500" checked>
-                        <span class="text-xs font-bold text-red-600">🤒 Больничный</span>
-                    </label>
-                    <label class="flex items-center gap-2 bg-amber-50 px-3 py-2 rounded-xl cursor-pointer">
-                        <input type="radio" name="reason" value="training" class="accent-amber-500">
-                        <span class="text-xs font-bold text-amber-600">📚 Курсы</span>
-                    </label>
-                    <label class="flex items-center gap-2 bg-purple-50 px-3 py-2 rounded-xl cursor-pointer">
-                        <input type="radio" name="reason" value="business" class="accent-purple-500">
-                        <span class="text-xs font-bold text-purple-600">💼 Командировка</span>
-                    </label>
-                    <label class="flex items-center gap-2 bg-sky-50 px-3 py-2 rounded-xl cursor-pointer">
-                        <input type="radio" name="reason" value="personal" class="accent-sky-500">
-                        <span class="text-xs font-bold text-sky-600">🏠 Личные</span>
-                    </label>
+                
+                <div class="flex gap-3">
+                    <button onclick="prevStep()" class="nav-btn flex-1 bg-slate-200 text-slate-600">← Назад</button>
+                    <button onclick="saveRecord()" class="nav-btn flex-1 bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg">✓ Добавить</button>
                 </div>
             </div>
-            
-            <button type="submit" id="submitBtn" class="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold py-4 rounded-xl shadow-lg uppercase tracking-wide text-sm">
-                ✓ Добавить
-            </button>
-        </form>
+        </div>
     </div>
 
     <!-- Report Modal -->
     <div id="reportOverlay" class="modal-overlay no-print" onclick="closeReport()"></div>
     <div id="reportSheet" class="modal-sheet no-print" onclick="event.stopPropagation()">
         <div class="modal-handle"></div>
-        <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-black uppercase tracking-tight">📊 Отчёт для бухгалтерии</h3>
-            <button onclick="closeReport()" class="w-10 h-10 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-2xl">×</button>
-        </div>
-        
-        <div class="mb-4">
-            <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block">Период</label>
-            <div class="flex gap-2">
-                <input type="date" id="reportDateFrom" class="flex-1 bg-slate-100 p-3 rounded-xl text-sm">
-                <span class="flex items-center text-slate-400">—</span>
-                <input type="date" id="reportDateTo" class="flex-1 bg-slate-100 p-3 rounded-xl text-sm">
+        <div class="px-6 py-4">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-black uppercase tracking-tight">📊 Отчёт</h3>
+                <button onclick="closeReport()" class="w-10 h-10 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-2xl">×</button>
             </div>
+            
+            <div class="mb-4">
+                <div class="flex gap-2">
+                    <input type="date" id="reportDateFrom" class="flex-1 bg-slate-100 p-3 rounded-xl text-sm">
+                    <span class="flex items-center text-slate-400">—</span>
+                    <input type="date" id="reportDateTo" class="flex-1 bg-slate-100 p-3 rounded-xl text-sm">
+                </div>
+            </div>
+            
+            <div class="flex gap-2 mb-4">
+                <button onclick="generateReport()" class="flex-1 bg-emerald-600 text-white font-bold py-3 rounded-xl">📊 Сформировать</button>
+                <button onclick="exportCSV()" class="flex-1 bg-blue-600 text-white font-bold py-3 rounded-xl">📥 Excel</button>
+            </div>
+            
+            <div id="reportContent" class="space-y-3 max-h-[50vh] overflow-y-auto"></div>
         </div>
-        
-        <div class="flex gap-2 mb-4">
-            <button onclick="generateReport()" class="flex-1 bg-emerald-600 text-white font-bold py-3 rounded-xl">
-                📊 Отчёт
-            </button>
-            <button onclick="exportCSV()" class="flex-1 bg-blue-600 text-white font-bold py-3 rounded-xl">
-                📥 Excel
-            </button>
-            <button onclick="doPrint()" class="bg-slate-200 text-slate-600 font-bold py-3 px-4 rounded-xl">
-                🖨️
-            </button>
-        </div>
-        
-        <div id="reportContent" class="space-y-3 max-h-[50vh] overflow-y-auto"></div>
     </div>
 
     <!-- Stats Modal -->
     <div id="statsOverlay" class="modal-overlay no-print" onclick="closeStats()"></div>
     <div id="statsSheet" class="modal-sheet no-print" onclick="event.stopPropagation()">
         <div class="modal-handle"></div>
-        <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-black uppercase tracking-tight">📈 Статистика</h3>
-            <button onclick="closeStats()" class="w-10 h-10 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-2xl">×</button>
+        <div class="px-6 py-4">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-black uppercase tracking-tight">📈 Статистика</h3>
+                <button onclick="closeStats()" class="w-10 h-10 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-2xl">×</button>
+            </div>
+            <div class="space-y-3 max-h-[60vh] overflow-y-auto" id="statsContent"></div>
         </div>
-        
-        <div class="space-y-3" id="statsContent"></div>
     </div>
 
     <!-- Settings Modal -->
     <div id="settingsOverlay" class="modal-overlay no-print" onclick="closeSettings()"></div>
     <div id="settingsSheet" class="modal-sheet no-print" onclick="event.stopPropagation()">
         <div class="modal-handle"></div>
-        <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-black uppercase tracking-tight">⚙️ Настройки</h3>
-            <button onclick="closeSettings()" class="w-10 h-10 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-2xl">×</button>
-        </div>
-        
-        <div class="space-y-4">
-            <div>
-                <label class="text-xs font-bold text-slate-400 uppercase mb-2 block">Резервное копирование</label>
+        <div class="px-6 py-4">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-black uppercase tracking-tight">⚙️ Настройки</h3>
+                <button onclick="closeSettings()" class="w-10 h-10 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-2xl">×</button>
+            </div>
+            
+            <div class="space-y-4">
                 <div class="flex gap-2">
-                    <button onclick="exportJSON()" class="flex-1 bg-slate-100 text-slate-600 font-bold py-3 rounded-xl">
-                        📤 Экспорт JSON
-                    </button>
-                    <button onclick="document.getElementById('importInput').click()" class="flex-1 bg-slate-100 text-slate-600 font-bold py-3 rounded-xl">
-                        📥 Импорт JSON
-                    </button>
+                    <button onclick="exportJSON()" class="flex-1 bg-slate-100 text-slate-600 font-bold py-3 rounded-xl">📤 Экспорт</button>
+                    <button onclick="document.getElementById('importInput').click()" class="flex-1 bg-slate-100 text-slate-600 font-bold py-3 rounded-xl">📥 Импорт</button>
                 </div>
                 <input type="file" id="importInput" accept=".json" class="hidden" onchange="importJSON(event)">
-            </div>
-            
-            <div>
-                <label class="text-xs font-bold text-slate-400 uppercase mb-2 block">Шаблоны замен</label>
-                <div class="flex items-center justify-between bg-slate-50 p-3 rounded-xl">
-                    <span class="text-sm">Показывать быстрые шаблоны</span>
-                    <input type="checkbox" id="showTemplates" onchange="toggleTemplatesVisibility()" class="w-5 h-5 accent-blue-600">
+                
+                <button onclick="clearAllData()" class="w-full bg-red-50 text-red-600 font-bold py-3 rounded-xl">🗑️ Очистить все</button>
+                
+                <div class="text-center text-xs text-slate-400 pt-4 border-t">
+                    Завуч.PRO v5.0 • 2024
                 </div>
-            </div>
-
-            <div>
-                <label class="text-xs font-bold text-slate-400 uppercase mb-2 block">Управление данными</label>
-                <button onclick="clearAllData()" class="w-full bg-red-50 text-red-600 font-bold py-3 rounded-xl">
-                    🗑️ Очистить все данные
-                </button>
-            </div>
-            
-            <div class="text-center text-xs text-slate-400 pt-4 border-t">
-                Завуч.PRO v4.0 • 2024
             </div>
         </div>
     </div>
@@ -610,18 +740,17 @@
     <datalist id="classes"></datalist>
 
     <script>
-        let reps = JSON.parse(localStorage.getItem('v4_data')) || [];
-        let master = JSON.parse(localStorage.getItem('v4_master')) || {t:[], s:[], c:[]};
-        let templates = JSON.parse(localStorage.getItem('v4_templates')) || [];
-        let settings = JSON.parse(localStorage.getItem('v4_settings')) || { showTemplates: false };
+        let reps = JSON.parse(localStorage.getItem('v5_data')) || [];
+        let master = JSON.parse(localStorage.getItem('v5_master')) || {t:[], s:[], c:[]};
+        let currentStep = 1;
         let currentTab = 'today';
+        let selectedLesson = 1;
+        let selectedType = '100';
         let currentSwipeEl = null;
 
         const save = () => {
-            localStorage.setItem('v4_data', JSON.stringify(reps));
-            localStorage.setItem('v4_master', JSON.stringify(master));
-            localStorage.setItem('v4_templates', JSON.stringify(templates));
-            localStorage.setItem('v4_settings', JSON.stringify(settings));
+            localStorage.setItem('v5_data', JSON.stringify(reps));
+            localStorage.setItem('v5_master', JSON.stringify(master));
         };
 
         const getToday = () => new Date().toISOString().slice(0, 10);
@@ -635,16 +764,6 @@
                 month: monthNames[d.getMonth()],
                 weekday: dayNames[d.getDay()]
             };
-        };
-
-        const getReasonInfo = (reason) => {
-            const reasons = {
-                sick: { label: 'Больничный', class: 'reason-sick', icon: '🤒' },
-                training: { label: 'Курсы', class: 'reason-training', icon: '📚' },
-                business: { label: 'Командировка', class: 'reason-business', icon: '💼' },
-                personal: { label: 'Личные', class: 'reason-personal', icon: '🏠' }
-            };
-            return reasons[reason] || reasons.sick;
         };
 
         const setTab = (tab) => {
@@ -664,14 +783,12 @@
             
             let filtered = [...reps];
             
-            // Tab filter
             if (currentTab === 'today') {
                 filtered = filtered.filter(r => r.date === today);
             } else if (currentTab === 'pending') {
                 filtered = filtered.filter(r => !r.completed && r.date <= today);
             }
             
-            // Search filter
             if (search) {
                 filtered = filtered.filter(r => 
                     r.by.toLowerCase().includes(search) || 
@@ -681,16 +798,10 @@
                 );
             }
             
-            // Class filter
-            if (filterClass) {
-                filtered = filtered.filter(r => r.class === filterClass);
-            }
-            
-            // Date range filter
+            if (filterClass) filtered = filtered.filter(r => r.class === filterClass);
             if (dateFrom) filtered = filtered.filter(r => r.date >= dateFrom);
             if (dateTo) filtered = filtered.filter(r => r.date <= dateTo);
             
-            // Sort
             filtered.sort((a, b) => {
                 if (a.date !== b.date) return new Date(b.date) - new Date(a.date);
                 return (a.lesson || 1) - (b.lesson || 1);
@@ -704,22 +815,17 @@
                 container.innerHTML = filtered.map(r => {
                     const d = formatDate(r.date);
                     const is100 = r.type === '100';
-                    const reason = getReasonInfo(r.reason);
                     const isCompleted = r.completed;
                     
                     return `
-                    <div class="swipe-container record-card shadow-md ${isCompleted ? 'completed-card' : ''}" data-id="${r.id}">
+                    <div class="swipe-container record-card shadow-lg ${isCompleted ? 'completed-card' : ''}" data-id="${r.id}">
                         <div class="swipe-actions">
                             <div class="swipe-action bg-emerald-500" onclick="toggleComplete(${r.id})">
-                                <span class="text-base">${isCompleted ? '↩️' : '✓'}</span>
+                                <span class="text-lg">${isCompleted ? '↩️' : '✓'}</span>
                                 <span>${isCompleted ? 'ОТМЕНА' : 'ГОТОВО'}</span>
                             </div>
-                            <div class="swipe-action bg-blue-500" onclick="duplicateRecord(${r.id})">
-                                <span class="text-base">📋</span>
-                                <span>КОПИЯ</span>
-                            </div>
                             <div class="swipe-action bg-red-500" onclick="del(${r.id})">
-                                <span class="text-base">🗑️</span>
+                                <span class="text-lg">🗑️</span>
                                 <span>УДАЛИТЬ</span>
                             </div>
                         </div>
@@ -729,59 +835,55 @@
                              ontouchend="handleTouchEnd(event)">
                             
                             <div class="flex gap-3">
-                                <!-- Left: Date & Lesson -->
+                                <!-- Left: Date -->
                                 <div class="flex flex-col items-center">
-                                    <div class="bg-slate-100 px-3 py-2 rounded-xl text-center min-w-[52px]">
+                                    <div class="bg-gradient-to-br from-slate-100 to-slate-50 px-3 py-2 rounded-xl text-center min-w-[56px] border border-slate-200">
                                         <div class="text-2xl font-black text-slate-700 leading-none">${d.day}</div>
                                         <div class="text-[9px] font-bold text-slate-400 uppercase">${d.month}</div>
                                         <div class="text-[8px] font-medium text-slate-300">${d.weekday}</div>
                                     </div>
-                                    <div class="mt-1 bg-purple-100 text-purple-700 text-xs font-black px-2 py-1 rounded-lg">
+                                    <div class="mt-1.5 bg-purple-100 text-purple-700 text-[10px] font-black px-2 py-1 rounded-lg">
                                         ${r.lesson || 1} урок
                                     </div>
                                 </div>
                                 
                                 <!-- Middle: Info -->
                                 <div class="flex-1 min-w-0">
-                                    <div class="flex items-center gap-2 mb-1">
-                                        <span class="bg-blue-100 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded-md">${r.class || '—'}</span>
-                                        <span class="text-xs font-bold text-slate-600 truncate">${r.subject}</span>
+                                    <div class="flex items-center gap-2 mb-1.5">
+                                        <span class="bg-indigo-100 text-indigo-700 text-xs font-bold px-2 py-0.5 rounded-lg">${r.class || '—'}</span>
+                                        <span class="text-sm font-bold text-slate-600 truncate">${r.subject}</span>
                                     </div>
                                     
-                                    <div class="mb-2">
-                                        <div class="flex items-center gap-1.5">
-                                            <span class="text-sm">🦸</span>
+                                    <div class="mb-1">
+                                        <div class="flex items-center gap-1.5 mb-0.5">
+                                            <span class="text-base">🦸</span>
                                             <span class="font-bold text-slate-800 text-sm truncate">${r.by}</span>
                                         </div>
                                         <div class="flex items-center gap-1.5">
-                                            <span class="text-sm">😷</span>
-                                            <span class="text-xs text-slate-500 truncate">${r.who}</span>
+                                            <span class="text-base">😷</span>
+                                            <span class="text-xs text-slate-500 truncate">за ${r.who}</span>
                                         </div>
                                     </div>
-                                    
-                                    <span class="reason-tag ${reason.class}">${reason.icon} ${reason.label}</span>
                                 </div>
                                 
                                 <!-- Right: Type Badge -->
-                                <div class="${is100 ? 'badge-100' : 'badge-50'} px-3 py-2 rounded-xl text-center self-start">
-                                    <div class="text-xl font-black">${r.type}%</div>
-                                    <div class="text-[8px] font-bold uppercase">${is100 ? '🪟 ОКНО' : '📚 УРОК'}</div>
+                                <div class="${is100 ? 'badge-100' : 'badge-50'} px-4 py-3 rounded-2xl text-center self-center">
+                                    <div class="text-2xl font-black">${r.type}%</div>
+                                    <div class="text-[9px] font-bold uppercase opacity-90">${is100 ? '🪟 ОКНО' : '📚 УРОК'}</div>
                                 </div>
                             </div>
                             
-                            ${isCompleted ? '<div class="absolute top-2 right-2 text-emerald-500 text-lg">✓</div>' : ''}
+                            ${isCompleted ? '<div class="absolute top-2 right-2 text-emerald-500 text-xl">✓</div>' : ''}
                         </div>
                     </div>
                     `;
                 }).join('');
-                
-                initSwipe();
             }
             
             updateStats();
             updateDatalists();
             updateClassFilter();
-            renderTemplates();
+            updateQuickButtons();
         };
 
         // Swipe handlers
@@ -809,7 +911,7 @@
             
             if (isSwiping) {
                 e.preventDefault();
-                const moveX = Math.max(-210, Math.min(0, deltaX));
+                const moveX = Math.max(-160, Math.min(0, deltaX));
                 currentSwipeEl.style.transform = `translateX(${moveX}px)`;
             }
         };
@@ -818,19 +920,11 @@
             if (!currentSwipeEl) return;
             currentSwipeEl.classList.remove('swiping');
             const currentX = parseInt(currentSwipeEl.style.transform.replace(/[^-\d]/g, '')) || 0;
-            currentSwipeEl.style.transform = currentX < -80 ? 'translateX(-210px)' : 'translateX(0)';
-            if (currentX >= -80) currentSwipeEl = null;
+            currentSwipeEl.style.transform = currentX < -60 ? 'translateX(-160px)' : 'translateX(0)';
+            if (currentX >= -60) currentSwipeEl = null;
             isSwiping = false;
         };
-        
-        const initSwipe = () => {};
-        
-        const resetSwipes = () => {
-            document.querySelectorAll('.swipe-item').forEach(el => el.style.transform = 'translateX(0)');
-            currentSwipeEl = null;
-        };
 
-        // Actions
         const del = id => {
             if(confirm('Удалить запись?')) {
                 reps = reps.filter(r => r.id !== id);
@@ -843,56 +937,21 @@
             if (r) {
                 r.completed = !r.completed;
                 save(); render();
-                showToast(r.completed ? '✓ Отмечено выполненным' : '↩️ Отметка снята');
-            }
-        };
-        
-        const duplicateRecord = id => {
-            const r = reps.find(r => r.id === id);
-            if (r) {
-                const tomorrow = new Date();
-                tomorrow.setDate(tomorrow.getDate() + 1);
-                const newRec = {
-                    ...r,
-                    id: Date.now(),
-                    date: tomorrow.toISOString().slice(0, 10),
-                    completed: false
-                };
-                reps.push(newRec);
-                
-                // Save as template
-                const templateKey = `${r.who}→${r.by}`;
-                if (!templates.find(t => t.key === templateKey)) {
-                    templates.push({
-                        key: templateKey,
-                        who: r.who,
-                        by: r.by,
-                        subject: r.subject,
-                        class: r.class,
-                        type: r.type,
-                        reason: r.reason,
-                        count: 1
-                    });
-                } else {
-                    templates.find(t => t.key === templateKey).count++;
-                }
-                
-                save(); render();
-                showToast('📋 Копия создана на завтра');
+                showToast(r.completed ? '✓ Выполнено' : '↩️ Отменено');
             }
         };
 
         const selectLesson = (n) => {
-            document.getElementById('fLesson').value = n;
+            selectedLesson = n;
             document.querySelectorAll('.lesson-btn').forEach((btn, i) => {
                 btn.classList.toggle('active', i + 1 === n);
             });
         };
         
         const selectType = (type) => {
-            document.getElementById('fType').value = type;
-            document.getElementById('typeBtn100').classList.toggle('active', type === '100');
-            document.getElementById('typeBtn50').classList.toggle('active', type === '50');
+            selectedType = type;
+            document.getElementById('typeCardWindow').classList.toggle('active', type === '100');
+            document.getElementById('typeCardLesson').classList.toggle('active', type === '50');
         };
 
         const showToast = msg => {
@@ -901,63 +960,143 @@
             setTimeout(() => t.classList.remove('show'), 2500);
         };
 
-        // Form
-        const openForm = (template = null) => {
-            if (template) {
-                document.getElementById('fWho').value = template.who;
-                document.getElementById('fBy').value = template.by;
-                document.getElementById('fSubject').value = template.subject || '';
-                document.getElementById('fClass').value = template.class || '';
-                selectType(template.type || '100');
-                document.querySelector(`input[name="reason"][value="${template.reason || 'sick'}"]`).checked = true;
-            }
+        // Wizard
+        const openWizard = () => {
+            currentStep = 1;
+            selectedLesson = 1;
+            selectedType = '100';
+            document.getElementById('wDate').valueAsDate = new Date();
+            document.getElementById('wClass').value = '';
+            document.getElementById('wSubject').value = '';
+            document.getElementById('wWho').value = '';
+            document.getElementById('wBy').value = '';
+            selectLesson(1);
+            selectType('100');
+            updateWizardStep();
+            updateQuickButtons();
+            
             document.getElementById('modalOverlay').classList.add('active');
             document.getElementById('modalSheet').classList.add('active');
             document.body.style.overflow = 'hidden';
         };
         
-        const closeForm = () => {
+        const closeWizard = () => {
             document.getElementById('modalOverlay').classList.remove('active');
             document.getElementById('modalSheet').classList.remove('active');
             document.body.style.overflow = '';
-            setTimeout(() => {
-                document.getElementById('mainForm').reset();
-                document.getElementById('editId').value = '';
-                document.getElementById('modalTitle').textContent = '➕ Новая замена';
-                document.getElementById('submitBtn').textContent = '✓ Добавить';
-                document.getElementById('fDate').valueAsDate = new Date();
-                selectLesson(1);
-                selectType('100');
-            }, 300);
         };
-
-        document.getElementById('mainForm').onsubmit = function(e) {
-            e.preventDefault();
+        
+        const updateWizardStep = (direction = 'next') => {
+            document.querySelectorAll('.wizard-step').forEach(step => {
+                step.classList.remove('active', 'back');
+            });
             
-            const reason = document.querySelector('input[name="reason"]:checked').value;
+            const currentStepEl = document.querySelector(`.wizard-step[data-step="${currentStep}"]`);
+            currentStepEl.classList.add('active');
+            if (direction === 'back') currentStepEl.classList.add('back');
+            
+            // Update progress dots
+            document.querySelectorAll('.progress-dot').forEach((dot, i) => {
+                const stepNum = i + 1;
+                dot.classList.remove('active', 'done');
+                if (stepNum === currentStep) dot.classList.add('active');
+                else if (stepNum < currentStep) dot.classList.add('done');
+            });
+            
+            // Update progress lines
+            for (let i = 1; i < currentStep; i++) {
+                document.getElementById(`progress${i}`).style.width = '100%';
+            }
+            for (let i = currentStep; i <= 5; i++) {
+                document.getElementById(`progress${i}`).style.width = '0%';
+            }
+            
+            // Update summary on last step
+            if (currentStep === 6) {
+                updateSummary();
+            }
+        };
+        
+        const nextStep = () => {
+            // Validation
+            if (currentStep === 1 && !document.getElementById('wDate').value) {
+                showToast('⚠️ Выберите дату'); return;
+            }
+            if (currentStep === 2 && !document.getElementById('wClass').value.trim()) {
+                showToast('⚠️ Укажите класс'); return;
+            }
+            if (currentStep === 3 && !document.getElementById('wSubject').value.trim()) {
+                showToast('⚠️ Укажите предмет'); return;
+            }
+            if (currentStep === 4 && !document.getElementById('wWho').value.trim()) {
+                showToast('⚠️ Укажите кто отсутствует'); return;
+            }
+            if (currentStep === 5 && !document.getElementById('wBy').value.trim()) {
+                showToast('⚠️ Укажите кто заменяет'); return;
+            }
+            
+            if (currentStep < 6) {
+                currentStep++;
+                updateWizardStep('next');
+            }
+        };
+        
+        const prevStep = () => {
+            if (currentStep > 1) {
+                currentStep--;
+                updateWizardStep('back');
+            }
+        };
+        
+        const updateSummary = () => {
+            const d = formatDate(document.getElementById('wDate').value);
             const data = {
-                date: document.getElementById('fDate').value,
-                lesson: parseInt(document.getElementById('fLesson').value),
-                type: document.getElementById('fType').value,
-                class: document.getElementById('fClass').value.trim().toUpperCase(),
-                subject: document.getElementById('fSubject').value.trim(),
-                who: document.getElementById('fWho').value.trim(),
-                by: document.getElementById('fBy').value.trim(),
-                reason: reason,
+                date: `${d.day} ${d.month} (${d.weekday})`,
+                lesson: selectedLesson,
+                class: document.getElementById('wClass').value.toUpperCase(),
+                subject: document.getElementById('wSubject').value,
+                who: document.getElementById('wWho').value,
+                by: document.getElementById('wBy').value
+            };
+            
+            document.getElementById('summaryContent').innerHTML = `
+                <div class="summary-item">
+                    <span class="text-slate-500">📅 Дата:</span>
+                    <span class="font-bold">${data.date}, ${data.lesson} урок</span>
+                </div>
+                <div class="summary-item">
+                    <span class="text-slate-500">🏫 Класс:</span>
+                    <span class="font-bold">${data.class}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="text-slate-500">📖 Предмет:</span>
+                    <span class="font-bold">${data.subject}</span>
+                </div>
+                <div class="summary-item">
+                    <span class="text-slate-500">😷 Отсутствует:</span>
+                    <span class="font-bold">${data.who}</span>
+                </div>
+                <div class="summary-item highlight">
+                    <span class="text-slate-500">🦸 Заменяет:</span>
+                    <span class="font-bold">${data.by}</span>
+                </div>
+            `;
+        };
+        
+        const saveRecord = () => {
+            const data = {
+                id: Date.now(),
+                date: document.getElementById('wDate').value,
+                lesson: selectedLesson,
+                type: selectedType,
+                class: document.getElementById('wClass').value.trim().toUpperCase(),
+                subject: document.getElementById('wSubject').value.trim(),
+                who: document.getElementById('wWho').value.trim(),
+                by: document.getElementById('wBy').value.trim(),
                 completed: false
             };
             
-            const editId = document.getElementById('editId').value;
-            if (editId) {
-                const index = reps.findIndex(r => r.id === parseInt(editId));
-                if (index !== -1) {
-                    reps[index] = { ...reps[index], ...data };
-                    showToast('✅ Изменено');
-                }
-            } else {
-                reps.push({ id: Date.now(), ...data });
-                showToast('✅ Добавлено');
-            }
+            reps.push(data);
             
             // Update master lists
             if(!master.t.includes(data.who)) master.t.push(data.who);
@@ -965,43 +1104,50 @@
             if(!master.s.includes(data.subject)) master.s.push(data.subject);
             if(data.class && !master.c.includes(data.class)) master.c.push(data.class);
             
-            save(); render(); closeForm();
+            save(); render(); closeWizard();
+            showToast('✅ Замена добавлена!');
         };
-
-        // Templates
-        const renderTemplates = () => {
-            if (!settings.showTemplates || templates.length === 0) {
-                document.getElementById('templatesSection').classList.add('hidden');
-                return;
+        
+        const updateQuickButtons = () => {
+            // Quick classes
+            const classesContainer = document.getElementById('quickClasses');
+            if (classesContainer) {
+                const classes = master.c.slice(0, 8);
+                classesContainer.innerHTML = classes.map(c => 
+                    `<button type="button" class="class-btn" onclick="document.getElementById('wClass').value='${c}'">${c}</button>`
+                ).join('');
             }
-            document.getElementById('templatesSection').classList.remove('hidden');
             
-            const sorted = [...templates].sort((a, b) => b.count - a.count).slice(0, 5);
-            document.getElementById('templatesList').innerHTML = sorted.map(t => `
-                <div class="quick-template p-3 rounded-xl min-w-[140px]" onclick='openForm(${JSON.stringify(t)})'>
-                    <div class="text-xs font-bold text-slate-700 truncate">${t.by}</div>
-                    <div class="text-[10px] text-slate-500">за ${t.who.split(' ')[0]}</div>
-                </div>
-            `).join('');
-        };
-        
-        const toggleTemplates = () => {
-            settings.showTemplates = false;
-            save();
-            renderTemplates();
-        };
-        
-        const toggleTemplatesVisibility = () => {
-            settings.showTemplates = document.getElementById('showTemplates').checked;
-            save();
-            renderTemplates();
+            // Quick subjects
+            const subjectsContainer = document.getElementById('quickSubjects');
+            if (subjectsContainer) {
+                const subjects = master.s.slice(0, 6);
+                subjectsContainer.innerHTML = subjects.map(s => 
+                    `<button type="button" class="class-btn text-sm" onclick="document.getElementById('wSubject').value='${s}'">${s}</button>`
+                ).join('');
+            }
+            
+            // Quick teachers who
+            const teachersWhoContainer = document.getElementById('quickTeachersWho');
+            if (teachersWhoContainer) {
+                const teachers = master.t.slice(0, 4);
+                teachersWhoContainer.innerHTML = teachers.map(t => 
+                    `<button type="button" class="class-btn text-xs" onclick="document.getElementById('wWho').value='${t}'">${t}</button>`
+                ).join('');
+            }
+            
+            // Quick teachers by
+            const teachersByContainer = document.getElementById('quickTeachersBy');
+            if (teachersByContainer) {
+                const teachers = master.t.slice(0, 4);
+                teachersByContainer.innerHTML = teachers.map(t => 
+                    `<button type="button" class="class-btn text-xs" onclick="document.getElementById('wBy').value='${t}'">${t}</button>`
+                ).join('');
+            }
         };
 
-        // Stats
         const updateStats = () => {
             const today = getToday();
-            const thisMonth = new Date().getMonth();
-            
             document.getElementById('statTotal').textContent = reps.length;
             document.getElementById('stat100').textContent = reps.filter(r => r.type === '100').length;
             document.getElementById('stat50').textContent = reps.filter(r => r.type === '50').length;
@@ -1033,13 +1179,12 @@
             render(); 
         };
 
-        // Report
+        // Report Modal
         const openReport = () => {
             const now = new Date();
             const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
             document.getElementById('reportDateFrom').value = firstDay.toISOString().slice(0,10);
             document.getElementById('reportDateTo').value = now.toISOString().slice(0,10);
-            document.getElementById('reportContent').innerHTML = '<div class="text-center text-slate-400 py-8">Выберите период и нажмите "Отчёт"</div>';
             
             document.getElementById('reportOverlay').classList.add('active');
             document.getElementById('reportSheet').classList.add('active');
@@ -1064,42 +1209,33 @@
             
             const byTeacher = {};
             filtered.forEach(r => {
-                if (!byTeacher[r.by]) byTeacher[r.by] = { count100: 0, count50: 0, total: 0, completed: 0 };
+                if (!byTeacher[r.by]) byTeacher[r.by] = { count100: 0, count50: 0, total: 0 };
                 if (r.type === '100') byTeacher[r.by].count100++;
                 else byTeacher[r.by].count50++;
                 byTeacher[r.by].total++;
-                if (r.completed) byTeacher[r.by].completed++;
             });
             
             const sorted = Object.entries(byTeacher).sort((a,b) => b[1].total - a[1].total);
             
-            if (sorted.length === 0) {
-                document.getElementById('reportContent').innerHTML = '<div class="text-center text-slate-400 py-8">Нет данных</div>';
-                return;
-            }
-            
-            const total100 = filtered.filter(r => r.type === '100').length;
-            const total50 = filtered.filter(r => r.type === '50').length;
-            
             document.getElementById('reportContent').innerHTML = `
-                <div class="bg-gradient-to-r from-slate-100 to-slate-50 p-4 rounded-xl mb-4">
-                    <div class="text-center mb-3">
+                <div class="bg-gradient-to-r from-purple-100 to-indigo-100 p-4 rounded-xl mb-4">
+                    <div class="text-center mb-2">
                         <div class="text-3xl font-black text-slate-700">${filtered.length}</div>
                         <div class="text-xs text-slate-500 uppercase font-bold">Замен за период</div>
                     </div>
                     <div class="flex justify-center gap-6">
                         <div class="text-center">
-                            <div class="text-xl font-black text-blue-600">${total100}</div>
+                            <div class="text-xl font-black text-blue-600">${filtered.filter(r=>r.type==='100').length}</div>
                             <div class="text-[9px] text-blue-500 uppercase font-bold">🪟 100%</div>
                         </div>
                         <div class="text-center">
-                            <div class="text-xl font-black text-amber-600">${total50}</div>
+                            <div class="text-xl font-black text-amber-600">${filtered.filter(r=>r.type==='50').length}</div>
                             <div class="text-[9px] text-amber-500 uppercase font-bold">📚 50%</div>
                         </div>
                     </div>
                 </div>
                 
-                <div class="text-xs font-bold text-slate-400 uppercase mb-2">По учителям (заменяющим):</div>
+                <div class="text-xs font-bold text-slate-400 uppercase mb-2">По учителям:</div>
                 ${sorted.map(([name, data]) => `
                     <div class="bg-white border border-slate-100 p-3 rounded-xl mb-2 shadow-sm">
                         <div class="flex justify-between items-center">
@@ -1109,41 +1245,32 @@
                         <div class="flex gap-3 mt-1">
                             <span class="text-xs text-blue-600 font-medium">🪟 ${data.count100}</span>
                             <span class="text-xs text-amber-600 font-medium">📚 ${data.count50}</span>
-                            <span class="text-xs text-emerald-600 font-medium">✓ ${data.completed}</span>
                         </div>
                     </div>
                 `).join('')}
             `;
         };
 
-        // Stats modal
+        // Stats Modal
         const openStats = () => {
             const byAbsent = {};
             reps.forEach(r => {
-                if (!byAbsent[r.who]) byAbsent[r.who] = { total: 0, reasons: {} };
-                byAbsent[r.who].total++;
-                byAbsent[r.who].reasons[r.reason] = (byAbsent[r.who].reasons[r.reason] || 0) + 1;
+                if (!byAbsent[r.who]) byAbsent[r.who] = 0;
+                byAbsent[r.who]++;
             });
             
-            const sorted = Object.entries(byAbsent).sort((a,b) => b[1].total - a[1].total);
+            const sorted = Object.entries(byAbsent).sort((a,b) => b[1] - a[1]);
             
             document.getElementById('statsContent').innerHTML = `
                 <div class="text-xs font-bold text-slate-400 uppercase mb-2">🏥 Кто чаще отсутствует:</div>
-                ${sorted.length === 0 ? '<div class="text-center text-slate-400 py-8">Нет данных</div>' : ''}
-                ${sorted.slice(0, 10).map(([name, data]) => {
-                    const mainReason = Object.entries(data.reasons).sort((a,b) => b[1] - a[1])[0];
-                    const reasonInfo = getReasonInfo(mainReason[0]);
-                    return `
+                ${sorted.slice(0, 10).map(([name, count]) => `
                     <div class="bg-white border border-slate-100 p-3 rounded-xl shadow-sm">
                         <div class="flex justify-between items-center">
                             <div class="font-bold text-slate-700">${name}</div>
-                            <div class="text-lg font-black text-red-500">${data.total}</div>
-                        </div>
-                        <div class="mt-1">
-                            <span class="reason-tag ${reasonInfo.class}">${reasonInfo.icon} ${mainReason[1]}×</span>
+                            <div class="text-lg font-black text-red-500">${count}</div>
                         </div>
                     </div>
-                `}).join('')}
+                `).join('')}
             `;
             
             document.getElementById('statsOverlay').classList.add('active');
@@ -1157,9 +1284,8 @@
             document.body.style.overflow = '';
         };
 
-        // Settings
+        // Settings Modal
         const openSettings = () => {
-            document.getElementById('showTemplates').checked = settings.showTemplates;
             document.getElementById('settingsOverlay').classList.add('active');
             document.getElementById('settingsSheet').classList.add('active');
             document.body.style.overflow = 'hidden';
@@ -1171,9 +1297,8 @@
             document.body.style.overflow = '';
         };
 
-        // Export/Import
         function exportJSON() {
-            const data = { reps, master, templates, exportDate: new Date().toISOString(), version: '4.0' };
+            const data = { reps, master, exportDate: new Date().toISOString(), version: '5.0' };
             const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
             const a = document.createElement('a'); 
             a.href = URL.createObjectURL(blob);
@@ -1191,10 +1316,9 @@
                 try {
                     const data = JSON.parse(e.target.result);
                     if (data.reps) {
-                        if (confirm(`Импортировать ${data.reps.length} записей? Текущие данные будут заменены!`)) {
+                        if (confirm(`Импортировать ${data.reps.length} записей?`)) {
                             reps = data.reps;
                             master = data.master || {t:[], s:[], c:[]};
-                            templates = data.templates || [];
                             save(); render();
                             showToast(`✅ Импорт: ${reps.length} записей`);
                         }
@@ -1217,17 +1341,9 @@
                 return true;
             }).sort((a,b) => new Date(a.date) - new Date(b.date));
             
-            const headers = ['Дата', 'Урок', 'Класс', 'Предмет', 'Отсутствует', 'Заменяет', 'Тип %', 'Причина', 'Выполнено'];
+            const headers = ['Дата', 'Урок', 'Класс', 'Предмет', 'Отсутствует', 'Заменяет', 'Тип %'];
             const rows = filtered.map(r => [
-                r.date,
-                r.lesson || 1,
-                r.class || '',
-                r.subject,
-                r.who,
-                r.by,
-                r.type,
-                getReasonInfo(r.reason).label,
-                r.completed ? 'Да' : 'Нет'
+                r.date, r.lesson || 1, r.class || '', r.subject, r.who, r.by, r.type
             ]);
             
             const csv = [headers, ...rows].map(row => row.map(cell => `"${cell}"`).join(';')).join('\n');
@@ -1239,43 +1355,25 @@
             showToast('📥 Excel файл создан');
         }
         
-        function doPrint() {
-            const from = document.getElementById('reportDateFrom').value;
-            const to = document.getElementById('reportDateTo').value;
-            
-            document.getElementById('filterDateFrom').value = from;
-            document.getElementById('filterDateTo').value = to;
-            document.getElementById('printPeriod').textContent = `Период: ${from} — ${to}`;
-            document.getElementById('printDate').textContent = new Date().toLocaleDateString('ru-RU');
-            
-            setTab('all');
-            closeReport();
-            
-            setTimeout(() => window.print(), 300);
-        }
-        
         function clearAllData() {
-            if (confirm('⚠️ Удалить ВСЕ данные? Это действие нельзя отменить!')) {
-                if (confirm('Вы уверены? Все записи будут потеряны!')) {
+            if (confirm('⚠️ Удалить ВСЕ данные?')) {
+                if (confirm('Точно удалить?')) {
                     reps = [];
                     master = {t:[], s:[], c:[]};
-                    templates = [];
                     save(); render();
                     closeSettings();
-                    showToast('🗑️ Все данные удалены');
+                    showToast('🗑️ Данные удалены');
                 }
             }
         }
 
-        // Touch outside to close swipe
         document.addEventListener('touchstart', (e) => {
             if (!e.target.closest('.swipe-container') && currentSwipeEl) {
-                resetSwipes();
+                currentSwipeEl.style.transform = 'translateX(0)';
+                currentSwipeEl = null;
             }
         });
 
-        // Init
-        document.getElementById('fDate').valueAsDate = new Date();
         render();
     </script>
 </body>
