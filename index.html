@@ -3,100 +3,304 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Завуч.PRO v1.7</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Завуч.PRO v2.0</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
-        * { -webkit-tap-highlight-color: transparent; touch-action: pan-y; }
-        body { overscroll-behavior-y: contain; }
-        
-        .swipe-container { position: relative; overflow: hidden; border-radius: 1.5rem; background: #ef4444; margin-bottom: 0.75rem; }
-        .swipe-item { position: relative; z-index: 10; background: white; transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); }
-        .swipe-action { 
-            position: absolute; right: 0; top: 0; bottom: 0; width: 100px; 
-            color: white; display: flex; align-items: center; 
-            justify-content: center; font-size: 0.7rem; font-weight: 900;
+        * { 
+            -webkit-tap-highlight-color: transparent; 
+            -webkit-touch-callout: none;
         }
+        
+        body { 
+            overscroll-behavior-y: contain;
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
+            padding-left: env(safe-area-inset-left);
+            padding-right: env(safe-area-inset-right);
+        }
+        
+        .swipe-container { 
+            position: relative; 
+            overflow: hidden; 
+            border-radius: 1rem; 
+            margin-bottom: 0.5rem;
+            will-change: transform;
+        }
+        
+        .swipe-item { 
+            position: relative; 
+            z-index: 10; 
+            background: white; 
+            transition: transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            touch-action: pan-y;
+        }
+        
+        .swipe-item.swiping {
+            transition: none;
+        }
+        
+        .swipe-actions {
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            display: flex;
+        }
+        
+        .swipe-action { 
+            width: 80px;
+            height: 100%;
+            color: white; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 0.65rem; 
+            font-weight: 900;
+            flex-direction: column;
+            gap: 4px;
+        }
+        
+        .swipe-action-edit { background: #3b82f6; }
+        .swipe-action-delete { background: #ef4444; }
 
         .toast {
-            position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(100px);
-            background: #1e293b; color: white; padding: 0.75rem 1.5rem; border-radius: 1rem;
-            transition: transform 0.3s ease; z-index: 1000;
+            position: fixed; 
+            bottom: calc(2rem + env(safe-area-inset-bottom)); 
+            left: 50%; 
+            transform: translateX(-50%) translateY(100px);
+            background: #1e293b; 
+            color: white; 
+            padding: 0.875rem 1.75rem; 
+            border-radius: 1rem;
+            transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            z-index: 1000;
+            font-weight: 600;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
         }
         .toast.show { transform: translateX(-50%) translateY(0); }
 
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-sheet {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 1.5rem 1.5rem 0 0;
+            padding: 1.5rem;
+            padding-bottom: calc(1.5rem + env(safe-area-inset-bottom));
+            z-index: 101;
+            transform: translateY(100%);
+            transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-sheet.active {
+            transform: translateY(0);
+        }
+        
+        .modal-handle {
+            width: 40px;
+            height: 5px;
+            background: #e2e8f0;
+            border-radius: 3px;
+            margin: 0 auto 1rem;
+        }
+
+        .fab {
+            position: fixed;
+            bottom: calc(1.5rem + env(safe-area-inset-bottom));
+            right: 1.5rem;
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(59, 130, 246, 0.4);
+            font-size: 28px;
+            font-weight: 300;
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .fab:active {
+            transform: scale(0.92);
+        }
+        
+        .record-card {
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (min-width: 768px) {
+            .modal-sheet {
+                left: 50%;
+                right: auto;
+                bottom: 50%;
+                transform: translate(-50%, 50%) scale(0.95);
+                opacity: 0;
+                width: 100%;
+                max-width: 480px;
+                border-radius: 1.5rem;
+                padding-bottom: 1.5rem;
+            }
+            
+            .modal-sheet.active {
+                transform: translate(-50%, 50%) scale(1);
+                opacity: 1;
+            }
+            
+            .modal-handle {
+                display: none;
+            }
+        }
+
         @media print {
             .no-print { display: none !important; }
-            .record-card { border: 1px solid #eee; break-inside: avoid; }
+            body { padding: 0; background: white; }
+            .swipe-container { border: 1px solid #e2e8f0; break-inside: avoid; page-break-inside: avoid; }
+            .swipe-item { box-shadow: none; }
+        }
+        
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(0.5);
+        }
+        
+        .stat-card {
+            transition: transform 0.2s ease;
+        }
+        
+        .stat-card:active {
+            transform: scale(0.96);
         }
     </style>
 </head>
-<body class="bg-slate-50 min-h-screen pb-24">
+<body class="bg-slate-50 min-h-screen">
 
-    <div class="max-w-2xl mx-auto px-4 py-6">
+    <div class="max-w-2xl mx-auto px-4 py-6 pb-28">
         <!-- Header -->
         <header class="flex justify-between items-center mb-6 no-print">
-            <h1 class="text-2xl font-black tracking-tighter italic">ЗАВУЧ<span class="text-blue-600">.PRO</span></h1>
-            <div class="flex gap-3">
-                <button onclick="exportJSON()" class="text-slate-400 text-sm">JSON</button>
-                <button onclick="window.print()" class="text-blue-600 text-sm font-bold">ПЕЧАТЬ</button>
+            <div>
+                <h1 class="text-2xl font-black tracking-tight">ЗАВУЧ<span class="text-blue-600">.PRO</span></h1>
+                <p class="text-[10px] text-slate-400 font-medium uppercase tracking-widest">Журнал замен v2.0</p>
             </div>
+            <div class="flex gap-2">
+                <button onclick="document.getElementById('importInput').click()" class="bg-slate-100 text-slate-500 text-xs font-bold px-3 py-2 rounded-lg active:bg-slate-200">↓ JSON</button>
+                <button onclick="exportJSON()" class="bg-slate-100 text-slate-500 text-xs font-bold px-3 py-2 rounded-lg active:bg-slate-200">↑ JSON</button>
+                <button onclick="window.print()" class="bg-blue-600 text-white text-xs font-bold px-3 py-2 rounded-lg active:bg-blue-700">ПЕЧАТЬ</button>
+            </div>
+            <input type="file" id="importInput" accept=".json" class="hidden" onchange="importJSON(event)">
         </header>
 
         <!-- Stats -->
         <div class="grid grid-cols-4 gap-2 mb-6 no-print">
-            <div class="bg-white p-3 rounded-2xl border border-slate-100 text-center shadow-sm">
-                <div id="statTotal" class="text-lg font-black">0</div>
-                <div class="text-[8px] font-bold text-slate-400 uppercase">Всего</div>
+            <div class="stat-card bg-white p-3 rounded-xl border border-slate-100 text-center shadow-sm cursor-pointer" onclick="filterByType('all')">
+                <div id="statTotal" class="text-xl font-black text-slate-700">0</div>
+                <div class="text-[9px] font-bold text-slate-400 uppercase">Всего</div>
             </div>
-            <div class="bg-white p-3 rounded-2xl border-l-4 border-l-blue-500 text-center shadow-sm">
-                <div id="stat100" class="text-lg font-black text-blue-600">0</div>
-                <div class="text-[8px] font-bold text-slate-400 uppercase font-black">Окна</div>
+            <div class="stat-card bg-gradient-to-br from-blue-50 to-white p-3 rounded-xl border border-blue-100 text-center shadow-sm cursor-pointer" onclick="filterByType('100')">
+                <div id="stat100" class="text-xl font-black text-blue-600">0</div>
+                <div class="text-[9px] font-bold text-blue-400 uppercase">Окна</div>
             </div>
-            <div class="bg-white p-3 rounded-2xl border-l-4 border-l-amber-500 text-center shadow-sm">
-                <div id="stat50" class="text-lg font-black text-amber-500">0</div>
-                <div class="text-[8px] font-bold text-slate-400 uppercase font-black">50%</div>
+            <div class="stat-card bg-gradient-to-br from-amber-50 to-white p-3 rounded-xl border border-amber-100 text-center shadow-sm cursor-pointer" onclick="filterByType('50')">
+                <div id="stat50" class="text-xl font-black text-amber-500">0</div>
+                <div class="text-[9px] font-bold text-amber-400 uppercase">50%</div>
             </div>
-            <div class="bg-white p-3 rounded-2xl border border-slate-100 text-center shadow-sm">
-                <div id="statMonth" class="text-lg font-black text-slate-700">0</div>
-                <div class="text-[8px] font-bold text-slate-400 uppercase">Месяц</div>
+            <div class="stat-card bg-white p-3 rounded-xl border border-slate-100 text-center shadow-sm cursor-pointer" onclick="filterByMonth()">
+                <div id="statMonth" class="text-xl font-black text-emerald-600">0</div>
+                <div class="text-[9px] font-bold text-slate-400 uppercase" id="monthLabel">Месяц</div>
             </div>
         </div>
 
         <!-- Filter Bar -->
-        <div class="mb-6 no-print flex gap-2">
-            <input type="text" id="search" placeholder="Поиск по ФИО или предмету..." oninput="render()" 
-                class="flex-1 bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-            <button onclick="clearFilter()" class="bg-slate-200 px-3 rounded-xl text-xs font-bold text-slate-500 uppercase tracking-tighter">Сброс</button>
+        <div class="mb-4 no-print flex gap-2">
+            <div class="relative flex-1">
+                <input type="text" id="search" placeholder="Поиск по ФИО или предмету..." oninput="render()" 
+                    class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none shadow-sm">
+                <span class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-300">🔍</span>
+            </div>
+            <button onclick="clearFilter()" class="bg-slate-200 px-4 rounded-xl text-xs font-bold text-slate-600 uppercase tracking-tight active:bg-slate-300 transition">✕</button>
+        </div>
+
+        <!-- Active Filter Indicator -->
+        <div id="filterIndicator" class="hidden mb-4 no-print">
+            <div class="bg-blue-50 border border-blue-200 rounded-lg px-3 py-2 flex items-center justify-between">
+                <span class="text-xs font-medium text-blue-700" id="filterText"></span>
+                <button onclick="clearFilter()" class="text-blue-600 text-xs font-bold">Сбросить</button>
+            </div>
         </div>
 
         <!-- Journal -->
         <div id="mobileBody" class="space-y-1"></div>
+        
+        <!-- Empty State -->
+        <div id="emptyState" class="hidden text-center py-16">
+            <div class="text-6xl mb-4">📋</div>
+            <div class="text-slate-400 font-bold uppercase text-sm tracking-wider mb-2">Журнал пуст</div>
+            <div class="text-slate-300 text-xs">Нажмите + чтобы добавить запись</div>
+        </div>
     </div>
 
     <!-- FAB -->
-    <button onclick="openForm()" class="fixed bottom-8 right-6 w-14 h-14 bg-blue-600 text-white rounded-full shadow-2xl text-3xl font-light z-50 flex items-center justify-center no-print active:scale-90 transition">+</button>
+    <button onclick="openForm()" class="fab no-print" aria-label="Добавить замену">+</button>
 
-    <!-- Modal -->
-    <div id="modal" class="fixed inset-0 bg-slate-900/40 hidden items-end sm:items-center justify-center z-[100] no-print backdrop-blur-md">
-        <div class="bg-white w-full sm:max-w-md rounded-t-[2rem] p-6 shadow-2xl">
-            <div class="flex justify-between items-center mb-6 px-2">
-                <h3 class="text-xl font-black uppercase italic tracking-tighter">Новая замена</h3>
-                <button onclick="closeForm()" class="text-slate-300 text-2xl">&times;</button>
-            </div>
-            <form id="mainForm" class="space-y-4">
-                <div class="flex gap-2">
-                    <input type="date" id="fDate" required class="flex-1 bg-slate-100 p-4 rounded-xl border-none font-bold text-blue-600">
-                    <select id="fType" class="bg-slate-100 p-4 rounded-xl border-none font-black text-xs uppercase">
-                        <option value="100">100% (Окно)</option>
-                        <option value="50">50% (Урок)</option>
-                    </select>
-                </div>
-                <input list="subjects" id="fSubject" placeholder="Предмет" required class="w-full bg-slate-100 p-4 rounded-xl border-none">
-                <input list="teachers" id="fWho" placeholder="Кто отсутствует (ФИО)" required class="w-full bg-slate-100 p-4 rounded-xl border-none text-sm">
-                <input list="teachers" id="fBy" placeholder="Кто заменяет (ФИО)" required class="w-full bg-slate-100 p-4 rounded-xl border-none text-sm">
-                <button type="submit" class="w-full bg-blue-600 text-white font-black py-4 rounded-xl shadow-lg uppercase tracking-widest text-sm">Добавить в базу</button>
-            </form>
+    <!-- Modal Overlay -->
+    <div id="modalOverlay" class="modal-overlay no-print" onclick="closeForm()"></div>
+    
+    <!-- Modal Sheet -->
+    <div id="modalSheet" class="modal-sheet no-print" onclick="event.stopPropagation()">
+        <div class="modal-handle"></div>
+        <div class="flex justify-between items-center mb-5">
+            <h3 id="modalTitle" class="text-lg font-black uppercase tracking-tight">Новая замена</h3>
+            <button onclick="closeForm()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-lg active:bg-slate-200">×</button>
         </div>
+        <form id="mainForm" class="space-y-3">
+            <input type="hidden" id="editId">
+            <div class="flex gap-2">
+                <input type="date" id="fDate" required class="flex-1 bg-slate-100 p-4 rounded-xl border-none font-bold text-blue-600 text-base">
+                <select id="fType" class="bg-slate-100 p-4 rounded-xl border-none font-black text-xs uppercase w-32">
+                    <option value="100">100% Окно</option>
+                    <option value="50">50% Урок</option>
+                </select>
+            </div>
+            <input list="subjects" id="fSubject" placeholder="Предмет" required autocomplete="off"
+                class="w-full bg-slate-100 p-4 rounded-xl border-none text-base">
+            <input list="teachers" id="fWho" placeholder="Кто отсутствует (ФИО)" required autocomplete="off"
+                class="w-full bg-slate-100 p-4 rounded-xl border-none text-base">
+            <input list="teachers" id="fBy" placeholder="Кто заменяет (ФИО)" required autocomplete="off"
+                class="w-full bg-slate-100 p-4 rounded-xl border-none text-base">
+            <button type="submit" id="submitBtn" class="w-full bg-blue-600 text-white font-bold py-4 rounded-xl shadow-lg uppercase tracking-wide text-sm active:bg-blue-700 transition">
+                Добавить
+            </button>
+        </form>
     </div>
 
     <div id="toast" class="toast"></div>
@@ -104,130 +308,342 @@
     <datalist id="subjects"></datalist>
 
     <script>
-        let reps = JSON.parse(localStorage.getItem('v17_data')) || [];
-        let master = JSON.parse(localStorage.getItem('v17_master')) || {t:[], s:[]};
+        let reps = JSON.parse(localStorage.getItem('v2_data')) || [];
+        let master = JSON.parse(localStorage.getItem('v2_master')) || {t:[], s:[]};
+        let activeFilter = null;
         let startX = 0;
+        let startY = 0;
+        let isSwiping = false;
+        let currentSwipeEl = null;
 
         const save = () => {
-            localStorage.setItem('v17_data', JSON.stringify(reps));
-            localStorage.setItem('v17_master', JSON.stringify(master));
+            localStorage.setItem('v2_data', JSON.stringify(reps));
+            localStorage.setItem('v2_master', JSON.stringify(master));
+        };
+
+        const getMonthName = () => {
+            const months = ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'];
+            return months[new Date().getMonth()];
         };
 
         const render = () => {
             const container = document.getElementById('mobileBody');
             const search = document.getElementById('search').value.toLowerCase();
+            const emptyState = document.getElementById('emptyState');
+            const filterIndicator = document.getElementById('filterIndicator');
             
-            const filtered = reps.filter(r => 
+            let filtered = reps.filter(r => 
                 r.by.toLowerCase().includes(search) || 
                 r.who.toLowerCase().includes(search) || 
                 r.subject.toLowerCase().includes(search)
-            ).sort((a,b) => new Date(b.date) - new Date(a.date));
+            );
             
-            container.innerHTML = filtered.map(r => {
-                const d = new Date(r.date);
-                return `
-                <div class="swipe-container shadow-sm border border-slate-100" id="cont-${r.id}">
-                    <div class="swipe-action" onclick="del(${r.id})">УДАЛИТЬ 🗑️</div>
-                    <div class="swipe-item p-4 flex items-center gap-4" 
-                         onclick="resetSwipes()"
-                         ontouchstart="ts(event)" 
-                         ontouchmove="tm(event, this)" 
-                         ontouchend="te(event, this)">
-                        
-                        <div class="flex flex-col items-center bg-slate-50 w-12 py-1 rounded-lg">
-                            <span class="text-lg font-black leading-none">${d.getDate()}</span>
-                            <span class="text-[8px] uppercase font-bold text-slate-400">${d.toLocaleDateString('ru-RU',{month:'short'}).replace('.','')}</span>
+            // Apply active filter
+            if (activeFilter) {
+                if (activeFilter.type === 'percent') {
+                    filtered = filtered.filter(r => r.type === activeFilter.value);
+                    document.getElementById('filterText').textContent = `Фильтр: ${activeFilter.value}%`;
+                } else if (activeFilter.type === 'month') {
+                    filtered = filtered.filter(r => new Date(r.date).getMonth() === new Date().getMonth());
+                    document.getElementById('filterText').textContent = `Фильтр: ${getMonthName()}`;
+                }
+                filterIndicator.classList.remove('hidden');
+            } else {
+                filterIndicator.classList.add('hidden');
+            }
+            
+            filtered.sort((a,b) => new Date(b.date) - new Date(a.date));
+            
+            if (filtered.length === 0) {
+                container.innerHTML = '';
+                emptyState.classList.remove('hidden');
+            } else {
+                emptyState.classList.add('hidden');
+                container.innerHTML = filtered.map(r => {
+                    const d = new Date(r.date);
+                    const dayNames = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+                    return `
+                    <div class="swipe-container record-card shadow-sm border border-slate-100" data-id="${r.id}">
+                        <div class="swipe-actions">
+                            <div class="swipe-action swipe-action-edit" onclick="editRecord(${r.id})">
+                                <span>✏️</span>
+                                <span>ИЗМЕНИТЬ</span>
+                            </div>
+                            <div class="swipe-action swipe-action-delete" onclick="del(${r.id})">
+                                <span>🗑️</span>
+                                <span>УДАЛИТЬ</span>
+                            </div>
                         </div>
+                        <div class="swipe-item p-4 flex items-center gap-3">
+                            
+                            <div class="flex flex-col items-center bg-slate-50 w-14 py-2 rounded-lg shrink-0">
+                                <span class="text-xl font-black leading-none">${d.getDate()}</span>
+                                <span class="text-[9px] uppercase font-bold text-slate-400">${d.toLocaleDateString('ru-RU',{month:'short'}).replace('.','')}</span>
+                                <span class="text-[8px] text-slate-300 font-medium">${dayNames[d.getDay()]}</span>
+                            </div>
 
-                        <div class="flex-1 min-w-0">
-                            <div class="text-[9px] font-black uppercase text-blue-500 tracking-wider truncate">${r.subject}</div>
-                            <div class="text-xs font-bold text-slate-800 truncate leading-tight">${r.by}</div>
-                            <div class="text-[10px] text-slate-400 truncate tracking-tight italic">заменяет: ${r.who}</div>
-                        </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="text-[10px] font-bold uppercase text-blue-500 tracking-wide truncate mb-0.5">${r.subject}</div>
+                                <div class="text-sm font-bold text-slate-800 truncate leading-tight">${r.by}</div>
+                                <div class="text-[11px] text-slate-400 truncate mt-0.5">→ за ${r.who}</div>
+                            </div>
 
-                        <div class="text-right">
-                            <div class="text-sm font-black ${r.type == '100' ? 'text-blue-600' : 'text-amber-500'} italic">${r.type}%</div>
-                            <div class="text-[7px] font-bold px-1.5 py-0.5 rounded border ${r.type == '100' ? 'border-blue-200 text-blue-400' : 'border-amber-200 text-amber-400'} uppercase">${r.type == '100' ? 'ОКНО' : 'УРОК'}</div>
+                            <div class="text-right shrink-0">
+                                <div class="text-base font-black ${r.type == '100' ? 'text-blue-600' : 'text-amber-500'}">${r.type}%</div>
+                                <div class="text-[8px] font-bold px-2 py-0.5 rounded-full ${r.type == '100' ? 'bg-blue-50 text-blue-500' : 'bg-amber-50 text-amber-500'} uppercase">${r.type == '100' ? 'ОКНО' : 'УРОК'}</div>
+                            </div>
                         </div>
                     </div>
-                </div>
-                `;
-            }).join('') || '<div class="text-center py-20 text-slate-300 font-bold uppercase text-xs tracking-widest">Журнал пуст</div>';
+                    `;
+                }).join('');
+                
+                initSwipe();
+            }
             
             updateStats();
             updateDatalists();
+            document.getElementById('monthLabel').textContent = getMonthName();
         };
 
-        // Swipe Logic
-        const ts = e => { startX = e.touches[0].clientX; resetSwipes(e.currentTarget); };
-        const tm = (e, el) => {
-            let moveX = e.touches[0].clientX - startX;
-            if (moveX < 0 && moveX > -120) el.style.transform = `translateX(${moveX}px)`;
-        };
-        const te = (e, el) => {
-            let finalX = parseInt(el.style.transform.replace(/[^-0-9]/g, '')) || 0;
-            el.style.transform = finalX < -50 ? 'translateX(-100px)' : 'translateX(0)';
-        };
-        const resetSwipes = (except) => {
+        // Improved Swipe Logic
+        const initSwipe = () => {
             document.querySelectorAll('.swipe-item').forEach(el => {
-                if (el !== except) el.style.transform = 'translateX(0)';
+                el.addEventListener('touchstart', handleTouchStart, { passive: true });
+                el.addEventListener('touchmove', handleTouchMove, { passive: false });
+                el.addEventListener('touchend', handleTouchEnd, { passive: true });
             });
+        };
+        
+        const handleTouchStart = (e) => {
+            if (currentSwipeEl && currentSwipeEl !== e.currentTarget) {
+                currentSwipeEl.style.transform = 'translateX(0)';
+            }
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+            isSwiping = false;
+            e.currentTarget.classList.add('swiping');
+            currentSwipeEl = e.currentTarget;
+        };
+        
+        const handleTouchMove = (e) => {
+            if (!currentSwipeEl) return;
+            
+            const deltaX = e.touches[0].clientX - startX;
+            const deltaY = e.touches[0].clientY - startY;
+            
+            // Determine if horizontal swipe
+            if (!isSwiping && Math.abs(deltaX) > 10) {
+                isSwiping = Math.abs(deltaX) > Math.abs(deltaY);
+            }
+            
+            if (isSwiping) {
+                e.preventDefault();
+                const moveX = Math.max(-160, Math.min(0, deltaX));
+                currentSwipeEl.style.transform = `translateX(${moveX}px)`;
+            }
+        };
+        
+        const handleTouchEnd = (e) => {
+            if (!currentSwipeEl) return;
+            
+            currentSwipeEl.classList.remove('swiping');
+            const transform = currentSwipeEl.style.transform;
+            const currentX = parseInt(transform.replace(/[^-\d]/g, '')) || 0;
+            
+            if (currentX < -80) {
+                currentSwipeEl.style.transform = 'translateX(-160px)';
+            } else {
+                currentSwipeEl.style.transform = 'translateX(0)';
+                currentSwipeEl = null;
+            }
+            
+            isSwiping = false;
+        };
+        
+        const resetSwipes = () => {
+            document.querySelectorAll('.swipe-item').forEach(el => {
+                el.style.transform = 'translateX(0)';
+            });
+            currentSwipeEl = null;
         };
 
         const del = id => {
-            if(confirm('Удалить запись?')) {
+            if(confirm('Удалить эту запись?')) {
                 reps = reps.filter(r => r.id !== id);
-                save(); render(); showToast('Запись удалена');
+                save(); 
+                render(); 
+                showToast('🗑️ Запись удалена');
             }
+        };
+        
+        const editRecord = (id) => {
+            const record = reps.find(r => r.id === id);
+            if (!record) return;
+            
+            document.getElementById('editId').value = id;
+            document.getElementById('fDate').value = record.date;
+            document.getElementById('fType').value = record.type;
+            document.getElementById('fSubject').value = record.subject;
+            document.getElementById('fWho').value = record.who;
+            document.getElementById('fBy').value = record.by;
+            document.getElementById('modalTitle').textContent = 'Редактирование';
+            document.getElementById('submitBtn').textContent = 'Сохранить изменения';
+            
+            resetSwipes();
+            openForm();
         };
 
         const showToast = msg => {
             const t = document.getElementById('toast');
-            t.textContent = msg; t.classList.add('show');
-            setTimeout(() => t.classList.remove('show'), 2000);
+            t.textContent = msg; 
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 2500);
         };
 
-        const openForm = () => document.getElementById('modal').classList.replace('hidden', 'flex');
-        const closeForm = () => document.getElementById('modal').classList.replace('flex', 'hidden');
+        const openForm = () => {
+            document.getElementById('modalOverlay').classList.add('active');
+            document.getElementById('modalSheet').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        };
+        
+        const closeForm = () => {
+            document.getElementById('modalOverlay').classList.remove('active');
+            document.getElementById('modalSheet').classList.remove('active');
+            document.body.style.overflow = '';
+            
+            // Reset form
+            setTimeout(() => {
+                document.getElementById('mainForm').reset();
+                document.getElementById('editId').value = '';
+                document.getElementById('modalTitle').textContent = 'Новая замена';
+                document.getElementById('submitBtn').textContent = 'Добавить';
+                document.getElementById('fDate').valueAsDate = new Date();
+            }, 300);
+        };
 
         document.getElementById('mainForm').onsubmit = function(e) {
             e.preventDefault();
-            const rec = {
-                id: Date.now(),
+            
+            const editId = document.getElementById('editId').value;
+            const data = {
                 date: document.getElementById('fDate').value,
                 type: document.getElementById('fType').value,
                 subject: document.getElementById('fSubject').value.trim(),
                 who: document.getElementById('fWho').value.trim(),
                 by: document.getElementById('fBy').value.trim()
             };
-            reps.push(rec);
-            if(!master.t.includes(rec.who)) master.t.push(rec.who);
-            if(!master.t.includes(rec.by)) master.t.push(rec.by);
-            if(!master.s.includes(rec.subject)) master.s.push(rec.subject);
-            save(); render(); closeForm(); showToast('✓ Сохранено');
-            this.reset(); document.getElementById('fDate').valueAsDate = new Date();
+            
+            if (editId) {
+                // Edit existing
+                const index = reps.findIndex(r => r.id === parseInt(editId));
+                if (index !== -1) {
+                    reps[index] = { ...reps[index], ...data };
+                    showToast('✓ Изменения сохранены');
+                }
+            } else {
+                // Add new
+                const rec = { id: Date.now(), ...data };
+                reps.push(rec);
+                showToast('✓ Добавлено в журнал');
+            }
+            
+            // Update master lists
+            if(!master.t.includes(data.who)) master.t.push(data.who);
+            if(!master.t.includes(data.by)) master.t.push(data.by);
+            if(!master.s.includes(data.subject)) master.s.push(data.subject);
+            
+            save(); 
+            render(); 
+            closeForm();
         };
 
         const updateStats = () => {
             document.getElementById('statTotal').textContent = reps.length;
-            document.getElementById('stat100').textContent = reps.filter(r => r.type == '100').length;
-            document.getElementById('stat50').textContent = reps.filter(r => r.type == '50').length;
-            document.getElementById('statMonth').textContent = reps.filter(r => new Date(r.date).getMonth() === new Date().getMonth()).length;
+            document.getElementById('stat100').textContent = reps.filter(r => r.type === '100').length;
+            document.getElementById('stat50').textContent = reps.filter(r => r.type === '50').length;
+            document.getElementById('statMonth').textContent = reps.filter(r => 
+                new Date(r.date).getMonth() === new Date().getMonth() &&
+                new Date(r.date).getFullYear() === new Date().getFullYear()
+            ).length;
         };
 
         const updateDatalists = () => {
-            document.getElementById('teachers').innerHTML = master.t.map(t => `<option value="${t}">`).join('');
-            document.getElementById('subjects').innerHTML = master.s.map(s => `<option value="${s}">`).join('');
+            document.getElementById('teachers').innerHTML = master.t.sort().map(t => `<option value="${t}">`).join('');
+            document.getElementById('subjects').innerHTML = master.s.sort().map(s => `<option value="${s}">`).join('');
+        };
+        
+        const filterByType = (type) => {
+            if (type === 'all') {
+                activeFilter = null;
+            } else {
+                activeFilter = { type: 'percent', value: type };
+            }
+            render();
+        };
+        
+        const filterByMonth = () => {
+            activeFilter = { type: 'month' };
+            render();
         };
 
-        const clearFilter = () => { document.getElementById('search').value = ''; render(); };
+        const clearFilter = () => { 
+            document.getElementById('search').value = ''; 
+            activeFilter = null;
+            render(); 
+        };
 
         function exportJSON() {
-            const blob = new Blob([JSON.stringify({reps, master})], {type: 'application/json'});
-            const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
-            a.download = `backup_${new Date().toISOString().slice(0,10)}.json`; a.click();
+            const data = { reps, master, exportDate: new Date().toISOString(), version: '2.0' };
+            const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+            const a = document.createElement('a'); 
+            a.href = URL.createObjectURL(blob);
+            a.download = `zavuch_backup_${new Date().toISOString().slice(0,10)}.json`; 
+            a.click();
+            showToast('📦 Резервная копия создана');
         }
+        
+        function importJSON(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (data.reps && Array.isArray(data.reps)) {
+                        if (confirm(`Импортировать ${data.reps.length} записей? Текущие данные будут заменены.`)) {
+                            reps = data.reps;
+                            master = data.master || {t:[], s:[]};
+                            save();
+                            render();
+                            showToast(`✓ Импортировано: ${reps.length} записей`);
+                        }
+                    } else {
+                        showToast('❌ Неверный формат файла');
+                    }
+                } catch (err) {
+                    showToast('❌ Ошибка чтения файла');
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+        
+        // Close modal on back button
+        window.addEventListener('popstate', () => {
+            if (document.getElementById('modalSheet').classList.contains('active')) {
+                closeForm();
+            }
+        });
+        
+        // Click outside to close swipe
+        document.addEventListener('touchstart', (e) => {
+            if (!e.target.closest('.swipe-container') && currentSwipeEl) {
+                resetSwipes();
+            }
+        });
 
+        // Init
         document.getElementById('fDate').valueAsDate = new Date();
         render();
     </script>
