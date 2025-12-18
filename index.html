@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Завуч.PRO v2.0</title>
+    <title>Завуч.PRO v3.0</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
         * { 
@@ -19,13 +19,15 @@
             padding-bottom: env(safe-area-inset-bottom);
             padding-left: env(safe-area-inset-left);
             padding-right: env(safe-area-inset-right);
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
         }
         
         .swipe-container { 
             position: relative; 
             overflow: hidden; 
-            border-radius: 1rem; 
-            margin-bottom: 0.5rem;
+            border-radius: 1.25rem; 
+            margin-bottom: 0.75rem;
             will-change: transform;
         }
         
@@ -37,9 +39,7 @@
             touch-action: pan-y;
         }
         
-        .swipe-item.swiping {
-            transition: none;
-        }
+        .swipe-item.swiping { transition: none; }
         
         .swipe-actions {
             position: absolute;
@@ -56,7 +56,7 @@
             display: flex; 
             align-items: center; 
             justify-content: center; 
-            font-size: 0.65rem; 
+            font-size: 0.6rem; 
             font-weight: 900;
             flex-direction: column;
             gap: 4px;
@@ -72,7 +72,7 @@
             transform: translateX(-50%) translateY(100px);
             background: #1e293b; 
             color: white; 
-            padding: 0.875rem 1.75rem; 
+            padding: 1rem 2rem; 
             border-radius: 1rem;
             transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             z-index: 1000;
@@ -93,10 +93,7 @@
             transition: all 0.3s ease;
         }
         
-        .modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
         
         .modal-sheet {
             position: fixed;
@@ -104,39 +101,37 @@
             left: 0;
             right: 0;
             background: white;
-            border-radius: 1.5rem 1.5rem 0 0;
+            border-radius: 2rem 2rem 0 0;
             padding: 1.5rem;
             padding-bottom: calc(1.5rem + env(safe-area-inset-bottom));
             z-index: 101;
             transform: translateY(100%);
             transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            max-height: 90vh;
+            max-height: 92vh;
             overflow-y: auto;
         }
         
-        .modal-sheet.active {
-            transform: translateY(0);
-        }
+        .modal-sheet.active { transform: translateY(0); }
         
         .modal-handle {
             width: 40px;
             height: 5px;
             background: #e2e8f0;
             border-radius: 3px;
-            margin: 0 auto 1rem;
+            margin: 0 auto 1.25rem;
         }
 
         .fab {
             position: fixed;
             bottom: calc(1.5rem + env(safe-area-inset-bottom));
             right: 1.5rem;
-            width: 56px;
-            height: 56px;
+            width: 60px;
+            height: 60px;
             background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
             color: white;
-            border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(59, 130, 246, 0.4);
-            font-size: 28px;
+            border-radius: 18px;
+            box-shadow: 0 8px 32px rgba(59, 130, 246, 0.5);
+            font-size: 32px;
             font-weight: 300;
             z-index: 50;
             display: flex;
@@ -147,17 +142,30 @@
             cursor: pointer;
         }
         
-        .fab:active {
-            transform: scale(0.92);
-        }
+        .fab:active { transform: scale(0.92); }
         
-        .record-card {
-            animation: slideIn 0.3s ease;
-        }
+        .record-card { animation: slideIn 0.3s ease; }
         
         @keyframes slideIn {
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Яркие бейджи для процентов */
+        .badge-100 {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+        }
+        
+        .badge-50 {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+        }
+        
+        .date-card {
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
         }
 
         @media (min-width: 768px) {
@@ -168,8 +176,8 @@
                 transform: translate(-50%, 50%) scale(0.95);
                 opacity: 0;
                 width: 100%;
-                max-width: 480px;
-                border-radius: 1.5rem;
+                max-width: 500px;
+                border-radius: 2rem;
                 padding-bottom: 1.5rem;
             }
             
@@ -178,94 +186,178 @@
                 opacity: 1;
             }
             
-            .modal-handle {
-                display: none;
-            }
+            .modal-handle { display: none; }
         }
 
         @media print {
             .no-print { display: none !important; }
-            body { padding: 0; background: white; }
-            .swipe-container { border: 1px solid #e2e8f0; break-inside: avoid; page-break-inside: avoid; }
-            .swipe-item { box-shadow: none; }
+            body { 
+                padding: 0; 
+                background: white !important; 
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .record-card { 
+                break-inside: avoid; 
+                page-break-inside: avoid; 
+                margin-bottom: 8px !important;
+                box-shadow: none !important;
+                border: 1px solid #e2e8f0 !important;
+            }
+            .badge-100, .badge-50 {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .print-header {
+                display: block !important;
+                text-align: center;
+                margin-bottom: 20px;
+                padding-bottom: 15px;
+                border-bottom: 2px solid #1e293b;
+            }
         }
         
+        .print-header { display: none; }
+        
         input[type="date"]::-webkit-calendar-picker-indicator {
-            filter: invert(0.5);
+            filter: invert(0.4);
+            cursor: pointer;
         }
         
         .stat-card {
-            transition: transform 0.2s ease;
+            transition: all 0.2s ease;
+            cursor: pointer;
         }
         
-        .stat-card:active {
-            transform: scale(0.96);
+        .stat-card:active { transform: scale(0.96); }
+        .stat-card:hover { transform: translateY(-2px); }
+        
+        .type-selector {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .type-btn {
+            flex: 1;
+            padding: 1rem;
+            border-radius: 1rem;
+            font-weight: 900;
+            font-size: 1.25rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 3px solid transparent;
+        }
+        
+        .type-btn-100 {
+            background: #eff6ff;
+            color: #3b82f6;
+        }
+        
+        .type-btn-100.active {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.4);
+        }
+        
+        .type-btn-50 {
+            background: #fffbeb;
+            color: #f59e0b;
+        }
+        
+        .type-btn-50.active {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            box-shadow: 0 4px 20px rgba(245, 158, 11, 0.4);
+        }
+        
+        .teacher-report-item {
+            transition: all 0.2s ease;
+        }
+        
+        .teacher-report-item:hover {
+            background: #f8fafc;
         }
     </style>
 </head>
-<body class="bg-slate-50 min-h-screen">
+<body>
 
-    <div class="max-w-2xl mx-auto px-4 py-6 pb-28">
+    <div class="max-w-2xl mx-auto px-4 py-6 pb-32">
+        
+        <!-- Print Header -->
+        <div class="print-header">
+            <h1 style="font-size: 24px; font-weight: bold; margin-bottom: 5px;">ЖУРНАЛ ЗАМЕН УРОКОВ</h1>
+            <p id="printPeriod" style="font-size: 14px; color: #64748b;"></p>
+            <p style="font-size: 12px; color: #94a3b8; margin-top: 5px;">Сформировано: <span id="printDate"></span></p>
+        </div>
+        
         <!-- Header -->
         <header class="flex justify-between items-center mb-6 no-print">
             <div>
                 <h1 class="text-2xl font-black tracking-tight">ЗАВУЧ<span class="text-blue-600">.PRO</span></h1>
-                <p class="text-[10px] text-slate-400 font-medium uppercase tracking-widest">Журнал замен v2.0</p>
+                <p class="text-[10px] text-slate-400 font-medium uppercase tracking-widest">Журнал замен v3.0</p>
             </div>
             <div class="flex gap-2">
-                <button onclick="document.getElementById('importInput').click()" class="bg-slate-100 text-slate-500 text-xs font-bold px-3 py-2 rounded-lg active:bg-slate-200">↓ JSON</button>
-                <button onclick="exportJSON()" class="bg-slate-100 text-slate-500 text-xs font-bold px-3 py-2 rounded-lg active:bg-slate-200">↑ JSON</button>
-                <button onclick="window.print()" class="bg-blue-600 text-white text-xs font-bold px-3 py-2 rounded-lg active:bg-blue-700">ПЕЧАТЬ</button>
+                <button onclick="openReport()" class="bg-emerald-100 text-emerald-600 text-xs font-bold px-3 py-2 rounded-xl active:bg-emerald-200">📊</button>
+                <button onclick="document.getElementById('importInput').click()" class="bg-slate-100 text-slate-500 text-xs font-bold px-3 py-2 rounded-xl active:bg-slate-200">↓</button>
+                <button onclick="exportJSON()" class="bg-slate-100 text-slate-500 text-xs font-bold px-3 py-2 rounded-xl active:bg-slate-200">↑</button>
+                <button onclick="openPrintDialog()" class="bg-blue-600 text-white text-xs font-bold px-4 py-2 rounded-xl active:bg-blue-700">🖨️</button>
             </div>
             <input type="file" id="importInput" accept=".json" class="hidden" onchange="importJSON(event)">
         </header>
 
         <!-- Stats -->
-        <div class="grid grid-cols-4 gap-2 mb-6 no-print">
-            <div class="stat-card bg-white p-3 rounded-xl border border-slate-100 text-center shadow-sm cursor-pointer" onclick="filterByType('all')">
-                <div id="statTotal" class="text-xl font-black text-slate-700">0</div>
-                <div class="text-[9px] font-bold text-slate-400 uppercase">Всего</div>
+        <div class="grid grid-cols-4 gap-3 mb-6 no-print">
+            <div class="stat-card bg-white p-4 rounded-2xl shadow-sm border border-slate-100 text-center" onclick="filterByType('all')">
+                <div id="statTotal" class="text-2xl font-black text-slate-700">0</div>
+                <div class="text-[9px] font-bold text-slate-400 uppercase tracking-wide">Всего</div>
             </div>
-            <div class="stat-card bg-gradient-to-br from-blue-50 to-white p-3 rounded-xl border border-blue-100 text-center shadow-sm cursor-pointer" onclick="filterByType('100')">
-                <div id="stat100" class="text-xl font-black text-blue-600">0</div>
-                <div class="text-[9px] font-bold text-blue-400 uppercase">Окна</div>
+            <div class="stat-card bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-2xl shadow-sm border border-blue-200 text-center" onclick="filterByType('100')">
+                <div id="stat100" class="text-2xl font-black text-blue-600">0</div>
+                <div class="text-[9px] font-bold text-blue-500 uppercase tracking-wide">🪟 Окна</div>
             </div>
-            <div class="stat-card bg-gradient-to-br from-amber-50 to-white p-3 rounded-xl border border-amber-100 text-center shadow-sm cursor-pointer" onclick="filterByType('50')">
-                <div id="stat50" class="text-xl font-black text-amber-500">0</div>
-                <div class="text-[9px] font-bold text-amber-400 uppercase">50%</div>
+            <div class="stat-card bg-gradient-to-br from-amber-50 to-amber-100 p-4 rounded-2xl shadow-sm border border-amber-200 text-center" onclick="filterByType('50')">
+                <div id="stat50" class="text-2xl font-black text-amber-600">0</div>
+                <div class="text-[9px] font-bold text-amber-500 uppercase tracking-wide">📚 Уроки</div>
             </div>
-            <div class="stat-card bg-white p-3 rounded-xl border border-slate-100 text-center shadow-sm cursor-pointer" onclick="filterByMonth()">
-                <div id="statMonth" class="text-xl font-black text-emerald-600">0</div>
-                <div class="text-[9px] font-bold text-slate-400 uppercase" id="monthLabel">Месяц</div>
+            <div class="stat-card bg-gradient-to-br from-emerald-50 to-emerald-100 p-4 rounded-2xl shadow-sm border border-emerald-200 text-center" onclick="filterByMonth()">
+                <div id="statMonth" class="text-2xl font-black text-emerald-600">0</div>
+                <div class="text-[9px] font-bold text-emerald-500 uppercase tracking-wide" id="monthLabel">📅 Мес</div>
             </div>
         </div>
 
         <!-- Filter Bar -->
-        <div class="mb-4 no-print flex gap-2">
-            <div class="relative flex-1">
-                <input type="text" id="search" placeholder="Поиск по ФИО или предмету..." oninput="render()" 
-                    class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none shadow-sm">
-                <span class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-300">🔍</span>
+        <div class="mb-4 no-print">
+            <div class="flex gap-2 mb-2">
+                <div class="relative flex-1">
+                    <input type="text" id="search" placeholder="🔍 Поиск по ФИО или предмету..." oninput="render()" 
+                        class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none shadow-sm">
+                </div>
+                <button onclick="clearFilter()" class="bg-slate-200 px-4 rounded-xl text-xs font-bold text-slate-600 uppercase tracking-tight active:bg-slate-300">✕</button>
             </div>
-            <button onclick="clearFilter()" class="bg-slate-200 px-4 rounded-xl text-xs font-bold text-slate-600 uppercase tracking-tight active:bg-slate-300 transition">✕</button>
+            <div class="flex gap-2">
+                <input type="date" id="filterDateFrom" onchange="render()" class="flex-1 bg-white border border-slate-200 rounded-xl px-3 py-2 text-sm shadow-sm">
+                <span class="flex items-center text-slate-400 text-sm">—</span>
+                <input type="date" id="filterDateTo" onchange="render()" class="flex-1 bg-white border border-slate-200 rounded-xl px-3 py-2 text-sm shadow-sm">
+            </div>
         </div>
 
         <!-- Active Filter Indicator -->
         <div id="filterIndicator" class="hidden mb-4 no-print">
-            <div class="bg-blue-50 border border-blue-200 rounded-lg px-3 py-2 flex items-center justify-between">
-                <span class="text-xs font-medium text-blue-700" id="filterText"></span>
-                <button onclick="clearFilter()" class="text-blue-600 text-xs font-bold">Сбросить</button>
+            <div class="bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 flex items-center justify-between">
+                <span class="text-sm font-medium text-blue-700" id="filterText">🔍 Активный фильтр</span>
+                <button onclick="clearFilter()" class="text-blue-600 text-xs font-bold bg-blue-100 px-3 py-1 rounded-lg">Сбросить</button>
             </div>
         </div>
 
         <!-- Journal -->
-        <div id="mobileBody" class="space-y-1"></div>
+        <div id="mobileBody" class="space-y-3"></div>
         
         <!-- Empty State -->
-        <div id="emptyState" class="hidden text-center py-16">
-            <div class="text-6xl mb-4">📋</div>
+        <div id="emptyState" class="hidden text-center py-20">
+            <div class="text-7xl mb-6">📋</div>
             <div class="text-slate-400 font-bold uppercase text-sm tracking-wider mb-2">Журнал пуст</div>
-            <div class="text-slate-300 text-xs">Нажмите + чтобы добавить запись</div>
+            <div class="text-slate-300 text-xs">Нажмите + чтобы добавить первую замену</div>
         </div>
     </div>
 
@@ -275,32 +367,117 @@
     <!-- Modal Overlay -->
     <div id="modalOverlay" class="modal-overlay no-print" onclick="closeForm()"></div>
     
-    <!-- Modal Sheet -->
+    <!-- Modal Sheet - Add/Edit -->
     <div id="modalSheet" class="modal-sheet no-print" onclick="event.stopPropagation()">
         <div class="modal-handle"></div>
         <div class="flex justify-between items-center mb-5">
-            <h3 id="modalTitle" class="text-lg font-black uppercase tracking-tight">Новая замена</h3>
-            <button onclick="closeForm()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-lg active:bg-slate-200">×</button>
+            <h3 id="modalTitle" class="text-xl font-black uppercase tracking-tight">➕ Новая замена</h3>
+            <button onclick="closeForm()" class="w-10 h-10 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-2xl active:bg-slate-200">×</button>
         </div>
-        <form id="mainForm" class="space-y-3">
+        <form id="mainForm" class="space-y-4">
             <input type="hidden" id="editId">
-            <div class="flex gap-2">
-                <input type="date" id="fDate" required class="flex-1 bg-slate-100 p-4 rounded-xl border-none font-bold text-blue-600 text-base">
-                <select id="fType" class="bg-slate-100 p-4 rounded-xl border-none font-black text-xs uppercase w-32">
-                    <option value="100">100% Окно</option>
-                    <option value="50">50% Урок</option>
-                </select>
+            
+            <!-- Date -->
+            <div>
+                <label class="text-xs font-bold text-slate-400 uppercase tracking-wide mb-2 block">📅 Дата замены</label>
+                <input type="date" id="fDate" required class="w-full bg-slate-100 p-4 rounded-xl border-none font-bold text-blue-600 text-lg">
             </div>
-            <input list="subjects" id="fSubject" placeholder="Предмет" required autocomplete="off"
-                class="w-full bg-slate-100 p-4 rounded-xl border-none text-base">
-            <input list="teachers" id="fWho" placeholder="Кто отсутствует (ФИО)" required autocomplete="off"
-                class="w-full bg-slate-100 p-4 rounded-xl border-none text-base">
-            <input list="teachers" id="fBy" placeholder="Кто заменяет (ФИО)" required autocomplete="off"
-                class="w-full bg-slate-100 p-4 rounded-xl border-none text-base">
-            <button type="submit" id="submitBtn" class="w-full bg-blue-600 text-white font-bold py-4 rounded-xl shadow-lg uppercase tracking-wide text-sm active:bg-blue-700 transition">
-                Добавить
+            
+            <!-- Type Selector - BIG AND OBVIOUS -->
+            <div>
+                <label class="text-xs font-bold text-slate-400 uppercase tracking-wide mb-2 block">💰 Тип оплаты (ВАЖНО!)</label>
+                <div class="type-selector">
+                    <div class="type-btn type-btn-100 active" onclick="selectType('100')" id="typeBtn100">
+                        <div class="text-2xl mb-1">🪟</div>
+                        <div>100%</div>
+                        <div class="text-[10px] font-medium opacity-80">ОКНО</div>
+                    </div>
+                    <div class="type-btn type-btn-50" onclick="selectType('50')" id="typeBtn50">
+                        <div class="text-2xl mb-1">📚</div>
+                        <div>50%</div>
+                        <div class="text-[10px] font-medium opacity-80">УРОК</div>
+                    </div>
+                </div>
+                <input type="hidden" id="fType" value="100">
+            </div>
+            
+            <div>
+                <label class="text-xs font-bold text-slate-400 uppercase tracking-wide mb-2 block">📖 Предмет</label>
+                <input list="subjects" id="fSubject" placeholder="Введите предмет..." required autocomplete="off"
+                    class="w-full bg-slate-100 p-4 rounded-xl border-none text-base">
+            </div>
+            
+            <div>
+                <label class="text-xs font-bold text-slate-400 uppercase tracking-wide mb-2 block">😷 Кто отсутствует</label>
+                <input list="teachers" id="fWho" placeholder="ФИО отсутствующего учителя..." required autocomplete="off"
+                    class="w-full bg-slate-100 p-4 rounded-xl border-none text-base">
+            </div>
+            
+            <div>
+                <label class="text-xs font-bold text-slate-400 uppercase tracking-wide mb-2 block">🦸 Кто заменяет</label>
+                <input list="teachers" id="fBy" placeholder="ФИО заменяющего учителя..." required autocomplete="off"
+                    class="w-full bg-slate-100 p-4 rounded-xl border-none text-base">
+            </div>
+            
+            <button type="submit" id="submitBtn" class="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold py-4 rounded-xl shadow-lg uppercase tracking-wide text-sm active:from-blue-700 active:to-blue-800 transition mt-2">
+                ✓ Добавить
             </button>
         </form>
+    </div>
+
+    <!-- Report Modal -->
+    <div id="reportOverlay" class="modal-overlay no-print" onclick="closeReport()"></div>
+    <div id="reportSheet" class="modal-sheet no-print" onclick="event.stopPropagation()">
+        <div class="modal-handle"></div>
+        <div class="flex justify-between items-center mb-5">
+            <h3 class="text-xl font-black uppercase tracking-tight">📊 Отчёт для бухгалтерии</h3>
+            <button onclick="closeReport()" class="w-10 h-10 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-2xl active:bg-slate-200">×</button>
+        </div>
+        
+        <div class="mb-4">
+            <label class="text-xs font-bold text-slate-400 uppercase tracking-wide mb-2 block">Период отчёта</label>
+            <div class="flex gap-2">
+                <input type="date" id="reportDateFrom" class="flex-1 bg-slate-100 p-3 rounded-xl border-none text-sm">
+                <span class="flex items-center text-slate-400">—</span>
+                <input type="date" id="reportDateTo" class="flex-1 bg-slate-100 p-3 rounded-xl border-none text-sm">
+            </div>
+        </div>
+        
+        <button onclick="generateReport()" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl mb-4">
+            Сформировать отчёт
+        </button>
+        
+        <div id="reportContent" class="space-y-3 max-h-[50vh] overflow-y-auto"></div>
+    </div>
+
+    <!-- Print Dialog -->
+    <div id="printOverlay" class="modal-overlay no-print" onclick="closePrintDialog()"></div>
+    <div id="printSheet" class="modal-sheet no-print" onclick="event.stopPropagation()">
+        <div class="modal-handle"></div>
+        <div class="flex justify-between items-center mb-5">
+            <h3 class="text-xl font-black uppercase tracking-tight">🖨️ Печать</h3>
+            <button onclick="closePrintDialog()" class="w-10 h-10 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-2xl active:bg-slate-200">×</button>
+        </div>
+        
+        <div class="mb-4">
+            <label class="text-xs font-bold text-slate-400 uppercase tracking-wide mb-2 block">Период для печати</label>
+            <div class="flex gap-2">
+                <input type="date" id="printDateFrom" class="flex-1 bg-slate-100 p-3 rounded-xl border-none text-sm">
+                <span class="flex items-center text-slate-400">—</span>
+                <input type="date" id="printDateTo" class="flex-1 bg-slate-100 p-3 rounded-xl border-none text-sm">
+            </div>
+        </div>
+        
+        <div class="mb-4">
+            <label class="text-xs font-bold text-slate-400 uppercase tracking-wide mb-2 block">Фильтр по учителю</label>
+            <select id="printTeacher" class="w-full bg-slate-100 p-3 rounded-xl border-none text-sm">
+                <option value="">Все учителя</option>
+            </select>
+        </div>
+        
+        <button onclick="doPrint()" class="w-full bg-blue-600 text-white font-bold py-4 rounded-xl">
+            🖨️ Распечатать
+        </button>
     </div>
 
     <div id="toast" class="toast"></div>
@@ -308,8 +485,8 @@
     <datalist id="subjects"></datalist>
 
     <script>
-        let reps = JSON.parse(localStorage.getItem('v2_data')) || [];
-        let master = JSON.parse(localStorage.getItem('v2_master')) || {t:[], s:[]};
+        let reps = JSON.parse(localStorage.getItem('v3_data')) || [];
+        let master = JSON.parse(localStorage.getItem('v3_master')) || {t:[], s:[]};
         let activeFilter = null;
         let startX = 0;
         let startY = 0;
@@ -317,18 +494,33 @@
         let currentSwipeEl = null;
 
         const save = () => {
-            localStorage.setItem('v2_data', JSON.stringify(reps));
-            localStorage.setItem('v2_master', JSON.stringify(master));
+            localStorage.setItem('v3_data', JSON.stringify(reps));
+            localStorage.setItem('v3_master', JSON.stringify(master));
         };
 
         const getMonthName = () => {
             const months = ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'];
             return months[new Date().getMonth()];
         };
+        
+        const formatDate = (dateStr) => {
+            const d = new Date(dateStr);
+            const dayNames = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
+            const monthNames = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+            return {
+                day: d.getDate(),
+                month: monthNames[d.getMonth()],
+                monthShort: d.toLocaleDateString('ru-RU',{month:'short'}).replace('.',''),
+                weekday: dayNames[d.getDay()],
+                weekdayShort: dayNames[d.getDay()].slice(0,2)
+            };
+        };
 
         const render = () => {
             const container = document.getElementById('mobileBody');
             const search = document.getElementById('search').value.toLowerCase();
+            const dateFrom = document.getElementById('filterDateFrom').value;
+            const dateTo = document.getElementById('filterDateTo').value;
             const emptyState = document.getElementById('emptyState');
             const filterIndicator = document.getElementById('filterIndicator');
             
@@ -338,16 +530,36 @@
                 r.subject.toLowerCase().includes(search)
             );
             
+            // Date range filter
+            if (dateFrom) {
+                filtered = filtered.filter(r => r.date >= dateFrom);
+            }
+            if (dateTo) {
+                filtered = filtered.filter(r => r.date <= dateTo);
+            }
+            
             // Apply active filter
+            let filterActive = false;
             if (activeFilter) {
                 if (activeFilter.type === 'percent') {
                     filtered = filtered.filter(r => r.type === activeFilter.value);
-                    document.getElementById('filterText').textContent = `Фильтр: ${activeFilter.value}%`;
+                    document.getElementById('filterText').textContent = activeFilter.value === '100' ? '🪟 Показаны только ОКНА (100%)' : '📚 Показаны только УРОКИ (50%)';
+                    filterActive = true;
                 } else if (activeFilter.type === 'month') {
                     filtered = filtered.filter(r => new Date(r.date).getMonth() === new Date().getMonth());
-                    document.getElementById('filterText').textContent = `Фильтр: ${getMonthName()}`;
+                    document.getElementById('filterText').textContent = `📅 Показан только ${getMonthName()}`;
+                    filterActive = true;
                 }
+            }
+            
+            if (filterActive || search || dateFrom || dateTo) {
                 filterIndicator.classList.remove('hidden');
+                if (!activeFilter && (search || dateFrom || dateTo)) {
+                    let parts = [];
+                    if (search) parts.push(`"${search}"`);
+                    if (dateFrom || dateTo) parts.push('по датам');
+                    document.getElementById('filterText').textContent = `🔍 Фильтр: ${parts.join(', ')}`;
+                }
             } else {
                 filterIndicator.classList.add('hidden');
             }
@@ -360,37 +572,58 @@
             } else {
                 emptyState.classList.add('hidden');
                 container.innerHTML = filtered.map(r => {
-                    const d = new Date(r.date);
-                    const dayNames = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+                    const d = formatDate(r.date);
+                    const is100 = r.type === '100';
                     return `
-                    <div class="swipe-container record-card shadow-sm border border-slate-100" data-id="${r.id}">
+                    <div class="swipe-container record-card shadow-md" data-id="${r.id}">
                         <div class="swipe-actions">
                             <div class="swipe-action swipe-action-edit" onclick="editRecord(${r.id})">
-                                <span>✏️</span>
+                                <span class="text-lg">✏️</span>
                                 <span>ИЗМЕНИТЬ</span>
                             </div>
                             <div class="swipe-action swipe-action-delete" onclick="del(${r.id})">
-                                <span>🗑️</span>
+                                <span class="text-lg">🗑️</span>
                                 <span>УДАЛИТЬ</span>
                             </div>
                         </div>
-                        <div class="swipe-item p-4 flex items-center gap-3">
+                        <div class="swipe-item p-4">
+                            <!-- Top row: Date and Type Badge -->
+                            <div class="flex justify-between items-start mb-3">
+                                <div class="date-card px-4 py-2 rounded-xl">
+                                    <div class="flex items-baseline gap-2">
+                                        <span class="text-3xl font-black text-slate-700">${d.day}</span>
+                                        <span class="text-sm font-bold text-slate-500">${d.monthShort}</span>
+                                    </div>
+                                    <div class="text-[10px] font-medium text-slate-400 uppercase">${d.weekdayShort}</div>
+                                </div>
+                                
+                                <div class="${is100 ? 'badge-100' : 'badge-50'} px-5 py-3 rounded-2xl text-center">
+                                    <div class="text-2xl font-black">${r.type}%</div>
+                                    <div class="text-[10px] font-bold uppercase tracking-wide">${is100 ? '🪟 ОКНО' : '📚 УРОК'}</div>
+                                </div>
+                            </div>
                             
-                            <div class="flex flex-col items-center bg-slate-50 w-14 py-2 rounded-lg shrink-0">
-                                <span class="text-xl font-black leading-none">${d.getDate()}</span>
-                                <span class="text-[9px] uppercase font-bold text-slate-400">${d.toLocaleDateString('ru-RU',{month:'short'}).replace('.','')}</span>
-                                <span class="text-[8px] text-slate-300 font-medium">${dayNames[d.getDay()]}</span>
+                            <!-- Subject -->
+                            <div class="bg-blue-50 text-blue-700 text-xs font-bold uppercase tracking-wide px-3 py-1.5 rounded-lg inline-block mb-3">
+                                📖 ${r.subject}
                             </div>
-
-                            <div class="flex-1 min-w-0">
-                                <div class="text-[10px] font-bold uppercase text-blue-500 tracking-wide truncate mb-0.5">${r.subject}</div>
-                                <div class="text-sm font-bold text-slate-800 truncate leading-tight">${r.by}</div>
-                                <div class="text-[11px] text-slate-400 truncate mt-0.5">→ за ${r.who}</div>
-                            </div>
-
-                            <div class="text-right shrink-0">
-                                <div class="text-base font-black ${r.type == '100' ? 'text-blue-600' : 'text-amber-500'}">${r.type}%</div>
-                                <div class="text-[8px] font-bold px-2 py-0.5 rounded-full ${r.type == '100' ? 'bg-blue-50 text-blue-500' : 'bg-amber-50 text-amber-500'} uppercase">${r.type == '100' ? 'ОКНО' : 'УРОК'}</div>
+                            
+                            <!-- Teachers -->
+                            <div class="space-y-2">
+                                <div class="flex items-center gap-3">
+                                    <span class="text-lg">🦸</span>
+                                    <div>
+                                        <div class="text-[10px] text-slate-400 uppercase font-medium">Заменяет</div>
+                                        <div class="font-bold text-slate-800">${r.by}</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span class="text-lg">😷</span>
+                                    <div>
+                                        <div class="text-[10px] text-slate-400 uppercase font-medium">Вместо</div>
+                                        <div class="font-medium text-slate-600">${r.who}</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -402,10 +635,10 @@
             
             updateStats();
             updateDatalists();
-            document.getElementById('monthLabel').textContent = getMonthName();
+            document.getElementById('monthLabel').textContent = '📅 ' + getMonthName();
         };
 
-        // Improved Swipe Logic
+        // Swipe Logic
         const initSwipe = () => {
             document.querySelectorAll('.swipe-item').forEach(el => {
                 el.addEventListener('touchstart', handleTouchStart, { passive: true });
@@ -431,7 +664,6 @@
             const deltaX = e.touches[0].clientX - startX;
             const deltaY = e.touches[0].clientY - startY;
             
-            // Determine if horizontal swipe
             if (!isSwiping && Math.abs(deltaX) > 10) {
                 isSwiping = Math.abs(deltaX) > Math.abs(deltaY);
             }
@@ -482,15 +714,29 @@
             
             document.getElementById('editId').value = id;
             document.getElementById('fDate').value = record.date;
-            document.getElementById('fType').value = record.type;
+            selectType(record.type);
             document.getElementById('fSubject').value = record.subject;
             document.getElementById('fWho').value = record.who;
             document.getElementById('fBy').value = record.by;
-            document.getElementById('modalTitle').textContent = 'Редактирование';
-            document.getElementById('submitBtn').textContent = 'Сохранить изменения';
+            document.getElementById('modalTitle').textContent = '✏️ Редактирование';
+            document.getElementById('submitBtn').textContent = '✓ Сохранить изменения';
             
             resetSwipes();
             openForm();
+        };
+        
+        const selectType = (type) => {
+            document.getElementById('fType').value = type;
+            const btn100 = document.getElementById('typeBtn100');
+            const btn50 = document.getElementById('typeBtn50');
+            
+            if (type === '100') {
+                btn100.classList.add('active');
+                btn50.classList.remove('active');
+            } else {
+                btn50.classList.add('active');
+                btn100.classList.remove('active');
+            }
         };
 
         const showToast = msg => {
@@ -511,13 +757,145 @@
             document.getElementById('modalSheet').classList.remove('active');
             document.body.style.overflow = '';
             
-            // Reset form
             setTimeout(() => {
                 document.getElementById('mainForm').reset();
                 document.getElementById('editId').value = '';
-                document.getElementById('modalTitle').textContent = 'Новая замена';
-                document.getElementById('submitBtn').textContent = 'Добавить';
+                document.getElementById('modalTitle').textContent = '➕ Новая замена';
+                document.getElementById('submitBtn').textContent = '✓ Добавить';
                 document.getElementById('fDate').valueAsDate = new Date();
+                selectType('100');
+            }, 300);
+        };
+        
+        const openReport = () => {
+            const now = new Date();
+            const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+            document.getElementById('reportDateFrom').value = firstDay.toISOString().slice(0,10);
+            document.getElementById('reportDateTo').value = now.toISOString().slice(0,10);
+            document.getElementById('reportContent').innerHTML = '<div class="text-center text-slate-400 py-8">Нажмите "Сформировать отчёт"</div>';
+            
+            document.getElementById('reportOverlay').classList.add('active');
+            document.getElementById('reportSheet').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        };
+        
+        const closeReport = () => {
+            document.getElementById('reportOverlay').classList.remove('active');
+            document.getElementById('reportSheet').classList.remove('active');
+            document.body.style.overflow = '';
+        };
+        
+        const generateReport = () => {
+            const from = document.getElementById('reportDateFrom').value;
+            const to = document.getElementById('reportDateTo').value;
+            
+            const filtered = reps.filter(r => {
+                if (from && r.date < from) return false;
+                if (to && r.date > to) return false;
+                return true;
+            });
+            
+            // Group by teacher (who replaces)
+            const byTeacher = {};
+            filtered.forEach(r => {
+                if (!byTeacher[r.by]) {
+                    byTeacher[r.by] = { count100: 0, count50: 0, total: 0 };
+                }
+                if (r.type === '100') {
+                    byTeacher[r.by].count100++;
+                } else {
+                    byTeacher[r.by].count50++;
+                }
+                byTeacher[r.by].total++;
+            });
+            
+            const sorted = Object.entries(byTeacher).sort((a,b) => b[1].total - a[1].total);
+            
+            if (sorted.length === 0) {
+                document.getElementById('reportContent').innerHTML = '<div class="text-center text-slate-400 py-8">Нет данных за выбранный период</div>';
+                return;
+            }
+            
+            const total100 = filtered.filter(r => r.type === '100').length;
+            const total50 = filtered.filter(r => r.type === '50').length;
+            
+            document.getElementById('reportContent').innerHTML = `
+                <div class="bg-slate-100 p-4 rounded-xl mb-4">
+                    <div class="text-center mb-3">
+                        <div class="text-3xl font-black text-slate-700">${filtered.length}</div>
+                        <div class="text-xs text-slate-500 uppercase font-bold">Всего замен</div>
+                    </div>
+                    <div class="flex justify-center gap-6">
+                        <div class="text-center">
+                            <div class="text-xl font-black text-blue-600">${total100}</div>
+                            <div class="text-[10px] text-blue-500 uppercase font-bold">🪟 Окна</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-xl font-black text-amber-600">${total50}</div>
+                            <div class="text-[10px] text-amber-500 uppercase font-bold">📚 Уроки</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-xs font-bold text-slate-400 uppercase mb-2">По учителям:</div>
+                ${sorted.map(([name, data]) => `
+                    <div class="teacher-report-item bg-white border border-slate-100 p-3 rounded-xl mb-2">
+                        <div class="flex justify-between items-center">
+                            <div class="font-bold text-slate-700">${name}</div>
+                            <div class="text-lg font-black text-slate-600">${data.total}</div>
+                        </div>
+                        <div class="flex gap-3 mt-1">
+                            <span class="text-xs text-blue-600 font-medium">🪟 ${data.count100} окон</span>
+                            <span class="text-xs text-amber-600 font-medium">📚 ${data.count50} уроков</span>
+                        </div>
+                    </div>
+                `).join('')}
+            `;
+        };
+        
+        const openPrintDialog = () => {
+            const now = new Date();
+            const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+            document.getElementById('printDateFrom').value = firstDay.toISOString().slice(0,10);
+            document.getElementById('printDateTo').value = now.toISOString().slice(0,10);
+            
+            // Populate teacher select
+            const select = document.getElementById('printTeacher');
+            const teachers = [...new Set(reps.map(r => r.by))].sort();
+            select.innerHTML = '<option value="">Все учителя</option>' + teachers.map(t => `<option value="${t}">${t}</option>`).join('');
+            
+            document.getElementById('printOverlay').classList.add('active');
+            document.getElementById('printSheet').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        };
+        
+        const closePrintDialog = () => {
+            document.getElementById('printOverlay').classList.remove('active');
+            document.getElementById('printSheet').classList.remove('active');
+            document.body.style.overflow = '';
+        };
+        
+        const doPrint = () => {
+            const from = document.getElementById('printDateFrom').value;
+            const to = document.getElementById('printDateTo').value;
+            const teacher = document.getElementById('printTeacher').value;
+            
+            // Set filter values for print
+            document.getElementById('filterDateFrom').value = from;
+            document.getElementById('filterDateTo').value = to;
+            document.getElementById('search').value = teacher;
+            
+            // Set print header
+            const fromDate = from ? new Date(from).toLocaleDateString('ru-RU') : '';
+            const toDate = to ? new Date(to).toLocaleDateString('ru-RU') : '';
+            document.getElementById('printPeriod').textContent = `Период: ${fromDate} — ${toDate}` + (teacher ? ` | Учитель: ${teacher}` : '');
+            document.getElementById('printDate').textContent = new Date().toLocaleDateString('ru-RU');
+            
+            render();
+            closePrintDialog();
+            
+            setTimeout(() => {
+                window.print();
             }, 300);
         };
 
@@ -534,20 +912,17 @@
             };
             
             if (editId) {
-                // Edit existing
                 const index = reps.findIndex(r => r.id === parseInt(editId));
                 if (index !== -1) {
                     reps[index] = { ...reps[index], ...data };
-                    showToast('✓ Изменения сохранены');
+                    showToast('✅ Изменения сохранены');
                 }
             } else {
-                // Add new
                 const rec = { id: Date.now(), ...data };
                 reps.push(rec);
-                showToast('✓ Добавлено в журнал');
+                showToast('✅ Замена добавлена');
             }
             
-            // Update master lists
             if(!master.t.includes(data.who)) master.t.push(data.who);
             if(!master.t.includes(data.by)) master.t.push(data.by);
             if(!master.s.includes(data.subject)) master.s.push(data.subject);
@@ -588,12 +963,14 @@
 
         const clearFilter = () => { 
             document.getElementById('search').value = ''; 
+            document.getElementById('filterDateFrom').value = '';
+            document.getElementById('filterDateTo').value = '';
             activeFilter = null;
             render(); 
         };
 
         function exportJSON() {
-            const data = { reps, master, exportDate: new Date().toISOString(), version: '2.0' };
+            const data = { reps, master, exportDate: new Date().toISOString(), version: '3.0' };
             const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
             const a = document.createElement('a'); 
             a.href = URL.createObjectURL(blob);
@@ -611,12 +988,12 @@
                 try {
                     const data = JSON.parse(e.target.result);
                     if (data.reps && Array.isArray(data.reps)) {
-                        if (confirm(`Импортировать ${data.reps.length} записей? Текущие данные будут заменены.`)) {
+                        if (confirm(`Импортировать ${data.reps.length} записей?\n\nТекущие данные будут заменены!`)) {
                             reps = data.reps;
                             master = data.master || {t:[], s:[]};
                             save();
                             render();
-                            showToast(`✓ Импортировано: ${reps.length} записей`);
+                            showToast(`✅ Импортировано: ${reps.length} записей`);
                         }
                     } else {
                         showToast('❌ Неверный формат файла');
@@ -629,10 +1006,16 @@
             event.target.value = '';
         }
         
-        // Close modal on back button
+        // Close on back button
         window.addEventListener('popstate', () => {
             if (document.getElementById('modalSheet').classList.contains('active')) {
                 closeForm();
+            }
+            if (document.getElementById('reportSheet').classList.contains('active')) {
+                closeReport();
+            }
+            if (document.getElementById('printSheet').classList.contains('active')) {
+                closePrintDialog();
             }
         });
         
