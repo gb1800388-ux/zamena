@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Завуч.PRO v3.0</title>
+    <title>Завуч.PRO v4.0</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
         * { 
@@ -17,8 +17,6 @@
             overscroll-behavior-y: contain;
             padding-top: env(safe-area-inset-top);
             padding-bottom: env(safe-area-inset-bottom);
-            padding-left: env(safe-area-inset-left);
-            padding-right: env(safe-area-inset-right);
             background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
             min-height: 100vh;
         }
@@ -28,7 +26,6 @@
             overflow: hidden; 
             border-radius: 1.25rem; 
             margin-bottom: 0.75rem;
-            will-change: transform;
         }
         
         .swipe-item { 
@@ -50,20 +47,17 @@
         }
         
         .swipe-action { 
-            width: 80px;
+            width: 70px;
             height: 100%;
             color: white; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
-            font-size: 0.6rem; 
+            font-size: 0.55rem; 
             font-weight: 900;
             flex-direction: column;
             gap: 4px;
         }
-        
-        .swipe-action-edit { background: #3b82f6; }
-        .swipe-action-delete { background: #ef4444; }
 
         .toast {
             position: fixed; 
@@ -107,7 +101,7 @@
             z-index: 101;
             transform: translateY(100%);
             transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            max-height: 92vh;
+            max-height: 95vh;
             overflow-y: auto;
         }
         
@@ -151,7 +145,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
         
-        /* Яркие бейджи для процентов */
         .badge-100 {
             background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
             color: white;
@@ -163,74 +156,23 @@
             color: white;
             box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
         }
-        
-        .date-card {
-            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-        }
 
-        @media (min-width: 768px) {
-            .modal-sheet {
-                left: 50%;
-                right: auto;
-                bottom: 50%;
-                transform: translate(-50%, 50%) scale(0.95);
-                opacity: 0;
-                width: 100%;
-                max-width: 500px;
-                border-radius: 2rem;
-                padding-bottom: 1.5rem;
-            }
-            
-            .modal-sheet.active {
-                transform: translate(-50%, 50%) scale(1);
-                opacity: 1;
-            }
-            
-            .modal-handle { display: none; }
-        }
-
-        @media print {
-            .no-print { display: none !important; }
-            body { 
-                padding: 0; 
-                background: white !important; 
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-            }
-            .record-card { 
-                break-inside: avoid; 
-                page-break-inside: avoid; 
-                margin-bottom: 8px !important;
-                box-shadow: none !important;
-                border: 1px solid #e2e8f0 !important;
-            }
-            .badge-100, .badge-50 {
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-            }
-            .print-header {
-                display: block !important;
-                text-align: center;
-                margin-bottom: 20px;
-                padding-bottom: 15px;
-                border-bottom: 2px solid #1e293b;
-            }
+        .tab-btn {
+            flex: 1;
+            padding: 0.75rem;
+            font-weight: 700;
+            font-size: 0.75rem;
+            text-align: center;
+            border-radius: 0.75rem;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
         
-        .print-header { display: none; }
-        
-        input[type="date"]::-webkit-calendar-picker-indicator {
-            filter: invert(0.4);
-            cursor: pointer;
+        .tab-btn.active {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-        
-        .stat-card {
-            transition: all 0.2s ease;
-            cursor: pointer;
-        }
-        
-        .stat-card:active { transform: scale(0.96); }
-        .stat-card:hover { transform: translateY(-2px); }
         
         .type-selector {
             display: flex;
@@ -270,21 +212,113 @@
             color: white;
             box-shadow: 0 4px 20px rgba(245, 158, 11, 0.4);
         }
-        
-        .teacher-report-item {
-            transition: all 0.2s ease;
+
+        .lesson-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            font-weight: 900;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #f1f5f9;
+            color: #64748b;
         }
         
-        .teacher-report-item:hover {
+        .lesson-btn.active {
+            background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+        }
+
+        .completed-card {
+            opacity: 0.6;
+            background: #f8fafc !important;
+        }
+        
+        .completed-card .swipe-item {
             background: #f8fafc;
         }
+
+        .quick-template {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border: 2px dashed #86efac;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .quick-template:hover {
+            border-color: #22c55e;
+            transform: scale(1.02);
+        }
+
+        @media (min-width: 768px) {
+            .modal-sheet {
+                left: 50%;
+                right: auto;
+                bottom: 50%;
+                transform: translate(-50%, 50%) scale(0.95);
+                opacity: 0;
+                width: 100%;
+                max-width: 500px;
+                border-radius: 2rem;
+                padding-bottom: 1.5rem;
+            }
+            
+            .modal-sheet.active {
+                transform: translate(-50%, 50%) scale(1);
+                opacity: 1;
+            }
+            
+            .modal-handle { display: none; }
+        }
+
+        @media print {
+            .no-print { display: none !important; }
+            body { 
+                padding: 0; 
+                background: white !important; 
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .record-card { 
+                break-inside: avoid; 
+                margin-bottom: 8px !important;
+                box-shadow: none !important;
+                border: 1px solid #e2e8f0 !important;
+            }
+            .print-header {
+                display: block !important;
+                text-align: center;
+                margin-bottom: 20px;
+                padding-bottom: 15px;
+                border-bottom: 2px solid #1e293b;
+            }
+        }
+        
+        .print-header { display: none; }
+
+        .reason-tag {
+            font-size: 0.6rem;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        
+        .reason-sick { background: #fef2f2; color: #dc2626; }
+        .reason-training { background: #fefce8; color: #ca8a04; }
+        .reason-personal { background: #f0f9ff; color: #0284c7; }
+        .reason-business { background: #faf5ff; color: #9333ea; }
     </style>
 </head>
 <body>
 
     <div class="max-w-2xl mx-auto px-4 py-6 pb-32">
         
-        <!-- Print Header -->
         <div class="print-header">
             <h1 style="font-size: 24px; font-weight: bold; margin-bottom: 5px;">ЖУРНАЛ ЗАМЕН УРОКОВ</h1>
             <p id="printPeriod" style="font-size: 14px; color: #64748b;"></p>
@@ -292,48 +326,69 @@
         </div>
         
         <!-- Header -->
-        <header class="flex justify-between items-center mb-6 no-print">
+        <header class="flex justify-between items-center mb-5 no-print">
             <div>
                 <h1 class="text-2xl font-black tracking-tight">ЗАВУЧ<span class="text-blue-600">.PRO</span></h1>
-                <p class="text-[10px] text-slate-400 font-medium uppercase tracking-widest">Журнал замен v3.0</p>
+                <p class="text-[10px] text-slate-400 font-medium uppercase tracking-widest">Журнал замен v4.0</p>
             </div>
             <div class="flex gap-2">
-                <button onclick="openReport()" class="bg-emerald-100 text-emerald-600 text-xs font-bold px-3 py-2 rounded-xl active:bg-emerald-200">📊</button>
-                <button onclick="document.getElementById('importInput').click()" class="bg-slate-100 text-slate-500 text-xs font-bold px-3 py-2 rounded-xl active:bg-slate-200">↓</button>
-                <button onclick="exportJSON()" class="bg-slate-100 text-slate-500 text-xs font-bold px-3 py-2 rounded-xl active:bg-slate-200">↑</button>
-                <button onclick="openPrintDialog()" class="bg-blue-600 text-white text-xs font-bold px-4 py-2 rounded-xl active:bg-blue-700">🖨️</button>
+                <button onclick="openStats()" class="bg-purple-100 text-purple-600 text-xs font-bold px-3 py-2 rounded-xl">📈</button>
+                <button onclick="openReport()" class="bg-emerald-100 text-emerald-600 text-xs font-bold px-3 py-2 rounded-xl">📊</button>
+                <button onclick="openSettings()" class="bg-slate-100 text-slate-500 text-xs font-bold px-3 py-2 rounded-xl">⚙️</button>
             </div>
-            <input type="file" id="importInput" accept=".json" class="hidden" onchange="importJSON(event)">
         </header>
 
-        <!-- Stats -->
-        <div class="grid grid-cols-4 gap-3 mb-6 no-print">
-            <div class="stat-card bg-white p-4 rounded-2xl shadow-sm border border-slate-100 text-center" onclick="filterByType('all')">
-                <div id="statTotal" class="text-2xl font-black text-slate-700">0</div>
-                <div class="text-[9px] font-bold text-slate-400 uppercase tracking-wide">Всего</div>
+        <!-- Tabs -->
+        <div class="bg-slate-100 p-1 rounded-2xl flex gap-1 mb-5 no-print">
+            <button class="tab-btn active" onclick="setTab('today')" id="tabToday">
+                📅 Сегодня <span id="todayCount" class="ml-1 bg-blue-600 text-white text-[10px] px-1.5 py-0.5 rounded-full">0</span>
+            </button>
+            <button class="tab-btn" onclick="setTab('all')" id="tabAll">
+                📋 Все записи
+            </button>
+            <button class="tab-btn" onclick="setTab('pending')" id="tabPending">
+                ⏳ Ожидают <span id="pendingCount" class="ml-1 bg-amber-500 text-white text-[10px] px-1.5 py-0.5 rounded-full">0</span>
+            </button>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="grid grid-cols-4 gap-2 mb-5 no-print">
+            <div class="bg-white p-3 rounded-2xl shadow-sm border border-slate-100 text-center">
+                <div id="statTotal" class="text-xl font-black text-slate-700">0</div>
+                <div class="text-[8px] font-bold text-slate-400 uppercase">Всего</div>
             </div>
-            <div class="stat-card bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-2xl shadow-sm border border-blue-200 text-center" onclick="filterByType('100')">
-                <div id="stat100" class="text-2xl font-black text-blue-600">0</div>
-                <div class="text-[9px] font-bold text-blue-500 uppercase tracking-wide">🪟 Окна</div>
+            <div class="bg-gradient-to-br from-blue-50 to-blue-100 p-3 rounded-2xl shadow-sm border border-blue-200 text-center">
+                <div id="stat100" class="text-xl font-black text-blue-600">0</div>
+                <div class="text-[8px] font-bold text-blue-500 uppercase">🪟 Окна</div>
             </div>
-            <div class="stat-card bg-gradient-to-br from-amber-50 to-amber-100 p-4 rounded-2xl shadow-sm border border-amber-200 text-center" onclick="filterByType('50')">
-                <div id="stat50" class="text-2xl font-black text-amber-600">0</div>
-                <div class="text-[9px] font-bold text-amber-500 uppercase tracking-wide">📚 Уроки</div>
+            <div class="bg-gradient-to-br from-amber-50 to-amber-100 p-3 rounded-2xl shadow-sm border border-amber-200 text-center">
+                <div id="stat50" class="text-xl font-black text-amber-600">0</div>
+                <div class="text-[8px] font-bold text-amber-500 uppercase">📚 Уроки</div>
             </div>
-            <div class="stat-card bg-gradient-to-br from-emerald-50 to-emerald-100 p-4 rounded-2xl shadow-sm border border-emerald-200 text-center" onclick="filterByMonth()">
-                <div id="statMonth" class="text-2xl font-black text-emerald-600">0</div>
-                <div class="text-[9px] font-bold text-emerald-500 uppercase tracking-wide" id="monthLabel">📅 Мес</div>
+            <div class="bg-gradient-to-br from-emerald-50 to-emerald-100 p-3 rounded-2xl shadow-sm border border-emerald-200 text-center">
+                <div id="statCompleted" class="text-xl font-black text-emerald-600">0</div>
+                <div class="text-[8px] font-bold text-emerald-500 uppercase">✓ Готово</div>
             </div>
+        </div>
+
+        <!-- Quick Templates -->
+        <div id="templatesSection" class="mb-5 no-print hidden">
+            <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold text-slate-400 uppercase">⚡ Быстрые шаблоны</span>
+                <button onclick="toggleTemplates()" class="text-xs text-slate-400">Скрыть</button>
+            </div>
+            <div id="templatesList" class="flex gap-2 overflow-x-auto pb-2"></div>
         </div>
 
         <!-- Filter Bar -->
         <div class="mb-4 no-print">
             <div class="flex gap-2 mb-2">
-                <div class="relative flex-1">
-                    <input type="text" id="search" placeholder="🔍 Поиск по ФИО или предмету..." oninput="render()" 
-                        class="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none shadow-sm">
-                </div>
-                <button onclick="clearFilter()" class="bg-slate-200 px-4 rounded-xl text-xs font-bold text-slate-600 uppercase tracking-tight active:bg-slate-300">✕</button>
+                <input type="text" id="search" placeholder="🔍 Поиск..." oninput="render()" 
+                    class="flex-1 bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-500 outline-none shadow-sm">
+                <select id="filterClass" onchange="render()" class="bg-white border border-slate-200 rounded-xl px-3 py-2 text-sm shadow-sm">
+                    <option value="">Все классы</option>
+                </select>
+                <button onclick="clearFilter()" class="bg-slate-200 px-3 rounded-xl text-xs font-bold text-slate-600">✕</button>
             </div>
             <div class="flex gap-2">
                 <input type="date" id="filterDateFrom" onchange="render()" class="flex-1 bg-white border border-slate-200 rounded-xl px-3 py-2 text-sm shadow-sm">
@@ -342,27 +397,19 @@
             </div>
         </div>
 
-        <!-- Active Filter Indicator -->
-        <div id="filterIndicator" class="hidden mb-4 no-print">
-            <div class="bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 flex items-center justify-between">
-                <span class="text-sm font-medium text-blue-700" id="filterText">🔍 Активный фильтр</span>
-                <button onclick="clearFilter()" class="text-blue-600 text-xs font-bold bg-blue-100 px-3 py-1 rounded-lg">Сбросить</button>
-            </div>
-        </div>
-
         <!-- Journal -->
         <div id="mobileBody" class="space-y-3"></div>
         
         <!-- Empty State -->
-        <div id="emptyState" class="hidden text-center py-20">
-            <div class="text-7xl mb-6">📋</div>
-            <div class="text-slate-400 font-bold uppercase text-sm tracking-wider mb-2">Журнал пуст</div>
-            <div class="text-slate-300 text-xs">Нажмите + чтобы добавить первую замену</div>
+        <div id="emptyState" class="hidden text-center py-16">
+            <div class="text-6xl mb-4">📋</div>
+            <div class="text-slate-400 font-bold uppercase text-sm mb-1">Нет записей</div>
+            <div class="text-slate-300 text-xs">Нажмите + чтобы добавить замену</div>
         </div>
     </div>
 
     <!-- FAB -->
-    <button onclick="openForm()" class="fab no-print" aria-label="Добавить замену">+</button>
+    <button onclick="openForm()" class="fab no-print">+</button>
 
     <!-- Modal Overlay -->
     <div id="modalOverlay" class="modal-overlay no-print" onclick="closeForm()"></div>
@@ -370,56 +417,99 @@
     <!-- Modal Sheet - Add/Edit -->
     <div id="modalSheet" class="modal-sheet no-print" onclick="event.stopPropagation()">
         <div class="modal-handle"></div>
-        <div class="flex justify-between items-center mb-5">
-            <h3 id="modalTitle" class="text-xl font-black uppercase tracking-tight">➕ Новая замена</h3>
-            <button onclick="closeForm()" class="w-10 h-10 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-2xl active:bg-slate-200">×</button>
+        <div class="flex justify-between items-center mb-4">
+            <h3 id="modalTitle" class="text-lg font-black uppercase tracking-tight">➕ Новая замена</h3>
+            <button onclick="closeForm()" class="w-10 h-10 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-2xl">×</button>
         </div>
         <form id="mainForm" class="space-y-4">
             <input type="hidden" id="editId">
             
-            <!-- Date -->
-            <div>
-                <label class="text-xs font-bold text-slate-400 uppercase tracking-wide mb-2 block">📅 Дата замены</label>
-                <input type="date" id="fDate" required class="w-full bg-slate-100 p-4 rounded-xl border-none font-bold text-blue-600 text-lg">
+            <!-- Date & Lesson -->
+            <div class="flex gap-2">
+                <div class="flex-1">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block">📅 Дата</label>
+                    <input type="date" id="fDate" required class="w-full bg-slate-100 p-3 rounded-xl font-bold text-blue-600">
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block">🔔 Урок</label>
+                    <div class="flex gap-1" id="lessonSelector">
+                        <div class="lesson-btn active" onclick="selectLesson(1)">1</div>
+                        <div class="lesson-btn" onclick="selectLesson(2)">2</div>
+                        <div class="lesson-btn" onclick="selectLesson(3)">3</div>
+                        <div class="lesson-btn" onclick="selectLesson(4)">4</div>
+                        <div class="lesson-btn" onclick="selectLesson(5)">5</div>
+                        <div class="lesson-btn" onclick="selectLesson(6)">6</div>
+                        <div class="lesson-btn" onclick="selectLesson(7)">7</div>
+                    </div>
+                    <input type="hidden" id="fLesson" value="1">
+                </div>
             </div>
             
-            <!-- Type Selector - BIG AND OBVIOUS -->
+            <!-- Type Selector -->
             <div>
-                <label class="text-xs font-bold text-slate-400 uppercase tracking-wide mb-2 block">💰 Тип оплаты (ВАЖНО!)</label>
+                <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block">💰 Тип оплаты</label>
                 <div class="type-selector">
                     <div class="type-btn type-btn-100 active" onclick="selectType('100')" id="typeBtn100">
-                        <div class="text-2xl mb-1">🪟</div>
+                        <div class="text-xl mb-0.5">🪟</div>
                         <div>100%</div>
-                        <div class="text-[10px] font-medium opacity-80">ОКНО</div>
+                        <div class="text-[9px] font-medium opacity-80">ОКНО</div>
                     </div>
                     <div class="type-btn type-btn-50" onclick="selectType('50')" id="typeBtn50">
-                        <div class="text-2xl mb-1">📚</div>
+                        <div class="text-xl mb-0.5">📚</div>
                         <div>50%</div>
-                        <div class="text-[10px] font-medium opacity-80">УРОК</div>
+                        <div class="text-[9px] font-medium opacity-80">УРОК</div>
                     </div>
                 </div>
                 <input type="hidden" id="fType" value="100">
             </div>
+
+            <!-- Class & Subject -->
+            <div class="flex gap-2">
+                <div class="w-24">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block">🏫 Класс</label>
+                    <input list="classes" id="fClass" placeholder="5А" required class="w-full bg-slate-100 p-3 rounded-xl text-center font-bold">
+                </div>
+                <div class="flex-1">
+                    <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block">📖 Предмет</label>
+                    <input list="subjects" id="fSubject" placeholder="Математика" required autocomplete="off" class="w-full bg-slate-100 p-3 rounded-xl">
+                </div>
+            </div>
             
+            <!-- Teachers -->
             <div>
-                <label class="text-xs font-bold text-slate-400 uppercase tracking-wide mb-2 block">📖 Предмет</label>
-                <input list="subjects" id="fSubject" placeholder="Введите предмет..." required autocomplete="off"
-                    class="w-full bg-slate-100 p-4 rounded-xl border-none text-base">
+                <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block">😷 Кто отсутствует</label>
+                <input list="teachers" id="fWho" placeholder="ФИО отсутствующего" required autocomplete="off" class="w-full bg-slate-100 p-3 rounded-xl">
             </div>
             
             <div>
-                <label class="text-xs font-bold text-slate-400 uppercase tracking-wide mb-2 block">😷 Кто отсутствует</label>
-                <input list="teachers" id="fWho" placeholder="ФИО отсутствующего учителя..." required autocomplete="off"
-                    class="w-full bg-slate-100 p-4 rounded-xl border-none text-base">
+                <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block">🦸 Кто заменяет</label>
+                <input list="teachers" id="fBy" placeholder="ФИО заменяющего" required autocomplete="off" class="w-full bg-slate-100 p-3 rounded-xl">
             </div>
-            
+
+            <!-- Reason -->
             <div>
-                <label class="text-xs font-bold text-slate-400 uppercase tracking-wide mb-2 block">🦸 Кто заменяет</label>
-                <input list="teachers" id="fBy" placeholder="ФИО заменяющего учителя..." required autocomplete="off"
-                    class="w-full bg-slate-100 p-4 rounded-xl border-none text-base">
+                <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block">📝 Причина отсутствия</label>
+                <div class="flex gap-2 flex-wrap">
+                    <label class="flex items-center gap-2 bg-red-50 px-3 py-2 rounded-xl cursor-pointer">
+                        <input type="radio" name="reason" value="sick" class="accent-red-500" checked>
+                        <span class="text-xs font-bold text-red-600">🤒 Больничный</span>
+                    </label>
+                    <label class="flex items-center gap-2 bg-amber-50 px-3 py-2 rounded-xl cursor-pointer">
+                        <input type="radio" name="reason" value="training" class="accent-amber-500">
+                        <span class="text-xs font-bold text-amber-600">📚 Курсы</span>
+                    </label>
+                    <label class="flex items-center gap-2 bg-purple-50 px-3 py-2 rounded-xl cursor-pointer">
+                        <input type="radio" name="reason" value="business" class="accent-purple-500">
+                        <span class="text-xs font-bold text-purple-600">💼 Командировка</span>
+                    </label>
+                    <label class="flex items-center gap-2 bg-sky-50 px-3 py-2 rounded-xl cursor-pointer">
+                        <input type="radio" name="reason" value="personal" class="accent-sky-500">
+                        <span class="text-xs font-bold text-sky-600">🏠 Личные</span>
+                    </label>
+                </div>
             </div>
             
-            <button type="submit" id="submitBtn" class="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold py-4 rounded-xl shadow-lg uppercase tracking-wide text-sm active:from-blue-700 active:to-blue-800 transition mt-2">
+            <button type="submit" id="submitBtn" class="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold py-4 rounded-xl shadow-lg uppercase tracking-wide text-sm">
                 ✓ Добавить
             </button>
         </form>
@@ -429,202 +519,257 @@
     <div id="reportOverlay" class="modal-overlay no-print" onclick="closeReport()"></div>
     <div id="reportSheet" class="modal-sheet no-print" onclick="event.stopPropagation()">
         <div class="modal-handle"></div>
-        <div class="flex justify-between items-center mb-5">
-            <h3 class="text-xl font-black uppercase tracking-tight">📊 Отчёт для бухгалтерии</h3>
-            <button onclick="closeReport()" class="w-10 h-10 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-2xl active:bg-slate-200">×</button>
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-black uppercase tracking-tight">📊 Отчёт для бухгалтерии</h3>
+            <button onclick="closeReport()" class="w-10 h-10 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-2xl">×</button>
         </div>
         
         <div class="mb-4">
-            <label class="text-xs font-bold text-slate-400 uppercase tracking-wide mb-2 block">Период отчёта</label>
+            <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block">Период</label>
             <div class="flex gap-2">
-                <input type="date" id="reportDateFrom" class="flex-1 bg-slate-100 p-3 rounded-xl border-none text-sm">
+                <input type="date" id="reportDateFrom" class="flex-1 bg-slate-100 p-3 rounded-xl text-sm">
                 <span class="flex items-center text-slate-400">—</span>
-                <input type="date" id="reportDateTo" class="flex-1 bg-slate-100 p-3 rounded-xl border-none text-sm">
+                <input type="date" id="reportDateTo" class="flex-1 bg-slate-100 p-3 rounded-xl text-sm">
             </div>
         </div>
         
-        <button onclick="generateReport()" class="w-full bg-emerald-600 text-white font-bold py-3 rounded-xl mb-4">
-            Сформировать отчёт
-        </button>
+        <div class="flex gap-2 mb-4">
+            <button onclick="generateReport()" class="flex-1 bg-emerald-600 text-white font-bold py-3 rounded-xl">
+                📊 Отчёт
+            </button>
+            <button onclick="exportCSV()" class="flex-1 bg-blue-600 text-white font-bold py-3 rounded-xl">
+                📥 Excel
+            </button>
+            <button onclick="doPrint()" class="bg-slate-200 text-slate-600 font-bold py-3 px-4 rounded-xl">
+                🖨️
+            </button>
+        </div>
         
         <div id="reportContent" class="space-y-3 max-h-[50vh] overflow-y-auto"></div>
     </div>
 
-    <!-- Print Dialog -->
-    <div id="printOverlay" class="modal-overlay no-print" onclick="closePrintDialog()"></div>
-    <div id="printSheet" class="modal-sheet no-print" onclick="event.stopPropagation()">
+    <!-- Stats Modal -->
+    <div id="statsOverlay" class="modal-overlay no-print" onclick="closeStats()"></div>
+    <div id="statsSheet" class="modal-sheet no-print" onclick="event.stopPropagation()">
         <div class="modal-handle"></div>
-        <div class="flex justify-between items-center mb-5">
-            <h3 class="text-xl font-black uppercase tracking-tight">🖨️ Печать</h3>
-            <button onclick="closePrintDialog()" class="w-10 h-10 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-2xl active:bg-slate-200">×</button>
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-black uppercase tracking-tight">📈 Статистика</h3>
+            <button onclick="closeStats()" class="w-10 h-10 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-2xl">×</button>
         </div>
         
-        <div class="mb-4">
-            <label class="text-xs font-bold text-slate-400 uppercase tracking-wide mb-2 block">Период для печати</label>
-            <div class="flex gap-2">
-                <input type="date" id="printDateFrom" class="flex-1 bg-slate-100 p-3 rounded-xl border-none text-sm">
-                <span class="flex items-center text-slate-400">—</span>
-                <input type="date" id="printDateTo" class="flex-1 bg-slate-100 p-3 rounded-xl border-none text-sm">
+        <div class="space-y-3" id="statsContent"></div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsOverlay" class="modal-overlay no-print" onclick="closeSettings()"></div>
+    <div id="settingsSheet" class="modal-sheet no-print" onclick="event.stopPropagation()">
+        <div class="modal-handle"></div>
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-black uppercase tracking-tight">⚙️ Настройки</h3>
+            <button onclick="closeSettings()" class="w-10 h-10 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-2xl">×</button>
+        </div>
+        
+        <div class="space-y-4">
+            <div>
+                <label class="text-xs font-bold text-slate-400 uppercase mb-2 block">Резервное копирование</label>
+                <div class="flex gap-2">
+                    <button onclick="exportJSON()" class="flex-1 bg-slate-100 text-slate-600 font-bold py-3 rounded-xl">
+                        📤 Экспорт JSON
+                    </button>
+                    <button onclick="document.getElementById('importInput').click()" class="flex-1 bg-slate-100 text-slate-600 font-bold py-3 rounded-xl">
+                        📥 Импорт JSON
+                    </button>
+                </div>
+                <input type="file" id="importInput" accept=".json" class="hidden" onchange="importJSON(event)">
+            </div>
+            
+            <div>
+                <label class="text-xs font-bold text-slate-400 uppercase mb-2 block">Шаблоны замен</label>
+                <div class="flex items-center justify-between bg-slate-50 p-3 rounded-xl">
+                    <span class="text-sm">Показывать быстрые шаблоны</span>
+                    <input type="checkbox" id="showTemplates" onchange="toggleTemplatesVisibility()" class="w-5 h-5 accent-blue-600">
+                </div>
+            </div>
+
+            <div>
+                <label class="text-xs font-bold text-slate-400 uppercase mb-2 block">Управление данными</label>
+                <button onclick="clearAllData()" class="w-full bg-red-50 text-red-600 font-bold py-3 rounded-xl">
+                    🗑️ Очистить все данные
+                </button>
+            </div>
+            
+            <div class="text-center text-xs text-slate-400 pt-4 border-t">
+                Завуч.PRO v4.0 • 2024
             </div>
         </div>
-        
-        <div class="mb-4">
-            <label class="text-xs font-bold text-slate-400 uppercase tracking-wide mb-2 block">Фильтр по учителю</label>
-            <select id="printTeacher" class="w-full bg-slate-100 p-3 rounded-xl border-none text-sm">
-                <option value="">Все учителя</option>
-            </select>
-        </div>
-        
-        <button onclick="doPrint()" class="w-full bg-blue-600 text-white font-bold py-4 rounded-xl">
-            🖨️ Распечатать
-        </button>
     </div>
 
     <div id="toast" class="toast"></div>
     <datalist id="teachers"></datalist>
     <datalist id="subjects"></datalist>
+    <datalist id="classes"></datalist>
 
     <script>
-        let reps = JSON.parse(localStorage.getItem('v3_data')) || [];
-        let master = JSON.parse(localStorage.getItem('v3_master')) || {t:[], s:[]};
-        let activeFilter = null;
-        let startX = 0;
-        let startY = 0;
-        let isSwiping = false;
+        let reps = JSON.parse(localStorage.getItem('v4_data')) || [];
+        let master = JSON.parse(localStorage.getItem('v4_master')) || {t:[], s:[], c:[]};
+        let templates = JSON.parse(localStorage.getItem('v4_templates')) || [];
+        let settings = JSON.parse(localStorage.getItem('v4_settings')) || { showTemplates: false };
+        let currentTab = 'today';
         let currentSwipeEl = null;
 
         const save = () => {
-            localStorage.setItem('v3_data', JSON.stringify(reps));
-            localStorage.setItem('v3_master', JSON.stringify(master));
+            localStorage.setItem('v4_data', JSON.stringify(reps));
+            localStorage.setItem('v4_master', JSON.stringify(master));
+            localStorage.setItem('v4_templates', JSON.stringify(templates));
+            localStorage.setItem('v4_settings', JSON.stringify(settings));
         };
 
-        const getMonthName = () => {
-            const months = ['Янв', 'Фев', 'Мар', 'Апр', 'Май', 'Июн', 'Июл', 'Авг', 'Сен', 'Окт', 'Ноя', 'Дек'];
-            return months[new Date().getMonth()];
-        };
+        const getToday = () => new Date().toISOString().slice(0, 10);
         
         const formatDate = (dateStr) => {
             const d = new Date(dateStr);
-            const dayNames = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
-            const monthNames = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+            const dayNames = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+            const monthNames = ['янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
             return {
                 day: d.getDate(),
                 month: monthNames[d.getMonth()],
-                monthShort: d.toLocaleDateString('ru-RU',{month:'short'}).replace('.',''),
-                weekday: dayNames[d.getDay()],
-                weekdayShort: dayNames[d.getDay()].slice(0,2)
+                weekday: dayNames[d.getDay()]
             };
+        };
+
+        const getReasonInfo = (reason) => {
+            const reasons = {
+                sick: { label: 'Больничный', class: 'reason-sick', icon: '🤒' },
+                training: { label: 'Курсы', class: 'reason-training', icon: '📚' },
+                business: { label: 'Командировка', class: 'reason-business', icon: '💼' },
+                personal: { label: 'Личные', class: 'reason-personal', icon: '🏠' }
+            };
+            return reasons[reason] || reasons.sick;
+        };
+
+        const setTab = (tab) => {
+            currentTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
+            render();
         };
 
         const render = () => {
             const container = document.getElementById('mobileBody');
             const search = document.getElementById('search').value.toLowerCase();
+            const filterClass = document.getElementById('filterClass').value;
             const dateFrom = document.getElementById('filterDateFrom').value;
             const dateTo = document.getElementById('filterDateTo').value;
-            const emptyState = document.getElementById('emptyState');
-            const filterIndicator = document.getElementById('filterIndicator');
+            const today = getToday();
             
-            let filtered = reps.filter(r => 
-                r.by.toLowerCase().includes(search) || 
-                r.who.toLowerCase().includes(search) || 
-                r.subject.toLowerCase().includes(search)
-            );
+            let filtered = [...reps];
+            
+            // Tab filter
+            if (currentTab === 'today') {
+                filtered = filtered.filter(r => r.date === today);
+            } else if (currentTab === 'pending') {
+                filtered = filtered.filter(r => !r.completed && r.date <= today);
+            }
+            
+            // Search filter
+            if (search) {
+                filtered = filtered.filter(r => 
+                    r.by.toLowerCase().includes(search) || 
+                    r.who.toLowerCase().includes(search) || 
+                    r.subject.toLowerCase().includes(search) ||
+                    (r.class && r.class.toLowerCase().includes(search))
+                );
+            }
+            
+            // Class filter
+            if (filterClass) {
+                filtered = filtered.filter(r => r.class === filterClass);
+            }
             
             // Date range filter
-            if (dateFrom) {
-                filtered = filtered.filter(r => r.date >= dateFrom);
-            }
-            if (dateTo) {
-                filtered = filtered.filter(r => r.date <= dateTo);
-            }
+            if (dateFrom) filtered = filtered.filter(r => r.date >= dateFrom);
+            if (dateTo) filtered = filtered.filter(r => r.date <= dateTo);
             
-            // Apply active filter
-            let filterActive = false;
-            if (activeFilter) {
-                if (activeFilter.type === 'percent') {
-                    filtered = filtered.filter(r => r.type === activeFilter.value);
-                    document.getElementById('filterText').textContent = activeFilter.value === '100' ? '🪟 Показаны только ОКНА (100%)' : '📚 Показаны только УРОКИ (50%)';
-                    filterActive = true;
-                } else if (activeFilter.type === 'month') {
-                    filtered = filtered.filter(r => new Date(r.date).getMonth() === new Date().getMonth());
-                    document.getElementById('filterText').textContent = `📅 Показан только ${getMonthName()}`;
-                    filterActive = true;
-                }
-            }
-            
-            if (filterActive || search || dateFrom || dateTo) {
-                filterIndicator.classList.remove('hidden');
-                if (!activeFilter && (search || dateFrom || dateTo)) {
-                    let parts = [];
-                    if (search) parts.push(`"${search}"`);
-                    if (dateFrom || dateTo) parts.push('по датам');
-                    document.getElementById('filterText').textContent = `🔍 Фильтр: ${parts.join(', ')}`;
-                }
-            } else {
-                filterIndicator.classList.add('hidden');
-            }
-            
-            filtered.sort((a,b) => new Date(b.date) - new Date(a.date));
+            // Sort
+            filtered.sort((a, b) => {
+                if (a.date !== b.date) return new Date(b.date) - new Date(a.date);
+                return (a.lesson || 1) - (b.lesson || 1);
+            });
             
             if (filtered.length === 0) {
                 container.innerHTML = '';
-                emptyState.classList.remove('hidden');
+                document.getElementById('emptyState').classList.remove('hidden');
             } else {
-                emptyState.classList.add('hidden');
+                document.getElementById('emptyState').classList.add('hidden');
                 container.innerHTML = filtered.map(r => {
                     const d = formatDate(r.date);
                     const is100 = r.type === '100';
+                    const reason = getReasonInfo(r.reason);
+                    const isCompleted = r.completed;
+                    
                     return `
-                    <div class="swipe-container record-card shadow-md" data-id="${r.id}">
+                    <div class="swipe-container record-card shadow-md ${isCompleted ? 'completed-card' : ''}" data-id="${r.id}">
                         <div class="swipe-actions">
-                            <div class="swipe-action swipe-action-edit" onclick="editRecord(${r.id})">
-                                <span class="text-lg">✏️</span>
-                                <span>ИЗМЕНИТЬ</span>
+                            <div class="swipe-action bg-emerald-500" onclick="toggleComplete(${r.id})">
+                                <span class="text-base">${isCompleted ? '↩️' : '✓'}</span>
+                                <span>${isCompleted ? 'ОТМЕНА' : 'ГОТОВО'}</span>
                             </div>
-                            <div class="swipe-action swipe-action-delete" onclick="del(${r.id})">
-                                <span class="text-lg">🗑️</span>
+                            <div class="swipe-action bg-blue-500" onclick="duplicateRecord(${r.id})">
+                                <span class="text-base">📋</span>
+                                <span>КОПИЯ</span>
+                            </div>
+                            <div class="swipe-action bg-red-500" onclick="del(${r.id})">
+                                <span class="text-base">🗑️</span>
                                 <span>УДАЛИТЬ</span>
                             </div>
                         </div>
-                        <div class="swipe-item p-4">
-                            <!-- Top row: Date and Type Badge -->
-                            <div class="flex justify-between items-start mb-3">
-                                <div class="date-card px-4 py-2 rounded-xl">
-                                    <div class="flex items-baseline gap-2">
-                                        <span class="text-3xl font-black text-slate-700">${d.day}</span>
-                                        <span class="text-sm font-bold text-slate-500">${d.monthShort}</span>
+                        <div class="swipe-item p-4" 
+                             ontouchstart="handleTouchStart(event)"
+                             ontouchmove="handleTouchMove(event)"
+                             ontouchend="handleTouchEnd(event)">
+                            
+                            <div class="flex gap-3">
+                                <!-- Left: Date & Lesson -->
+                                <div class="flex flex-col items-center">
+                                    <div class="bg-slate-100 px-3 py-2 rounded-xl text-center min-w-[52px]">
+                                        <div class="text-2xl font-black text-slate-700 leading-none">${d.day}</div>
+                                        <div class="text-[9px] font-bold text-slate-400 uppercase">${d.month}</div>
+                                        <div class="text-[8px] font-medium text-slate-300">${d.weekday}</div>
                                     </div>
-                                    <div class="text-[10px] font-medium text-slate-400 uppercase">${d.weekdayShort}</div>
+                                    <div class="mt-1 bg-purple-100 text-purple-700 text-xs font-black px-2 py-1 rounded-lg">
+                                        ${r.lesson || 1} урок
+                                    </div>
                                 </div>
                                 
-                                <div class="${is100 ? 'badge-100' : 'badge-50'} px-5 py-3 rounded-2xl text-center">
-                                    <div class="text-2xl font-black">${r.type}%</div>
-                                    <div class="text-[10px] font-bold uppercase tracking-wide">${is100 ? '🪟 ОКНО' : '📚 УРОК'}</div>
+                                <!-- Middle: Info -->
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="bg-blue-100 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded-md">${r.class || '—'}</span>
+                                        <span class="text-xs font-bold text-slate-600 truncate">${r.subject}</span>
+                                    </div>
+                                    
+                                    <div class="mb-2">
+                                        <div class="flex items-center gap-1.5">
+                                            <span class="text-sm">🦸</span>
+                                            <span class="font-bold text-slate-800 text-sm truncate">${r.by}</span>
+                                        </div>
+                                        <div class="flex items-center gap-1.5">
+                                            <span class="text-sm">😷</span>
+                                            <span class="text-xs text-slate-500 truncate">${r.who}</span>
+                                        </div>
+                                    </div>
+                                    
+                                    <span class="reason-tag ${reason.class}">${reason.icon} ${reason.label}</span>
+                                </div>
+                                
+                                <!-- Right: Type Badge -->
+                                <div class="${is100 ? 'badge-100' : 'badge-50'} px-3 py-2 rounded-xl text-center self-start">
+                                    <div class="text-xl font-black">${r.type}%</div>
+                                    <div class="text-[8px] font-bold uppercase">${is100 ? '🪟 ОКНО' : '📚 УРОК'}</div>
                                 </div>
                             </div>
                             
-                            <!-- Subject -->
-                            <div class="bg-blue-50 text-blue-700 text-xs font-bold uppercase tracking-wide px-3 py-1.5 rounded-lg inline-block mb-3">
-                                📖 ${r.subject}
-                            </div>
-                            
-                            <!-- Teachers -->
-                            <div class="space-y-2">
-                                <div class="flex items-center gap-3">
-                                    <span class="text-lg">🦸</span>
-                                    <div>
-                                        <div class="text-[10px] text-slate-400 uppercase font-medium">Заменяет</div>
-                                        <div class="font-bold text-slate-800">${r.by}</div>
-                                    </div>
-                                </div>
-                                <div class="flex items-center gap-3">
-                                    <span class="text-lg">😷</span>
-                                    <div>
-                                        <div class="text-[10px] text-slate-400 uppercase font-medium">Вместо</div>
-                                        <div class="font-medium text-slate-600">${r.who}</div>
-                                    </div>
-                                </div>
-                            </div>
+                            ${isCompleted ? '<div class="absolute top-2 right-2 text-emerald-500 text-lg">✓</div>' : ''}
                         </div>
                     </div>
                     `;
@@ -635,17 +780,12 @@
             
             updateStats();
             updateDatalists();
-            document.getElementById('monthLabel').textContent = '📅 ' + getMonthName();
+            updateClassFilter();
+            renderTemplates();
         };
 
-        // Swipe Logic
-        const initSwipe = () => {
-            document.querySelectorAll('.swipe-item').forEach(el => {
-                el.addEventListener('touchstart', handleTouchStart, { passive: true });
-                el.addEventListener('touchmove', handleTouchMove, { passive: false });
-                el.addEventListener('touchend', handleTouchEnd, { passive: true });
-            });
-        };
+        // Swipe handlers
+        let startX = 0, startY = 0, isSwiping = false;
         
         const handleTouchStart = (e) => {
             if (currentSwipeEl && currentSwipeEl !== e.currentTarget) {
@@ -660,7 +800,6 @@
         
         const handleTouchMove = (e) => {
             if (!currentSwipeEl) return;
-            
             const deltaX = e.touches[0].clientX - startX;
             const deltaY = e.touches[0].clientY - startY;
             
@@ -670,83 +809,108 @@
             
             if (isSwiping) {
                 e.preventDefault();
-                const moveX = Math.max(-160, Math.min(0, deltaX));
+                const moveX = Math.max(-210, Math.min(0, deltaX));
                 currentSwipeEl.style.transform = `translateX(${moveX}px)`;
             }
         };
         
         const handleTouchEnd = (e) => {
             if (!currentSwipeEl) return;
-            
             currentSwipeEl.classList.remove('swiping');
-            const transform = currentSwipeEl.style.transform;
-            const currentX = parseInt(transform.replace(/[^-\d]/g, '')) || 0;
-            
-            if (currentX < -80) {
-                currentSwipeEl.style.transform = 'translateX(-160px)';
-            } else {
-                currentSwipeEl.style.transform = 'translateX(0)';
-                currentSwipeEl = null;
-            }
-            
+            const currentX = parseInt(currentSwipeEl.style.transform.replace(/[^-\d]/g, '')) || 0;
+            currentSwipeEl.style.transform = currentX < -80 ? 'translateX(-210px)' : 'translateX(0)';
+            if (currentX >= -80) currentSwipeEl = null;
             isSwiping = false;
         };
         
+        const initSwipe = () => {};
+        
         const resetSwipes = () => {
-            document.querySelectorAll('.swipe-item').forEach(el => {
-                el.style.transform = 'translateX(0)';
-            });
+            document.querySelectorAll('.swipe-item').forEach(el => el.style.transform = 'translateX(0)');
             currentSwipeEl = null;
         };
 
+        // Actions
         const del = id => {
-            if(confirm('Удалить эту запись?')) {
+            if(confirm('Удалить запись?')) {
                 reps = reps.filter(r => r.id !== id);
-                save(); 
-                render(); 
-                showToast('🗑️ Запись удалена');
+                save(); render(); showToast('🗑️ Удалено');
             }
         };
         
-        const editRecord = (id) => {
-            const record = reps.find(r => r.id === id);
-            if (!record) return;
-            
-            document.getElementById('editId').value = id;
-            document.getElementById('fDate').value = record.date;
-            selectType(record.type);
-            document.getElementById('fSubject').value = record.subject;
-            document.getElementById('fWho').value = record.who;
-            document.getElementById('fBy').value = record.by;
-            document.getElementById('modalTitle').textContent = '✏️ Редактирование';
-            document.getElementById('submitBtn').textContent = '✓ Сохранить изменения';
-            
-            resetSwipes();
-            openForm();
+        const toggleComplete = id => {
+            const r = reps.find(r => r.id === id);
+            if (r) {
+                r.completed = !r.completed;
+                save(); render();
+                showToast(r.completed ? '✓ Отмечено выполненным' : '↩️ Отметка снята');
+            }
+        };
+        
+        const duplicateRecord = id => {
+            const r = reps.find(r => r.id === id);
+            if (r) {
+                const tomorrow = new Date();
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                const newRec = {
+                    ...r,
+                    id: Date.now(),
+                    date: tomorrow.toISOString().slice(0, 10),
+                    completed: false
+                };
+                reps.push(newRec);
+                
+                // Save as template
+                const templateKey = `${r.who}→${r.by}`;
+                if (!templates.find(t => t.key === templateKey)) {
+                    templates.push({
+                        key: templateKey,
+                        who: r.who,
+                        by: r.by,
+                        subject: r.subject,
+                        class: r.class,
+                        type: r.type,
+                        reason: r.reason,
+                        count: 1
+                    });
+                } else {
+                    templates.find(t => t.key === templateKey).count++;
+                }
+                
+                save(); render();
+                showToast('📋 Копия создана на завтра');
+            }
+        };
+
+        const selectLesson = (n) => {
+            document.getElementById('fLesson').value = n;
+            document.querySelectorAll('.lesson-btn').forEach((btn, i) => {
+                btn.classList.toggle('active', i + 1 === n);
+            });
         };
         
         const selectType = (type) => {
             document.getElementById('fType').value = type;
-            const btn100 = document.getElementById('typeBtn100');
-            const btn50 = document.getElementById('typeBtn50');
-            
-            if (type === '100') {
-                btn100.classList.add('active');
-                btn50.classList.remove('active');
-            } else {
-                btn50.classList.add('active');
-                btn100.classList.remove('active');
-            }
+            document.getElementById('typeBtn100').classList.toggle('active', type === '100');
+            document.getElementById('typeBtn50').classList.toggle('active', type === '50');
         };
 
         const showToast = msg => {
             const t = document.getElementById('toast');
-            t.textContent = msg; 
-            t.classList.add('show');
+            t.textContent = msg; t.classList.add('show');
             setTimeout(() => t.classList.remove('show'), 2500);
         };
 
-        const openForm = () => {
+        // Form
+        const openForm = (template = null) => {
+            if (template) {
+                document.getElementById('fWho').value = template.who;
+                document.getElementById('fBy').value = template.by;
+                document.getElementById('fSubject').value = template.subject || '';
+                document.getElementById('fClass').value = template.class || '';
+                selectType(template.type || '100');
+                document.querySelector(`input[name="reason"][value="${template.reason || 'sick'}"]`).checked = true;
+            }
             document.getElementById('modalOverlay').classList.add('active');
             document.getElementById('modalSheet').classList.add('active');
             document.body.style.overflow = 'hidden';
@@ -756,23 +920,126 @@
             document.getElementById('modalOverlay').classList.remove('active');
             document.getElementById('modalSheet').classList.remove('active');
             document.body.style.overflow = '';
-            
             setTimeout(() => {
                 document.getElementById('mainForm').reset();
                 document.getElementById('editId').value = '';
                 document.getElementById('modalTitle').textContent = '➕ Новая замена';
                 document.getElementById('submitBtn').textContent = '✓ Добавить';
                 document.getElementById('fDate').valueAsDate = new Date();
+                selectLesson(1);
                 selectType('100');
             }, 300);
         };
+
+        document.getElementById('mainForm').onsubmit = function(e) {
+            e.preventDefault();
+            
+            const reason = document.querySelector('input[name="reason"]:checked').value;
+            const data = {
+                date: document.getElementById('fDate').value,
+                lesson: parseInt(document.getElementById('fLesson').value),
+                type: document.getElementById('fType').value,
+                class: document.getElementById('fClass').value.trim().toUpperCase(),
+                subject: document.getElementById('fSubject').value.trim(),
+                who: document.getElementById('fWho').value.trim(),
+                by: document.getElementById('fBy').value.trim(),
+                reason: reason,
+                completed: false
+            };
+            
+            const editId = document.getElementById('editId').value;
+            if (editId) {
+                const index = reps.findIndex(r => r.id === parseInt(editId));
+                if (index !== -1) {
+                    reps[index] = { ...reps[index], ...data };
+                    showToast('✅ Изменено');
+                }
+            } else {
+                reps.push({ id: Date.now(), ...data });
+                showToast('✅ Добавлено');
+            }
+            
+            // Update master lists
+            if(!master.t.includes(data.who)) master.t.push(data.who);
+            if(!master.t.includes(data.by)) master.t.push(data.by);
+            if(!master.s.includes(data.subject)) master.s.push(data.subject);
+            if(data.class && !master.c.includes(data.class)) master.c.push(data.class);
+            
+            save(); render(); closeForm();
+        };
+
+        // Templates
+        const renderTemplates = () => {
+            if (!settings.showTemplates || templates.length === 0) {
+                document.getElementById('templatesSection').classList.add('hidden');
+                return;
+            }
+            document.getElementById('templatesSection').classList.remove('hidden');
+            
+            const sorted = [...templates].sort((a, b) => b.count - a.count).slice(0, 5);
+            document.getElementById('templatesList').innerHTML = sorted.map(t => `
+                <div class="quick-template p-3 rounded-xl min-w-[140px]" onclick='openForm(${JSON.stringify(t)})'>
+                    <div class="text-xs font-bold text-slate-700 truncate">${t.by}</div>
+                    <div class="text-[10px] text-slate-500">за ${t.who.split(' ')[0]}</div>
+                </div>
+            `).join('');
+        };
         
+        const toggleTemplates = () => {
+            settings.showTemplates = false;
+            save();
+            renderTemplates();
+        };
+        
+        const toggleTemplatesVisibility = () => {
+            settings.showTemplates = document.getElementById('showTemplates').checked;
+            save();
+            renderTemplates();
+        };
+
+        // Stats
+        const updateStats = () => {
+            const today = getToday();
+            const thisMonth = new Date().getMonth();
+            
+            document.getElementById('statTotal').textContent = reps.length;
+            document.getElementById('stat100').textContent = reps.filter(r => r.type === '100').length;
+            document.getElementById('stat50').textContent = reps.filter(r => r.type === '50').length;
+            document.getElementById('statCompleted').textContent = reps.filter(r => r.completed).length;
+            document.getElementById('todayCount').textContent = reps.filter(r => r.date === today).length;
+            document.getElementById('pendingCount').textContent = reps.filter(r => !r.completed && r.date <= today).length;
+        };
+
+        const updateDatalists = () => {
+            document.getElementById('teachers').innerHTML = master.t.sort().map(t => `<option value="${t}">`).join('');
+            document.getElementById('subjects').innerHTML = master.s.sort().map(s => `<option value="${s}">`).join('');
+            document.getElementById('classes').innerHTML = master.c.sort().map(c => `<option value="${c}">`).join('');
+        };
+        
+        const updateClassFilter = () => {
+            const select = document.getElementById('filterClass');
+            const current = select.value;
+            const classes = [...new Set(reps.map(r => r.class).filter(Boolean))].sort();
+            select.innerHTML = '<option value="">Все классы</option>' + classes.map(c => 
+                `<option value="${c}" ${c === current ? 'selected' : ''}>${c}</option>`
+            ).join('');
+        };
+
+        const clearFilter = () => { 
+            document.getElementById('search').value = ''; 
+            document.getElementById('filterClass').value = '';
+            document.getElementById('filterDateFrom').value = '';
+            document.getElementById('filterDateTo').value = '';
+            render(); 
+        };
+
+        // Report
         const openReport = () => {
             const now = new Date();
             const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
             document.getElementById('reportDateFrom').value = firstDay.toISOString().slice(0,10);
             document.getElementById('reportDateTo').value = now.toISOString().slice(0,10);
-            document.getElementById('reportContent').innerHTML = '<div class="text-center text-slate-400 py-8">Нажмите "Сформировать отчёт"</div>';
+            document.getElementById('reportContent').innerHTML = '<div class="text-center text-slate-400 py-8">Выберите период и нажмите "Отчёт"</div>';
             
             document.getElementById('reportOverlay').classList.add('active');
             document.getElementById('reportSheet').classList.add('active');
@@ -795,24 +1062,19 @@
                 return true;
             });
             
-            // Group by teacher (who replaces)
             const byTeacher = {};
             filtered.forEach(r => {
-                if (!byTeacher[r.by]) {
-                    byTeacher[r.by] = { count100: 0, count50: 0, total: 0 };
-                }
-                if (r.type === '100') {
-                    byTeacher[r.by].count100++;
-                } else {
-                    byTeacher[r.by].count50++;
-                }
+                if (!byTeacher[r.by]) byTeacher[r.by] = { count100: 0, count50: 0, total: 0, completed: 0 };
+                if (r.type === '100') byTeacher[r.by].count100++;
+                else byTeacher[r.by].count50++;
                 byTeacher[r.by].total++;
+                if (r.completed) byTeacher[r.by].completed++;
             });
             
             const sorted = Object.entries(byTeacher).sort((a,b) => b[1].total - a[1].total);
             
             if (sorted.length === 0) {
-                document.getElementById('reportContent').innerHTML = '<div class="text-center text-slate-400 py-8">Нет данных за выбранный период</div>';
+                document.getElementById('reportContent').innerHTML = '<div class="text-center text-slate-400 py-8">Нет данных</div>';
                 return;
             }
             
@@ -820,163 +1082,104 @@
             const total50 = filtered.filter(r => r.type === '50').length;
             
             document.getElementById('reportContent').innerHTML = `
-                <div class="bg-slate-100 p-4 rounded-xl mb-4">
+                <div class="bg-gradient-to-r from-slate-100 to-slate-50 p-4 rounded-xl mb-4">
                     <div class="text-center mb-3">
                         <div class="text-3xl font-black text-slate-700">${filtered.length}</div>
-                        <div class="text-xs text-slate-500 uppercase font-bold">Всего замен</div>
+                        <div class="text-xs text-slate-500 uppercase font-bold">Замен за период</div>
                     </div>
                     <div class="flex justify-center gap-6">
                         <div class="text-center">
                             <div class="text-xl font-black text-blue-600">${total100}</div>
-                            <div class="text-[10px] text-blue-500 uppercase font-bold">🪟 Окна</div>
+                            <div class="text-[9px] text-blue-500 uppercase font-bold">🪟 100%</div>
                         </div>
                         <div class="text-center">
                             <div class="text-xl font-black text-amber-600">${total50}</div>
-                            <div class="text-[10px] text-amber-500 uppercase font-bold">📚 Уроки</div>
+                            <div class="text-[9px] text-amber-500 uppercase font-bold">📚 50%</div>
                         </div>
                     </div>
                 </div>
                 
-                <div class="text-xs font-bold text-slate-400 uppercase mb-2">По учителям:</div>
+                <div class="text-xs font-bold text-slate-400 uppercase mb-2">По учителям (заменяющим):</div>
                 ${sorted.map(([name, data]) => `
-                    <div class="teacher-report-item bg-white border border-slate-100 p-3 rounded-xl mb-2">
+                    <div class="bg-white border border-slate-100 p-3 rounded-xl mb-2 shadow-sm">
                         <div class="flex justify-between items-center">
                             <div class="font-bold text-slate-700">${name}</div>
                             <div class="text-lg font-black text-slate-600">${data.total}</div>
                         </div>
                         <div class="flex gap-3 mt-1">
-                            <span class="text-xs text-blue-600 font-medium">🪟 ${data.count100} окон</span>
-                            <span class="text-xs text-amber-600 font-medium">📚 ${data.count50} уроков</span>
+                            <span class="text-xs text-blue-600 font-medium">🪟 ${data.count100}</span>
+                            <span class="text-xs text-amber-600 font-medium">📚 ${data.count50}</span>
+                            <span class="text-xs text-emerald-600 font-medium">✓ ${data.completed}</span>
                         </div>
                     </div>
                 `).join('')}
             `;
         };
-        
-        const openPrintDialog = () => {
-            const now = new Date();
-            const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
-            document.getElementById('printDateFrom').value = firstDay.toISOString().slice(0,10);
-            document.getElementById('printDateTo').value = now.toISOString().slice(0,10);
+
+        // Stats modal
+        const openStats = () => {
+            const byAbsent = {};
+            reps.forEach(r => {
+                if (!byAbsent[r.who]) byAbsent[r.who] = { total: 0, reasons: {} };
+                byAbsent[r.who].total++;
+                byAbsent[r.who].reasons[r.reason] = (byAbsent[r.who].reasons[r.reason] || 0) + 1;
+            });
             
-            // Populate teacher select
-            const select = document.getElementById('printTeacher');
-            const teachers = [...new Set(reps.map(r => r.by))].sort();
-            select.innerHTML = '<option value="">Все учителя</option>' + teachers.map(t => `<option value="${t}">${t}</option>`).join('');
+            const sorted = Object.entries(byAbsent).sort((a,b) => b[1].total - a[1].total);
             
-            document.getElementById('printOverlay').classList.add('active');
-            document.getElementById('printSheet').classList.add('active');
+            document.getElementById('statsContent').innerHTML = `
+                <div class="text-xs font-bold text-slate-400 uppercase mb-2">🏥 Кто чаще отсутствует:</div>
+                ${sorted.length === 0 ? '<div class="text-center text-slate-400 py-8">Нет данных</div>' : ''}
+                ${sorted.slice(0, 10).map(([name, data]) => {
+                    const mainReason = Object.entries(data.reasons).sort((a,b) => b[1] - a[1])[0];
+                    const reasonInfo = getReasonInfo(mainReason[0]);
+                    return `
+                    <div class="bg-white border border-slate-100 p-3 rounded-xl shadow-sm">
+                        <div class="flex justify-between items-center">
+                            <div class="font-bold text-slate-700">${name}</div>
+                            <div class="text-lg font-black text-red-500">${data.total}</div>
+                        </div>
+                        <div class="mt-1">
+                            <span class="reason-tag ${reasonInfo.class}">${reasonInfo.icon} ${mainReason[1]}×</span>
+                        </div>
+                    </div>
+                `}).join('')}
+            `;
+            
+            document.getElementById('statsOverlay').classList.add('active');
+            document.getElementById('statsSheet').classList.add('active');
             document.body.style.overflow = 'hidden';
         };
         
-        const closePrintDialog = () => {
-            document.getElementById('printOverlay').classList.remove('active');
-            document.getElementById('printSheet').classList.remove('active');
+        const closeStats = () => {
+            document.getElementById('statsOverlay').classList.remove('active');
+            document.getElementById('statsSheet').classList.remove('active');
             document.body.style.overflow = '';
         };
-        
-        const doPrint = () => {
-            const from = document.getElementById('printDateFrom').value;
-            const to = document.getElementById('printDateTo').value;
-            const teacher = document.getElementById('printTeacher').value;
-            
-            // Set filter values for print
-            document.getElementById('filterDateFrom').value = from;
-            document.getElementById('filterDateTo').value = to;
-            document.getElementById('search').value = teacher;
-            
-            // Set print header
-            const fromDate = from ? new Date(from).toLocaleDateString('ru-RU') : '';
-            const toDate = to ? new Date(to).toLocaleDateString('ru-RU') : '';
-            document.getElementById('printPeriod').textContent = `Период: ${fromDate} — ${toDate}` + (teacher ? ` | Учитель: ${teacher}` : '');
-            document.getElementById('printDate').textContent = new Date().toLocaleDateString('ru-RU');
-            
-            render();
-            closePrintDialog();
-            
-            setTimeout(() => {
-                window.print();
-            }, 300);
-        };
 
-        document.getElementById('mainForm').onsubmit = function(e) {
-            e.preventDefault();
-            
-            const editId = document.getElementById('editId').value;
-            const data = {
-                date: document.getElementById('fDate').value,
-                type: document.getElementById('fType').value,
-                subject: document.getElementById('fSubject').value.trim(),
-                who: document.getElementById('fWho').value.trim(),
-                by: document.getElementById('fBy').value.trim()
-            };
-            
-            if (editId) {
-                const index = reps.findIndex(r => r.id === parseInt(editId));
-                if (index !== -1) {
-                    reps[index] = { ...reps[index], ...data };
-                    showToast('✅ Изменения сохранены');
-                }
-            } else {
-                const rec = { id: Date.now(), ...data };
-                reps.push(rec);
-                showToast('✅ Замена добавлена');
-            }
-            
-            if(!master.t.includes(data.who)) master.t.push(data.who);
-            if(!master.t.includes(data.by)) master.t.push(data.by);
-            if(!master.s.includes(data.subject)) master.s.push(data.subject);
-            
-            save(); 
-            render(); 
-            closeForm();
-        };
-
-        const updateStats = () => {
-            document.getElementById('statTotal').textContent = reps.length;
-            document.getElementById('stat100').textContent = reps.filter(r => r.type === '100').length;
-            document.getElementById('stat50').textContent = reps.filter(r => r.type === '50').length;
-            document.getElementById('statMonth').textContent = reps.filter(r => 
-                new Date(r.date).getMonth() === new Date().getMonth() &&
-                new Date(r.date).getFullYear() === new Date().getFullYear()
-            ).length;
-        };
-
-        const updateDatalists = () => {
-            document.getElementById('teachers').innerHTML = master.t.sort().map(t => `<option value="${t}">`).join('');
-            document.getElementById('subjects').innerHTML = master.s.sort().map(s => `<option value="${s}">`).join('');
+        // Settings
+        const openSettings = () => {
+            document.getElementById('showTemplates').checked = settings.showTemplates;
+            document.getElementById('settingsOverlay').classList.add('active');
+            document.getElementById('settingsSheet').classList.add('active');
+            document.body.style.overflow = 'hidden';
         };
         
-        const filterByType = (type) => {
-            if (type === 'all') {
-                activeFilter = null;
-            } else {
-                activeFilter = { type: 'percent', value: type };
-            }
-            render();
-        };
-        
-        const filterByMonth = () => {
-            activeFilter = { type: 'month' };
-            render();
+        const closeSettings = () => {
+            document.getElementById('settingsOverlay').classList.remove('active');
+            document.getElementById('settingsSheet').classList.remove('active');
+            document.body.style.overflow = '';
         };
 
-        const clearFilter = () => { 
-            document.getElementById('search').value = ''; 
-            document.getElementById('filterDateFrom').value = '';
-            document.getElementById('filterDateTo').value = '';
-            activeFilter = null;
-            render(); 
-        };
-
+        // Export/Import
         function exportJSON() {
-            const data = { reps, master, exportDate: new Date().toISOString(), version: '3.0' };
+            const data = { reps, master, templates, exportDate: new Date().toISOString(), version: '4.0' };
             const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
             const a = document.createElement('a'); 
             a.href = URL.createObjectURL(blob);
-            a.download = `zavuch_backup_${new Date().toISOString().slice(0,10)}.json`; 
+            a.download = `zavuch_backup_${getToday()}.json`; 
             a.click();
-            showToast('📦 Резервная копия создана');
+            showToast('📦 Бэкап создан');
         }
         
         function importJSON(event) {
@@ -987,39 +1190,84 @@
             reader.onload = function(e) {
                 try {
                     const data = JSON.parse(e.target.result);
-                    if (data.reps && Array.isArray(data.reps)) {
-                        if (confirm(`Импортировать ${data.reps.length} записей?\n\nТекущие данные будут заменены!`)) {
+                    if (data.reps) {
+                        if (confirm(`Импортировать ${data.reps.length} записей? Текущие данные будут заменены!`)) {
                             reps = data.reps;
-                            master = data.master || {t:[], s:[]};
-                            save();
-                            render();
-                            showToast(`✅ Импортировано: ${reps.length} записей`);
+                            master = data.master || {t:[], s:[], c:[]};
+                            templates = data.templates || [];
+                            save(); render();
+                            showToast(`✅ Импорт: ${reps.length} записей`);
                         }
-                    } else {
-                        showToast('❌ Неверный формат файла');
                     }
                 } catch (err) {
-                    showToast('❌ Ошибка чтения файла');
+                    showToast('❌ Ошибка файла');
                 }
             };
             reader.readAsText(file);
             event.target.value = '';
         }
         
-        // Close on back button
-        window.addEventListener('popstate', () => {
-            if (document.getElementById('modalSheet').classList.contains('active')) {
-                closeForm();
-            }
-            if (document.getElementById('reportSheet').classList.contains('active')) {
-                closeReport();
-            }
-            if (document.getElementById('printSheet').classList.contains('active')) {
-                closePrintDialog();
-            }
-        });
+        function exportCSV() {
+            const from = document.getElementById('reportDateFrom').value;
+            const to = document.getElementById('reportDateTo').value;
+            
+            const filtered = reps.filter(r => {
+                if (from && r.date < from) return false;
+                if (to && r.date > to) return false;
+                return true;
+            }).sort((a,b) => new Date(a.date) - new Date(b.date));
+            
+            const headers = ['Дата', 'Урок', 'Класс', 'Предмет', 'Отсутствует', 'Заменяет', 'Тип %', 'Причина', 'Выполнено'];
+            const rows = filtered.map(r => [
+                r.date,
+                r.lesson || 1,
+                r.class || '',
+                r.subject,
+                r.who,
+                r.by,
+                r.type,
+                getReasonInfo(r.reason).label,
+                r.completed ? 'Да' : 'Нет'
+            ]);
+            
+            const csv = [headers, ...rows].map(row => row.map(cell => `"${cell}"`).join(';')).join('\n');
+            const blob = new Blob(['\ufeff' + csv], {type: 'text/csv;charset=utf-8'});
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `zameny_${from}_${to}.csv`;
+            a.click();
+            showToast('📥 Excel файл создан');
+        }
         
-        // Click outside to close swipe
+        function doPrint() {
+            const from = document.getElementById('reportDateFrom').value;
+            const to = document.getElementById('reportDateTo').value;
+            
+            document.getElementById('filterDateFrom').value = from;
+            document.getElementById('filterDateTo').value = to;
+            document.getElementById('printPeriod').textContent = `Период: ${from} — ${to}`;
+            document.getElementById('printDate').textContent = new Date().toLocaleDateString('ru-RU');
+            
+            setTab('all');
+            closeReport();
+            
+            setTimeout(() => window.print(), 300);
+        }
+        
+        function clearAllData() {
+            if (confirm('⚠️ Удалить ВСЕ данные? Это действие нельзя отменить!')) {
+                if (confirm('Вы уверены? Все записи будут потеряны!')) {
+                    reps = [];
+                    master = {t:[], s:[], c:[]};
+                    templates = [];
+                    save(); render();
+                    closeSettings();
+                    showToast('🗑️ Все данные удалены');
+                }
+            }
+        }
+
+        // Touch outside to close swipe
         document.addEventListener('touchstart', (e) => {
             if (!e.target.closest('.swipe-container') && currentSwipeEl) {
                 resetSwipes();
