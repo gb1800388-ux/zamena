@@ -2,272 +2,231 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Завуч-Ультра v1.5</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Завуч-Ультра v1.6</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
-        :root { --primary: #1e40af; }
-        * { -webkit-tap-highlight-color: transparent; }
-        body { overscroll-behavior: none; }
-        input, select, button { font-size: 16px !important; }
-        .safe-bottom { padding-bottom: env(safe-area-inset-bottom, 20px); }
+        :root { --p100: #2563eb; --p50: #f59e0b; }
+        * { -webkit-tap-highlight-color: transparent; touch-action: pan-y; }
+        body { overscroll-behavior-y: contain; padding-top: env(safe-area-inset-top); }
         
+        /* Swipe styles */
+        .swipe-container { position: relative; overflow: hidden; border-radius: 1.5rem; transition: transform 0.2s; }
+        .swipe-item { position: relative; z-index: 10; background: white; transition: transform 0.3s ease-out; }
+        .swipe-action { 
+            position: absolute; right: 0; top: 0; bottom: 0; width: 100px; 
+            background: #ef4444; color: white; display: flex; align-items: center; 
+            justify-content: center; font-weight: bold; border-radius: 0 1.5rem 1.5rem 0;
+        }
+
+        .toast {
+            position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(100px);
+            background: #1e293b; color: white; padding: 0.75rem 1.5rem; border-radius: 1rem;
+            transition: transform 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28); z-index: 1000;
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); }
+
         @media print {
             .no-print { display: none !important; }
-            body { background: white !important; }
-            table { border-collapse: collapse; width: 100%; border: 1px solid #000; }
-            th, td { border: 1px solid #000 !important; padding: 8px !important; color: #000 !important; }
-            .print-only { display: block !important; }
+            .print-area { padding: 0; }
+            table { width: 100%; border-collapse: collapse; }
+            th, td { border: 1px solid black !important; padding: 8px; text-align: left; }
         }
-        
-        .record-card {
-            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-            border-left: 4px solid var(--primary);
-        }
-        .print-only { display: none; }
-        .fade-in { animation: fadeIn 0.3s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body class="bg-slate-50 min-h-screen pb-20 sm:pb-8">
+<body class="bg-slate-50 min-h-screen pb-10">
 
-    <div class="container mx-auto px-4 py-6 max-w-6xl safe-bottom">
+    <div class="max-w-4xl mx-auto px-4 py-6">
         <!-- Header -->
-        <header class="flex justify-between items-center mb-6 no-print">
-            <div>
-                <h1 class="text-2xl font-black text-blue-900 tracking-tight">ЗАВУЧ-УЛЬТРА</h1>
-                <p class="text-slate-500 text-xs font-bold uppercase">Система контроля замен</p>
-            </div>
-            <div class="flex gap-2">
-                <button onclick="exportJSON()" class="bg-white p-2 rounded-xl shadow-sm border border-slate-200 text-slate-600 hover:bg-slate-50">📥</button>
-            </div>
+        <header class="flex justify-between items-center mb-8 no-print">
+            <h1 class="text-3xl font-black text-slate-900 tracking-tighter">ЗАВУЧ<span class="text-blue-600">.PRO</span></h1>
+            <button onclick="exportJSON()" class="text-slate-400 hover:text-blue-600 transition">Экспорт 📥</button>
         </header>
 
         <!-- Stats -->
-        <div class="grid grid-cols-4 gap-2 sm:gap-4 mb-8 no-print">
-            <div class="bg-white p-3 rounded-2xl shadow-sm border border-slate-100 text-center">
-                <div id="statTotal" class="text-xl sm:text-3xl font-black text-blue-600">0</div>
-                <div class="text-[10px] sm:text-xs text-slate-400 font-bold uppercase">Замен</div>
+        <div class="grid grid-cols-4 gap-3 mb-8 no-print">
+            <div class="bg-white p-4 rounded-3xl shadow-sm border border-slate-100 text-center">
+                <div id="statTotal" class="text-2xl font-black">0</div>
+                <div class="text-[9px] uppercase font-bold text-slate-400">Всего</div>
             </div>
-            <div id="stat100Btn" class="bg-white p-3 rounded-2xl shadow-sm border border-slate-100 text-center cursor-pointer hover:border-blue-300">
-                <div id="stat100" class="text-xl sm:text-3xl font-black text-emerald-500">0</div>
-                <div class="text-[10px] sm:text-xs text-slate-400 font-bold uppercase">Окна</div>
+            <div class="bg-blue-600 p-4 rounded-3xl shadow-lg text-center text-white">
+                <div id="stat100" class="text-2xl font-black">0</div>
+                <div class="text-[9px] uppercase font-bold opacity-80">Окна</div>
             </div>
-            <div id="stat50Btn" class="bg-white p-3 rounded-2xl shadow-sm border border-slate-100 text-center cursor-pointer hover:border-blue-300">
-                <div id="stat50" class="text-xl sm:text-3xl font-black text-amber-500">0</div>
-                <div class="text-[10px] sm:text-xs text-slate-400 font-bold uppercase">50%</div>
+            <div class="bg-amber-500 p-4 rounded-3xl shadow-lg text-center text-white">
+                <div id="stat50" class="text-2xl font-black">0</div>
+                <div class="text-[9px] uppercase font-bold opacity-80">50%</div>
             </div>
-            <div class="bg-white p-3 rounded-2xl shadow-sm border border-slate-100 text-center">
-                <div id="statMonth" class="text-xl sm:text-3xl font-black text-slate-700">0</div>
-                <div class="text-[10px] sm:text-xs text-slate-400 font-bold uppercase">Месяц</div>
-            </div>
-        </div>
-
-        <!-- Desktop Form -->
-        <div class="hidden sm:block bg-white rounded-3xl shadow-xl p-8 mb-8 no-print border border-blue-50">
-            <h2 class="text-lg font-bold mb-6 text-slate-800 flex items-center gap-2">⚡ БЫСТРЫЙ ВВОД</h2>
-            <form id="desktopForm" class="grid grid-cols-3 gap-5">
-                <input type="date" name="date" required class="bg-slate-50 p-4 rounded-2xl border-none focus:ring-2 focus:ring-blue-500">
-                <select name="type" class="bg-slate-50 p-4 rounded-2xl border-none focus:ring-2 focus:ring-blue-500">
-                    <option value="100">100% (Окно)</option>
-                    <option value="50">50% (Свой урок)</option>
-                </select>
-                <input list="subjects" name="subject" placeholder="Предмет" required class="bg-slate-50 p-4 rounded-2xl border-none focus:ring-2 focus:ring-blue-500">
-                <input list="teachers" name="who" placeholder="Кто отсутствует" required class="bg-slate-50 p-4 rounded-2xl border-none focus:ring-2 focus:ring-blue-500">
-                <input list="teachers" name="by" placeholder="Кто заменяет" required class="bg-slate-50 p-4 rounded-2xl border-none focus:ring-2 focus:ring-blue-500">
-                <button type="submit" class="bg-blue-600 text-white font-black rounded-2xl hover:bg-blue-700 shadow-lg shadow-blue-200 transition">ДОБАВИТЬ</button>
-            </form>
-        </div>
-
-        <!-- Print/View Area -->
-        <div id="printArea" class="bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100 p-4 sm:p-8">
-            <div class="print-only mb-10 text-center">
-                <h1 class="text-2xl font-bold mb-2">ВЕДОМОСТЬ УЧЁТА ЗАМЕН</h1>
-                <p id="printPeriod" class="text-slate-600 font-medium"></p>
-            </div>
-
-            <!-- Desktop View -->
-            <div class="hidden sm:block overflow-x-auto">
-                <table class="w-full">
-                    <thead>
-                        <tr class="bg-slate-50 text-slate-400 text-[10px] uppercase font-black tracking-widest">
-                            <th class="px-6 py-4 text-left">Дата</th>
-                            <th class="px-6 py-4 text-left">Предмет</th>
-                            <th class="px-6 py-4 text-left">Отсутствовал</th>
-                            <th class="px-6 py-4 text-left">Заменял</th>
-                            <th class="px-6 py-4 text-center">Тип</th>
-                            <th class="px-6 py-4 text-right no-print">Правка</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tableBody" class="divide-y divide-slate-50"></tbody>
-                </table>
-            </div>
-
-            <!-- Mobile View -->
-            <div id="mobileBody" class="sm:hidden space-y-3"></div>
-
-            <!-- Print Signatures -->
-            <div class="hidden print:grid grid-cols-2 gap-20 mt-16 px-4">
-                <div class="border-t border-black pt-2 text-xs font-bold text-center italic">Заместитель директора (подпись)</div>
-                <div class="border-t border-black pt-2 text-xs font-bold text-center italic">Бухгалтер (принял)</div>
+            <div class="bg-white p-4 rounded-3xl shadow-sm border border-slate-100 text-center">
+                <div id="statMonth" class="text-2xl font-black">0</div>
+                <div class="text-[9px] uppercase font-bold text-slate-400">Месяц</div>
             </div>
         </div>
+
+        <!-- Mobile Records -->
+        <div id="mobileBody" class="space-y-4"></div>
     </div>
 
-    <!-- Mobile FAB -->
-    <button onclick="openForm()" class="sm:hidden fixed bottom-6 right-6 w-16 h-16 bg-blue-600 text-white rounded-full shadow-2xl text-3xl font-bold z-50 flex items-center justify-center active:scale-90 transition no-print">+</button>
+    <!-- FAB -->
+    <button onclick="openForm()" class="fixed bottom-8 right-6 w-16 h-16 bg-blue-600 text-white rounded-full shadow-2xl text-4xl font-light z-50 no-print">+</button>
 
-    <!-- Form Modal -->
-    <div id="modal" class="fixed inset-0 bg-slate-900/60 hidden items-end sm:items-center justify-center z-[100] no-print backdrop-blur-sm">
-        <div class="bg-white w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl p-6 fade-in">
+    <!-- Modal -->
+    <div id="modal" class="fixed inset-0 bg-slate-900/40 hidden items-end sm:items-center justify-center z-[100] no-print backdrop-blur-md">
+        <div class="bg-white w-full sm:max-w-md rounded-t-[2.5rem] sm:rounded-[2rem] p-8 shadow-2xl transition-all">
             <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-black text-slate-800 uppercase tracking-tight">Новая запись</h3>
-                <button onclick="closeForm()" class="text-slate-400 text-2xl">✕</button>
+                <h3 class="text-2xl font-black text-slate-800">Новая замена</h3>
+                <button onclick="closeForm()" class="text-slate-300 text-3xl">&times;</button>
             </div>
-            <form id="mobileForm" class="space-y-4">
-                <input type="date" id="mDate" required class="w-full bg-slate-100 p-4 rounded-2xl border-none">
-                <select id="mType" class="w-full bg-slate-100 p-4 rounded-2xl border-none">
-                    <option value="100">100% (Окно)</option>
-                    <option value="50">50% (Свой урок)</option>
-                </select>
-                <input list="subjects" id="mSubject" placeholder="Предмет" required class="w-full bg-slate-100 p-4 rounded-2xl border-none">
-                <input list="teachers" id="mWho" placeholder="Кто отсутствует" required class="w-full bg-slate-100 p-4 rounded-2xl border-none">
-                <input list="teachers" id="mBy" placeholder="Кто заменяет" required class="w-full bg-slate-100 p-4 rounded-2xl border-none">
-                <button type="submit" class="w-full bg-blue-600 text-white font-black py-4 rounded-2xl shadow-lg">СОХРАНИТЬ</button>
+            <form id="mainForm" class="space-y-5">
+                <div class="grid grid-cols-2 gap-4">
+                    <input type="date" id="fDate" required class="bg-slate-100 p-4 rounded-2xl border-none font-bold text-blue-600">
+                    <select id="fType" class="bg-slate-100 p-4 rounded-2xl border-none font-bold">
+                        <option value="100">🔥 100% Окно</option>
+                        <option value="50">⏳ 50% Урок</option>
+                    </select>
+                </div>
+                <input list="subjects" id="fSubject" placeholder="Предмет" required class="w-full bg-slate-100 p-4 rounded-2xl border-none">
+                <input list="teachers" id="fWho" placeholder="Кто отсутствует" required class="w-full bg-slate-100 p-4 rounded-2xl border-none">
+                <input list="teachers" id="fBy" placeholder="Кто заменяет" required class="w-full bg-slate-100 p-4 rounded-2xl border-none">
+                <button type="submit" class="w-full bg-blue-600 text-white font-black py-5 rounded-2xl shadow-xl active:scale-95 transition">СОХРАНИТЬ ЗАПИСЬ</button>
             </form>
         </div>
     </div>
 
+    <div id="toast" class="toast">Запись сохранена</div>
     <datalist id="teachers"></datalist>
     <datalist id="subjects"></datalist>
 
     <script>
-        let reps = JSON.parse(localStorage.getItem('ultra_v15')) || [];
-        let teachers = JSON.parse(localStorage.getItem('ultra_teachers_v15')) || [];
-        let subjects = JSON.parse(localStorage.getItem('ultra_subs_v15')) || [];
+        let reps = JSON.parse(localStorage.getItem('v16_data')) || [];
+        let master = JSON.parse(localStorage.getItem('v16_master')) || {t:[], s:[]};
 
-        // App Logic
         const save = () => {
-            localStorage.setItem('ultra_v15', JSON.stringify(reps));
-            localStorage.setItem('ultra_teachers_v15', JSON.stringify(teachers));
-            localStorage.setItem('ultra_subs_v15', JSON.stringify(subjects));
-        };
-
-        const updateMaster = (r) => {
-            if(!teachers.includes(r.who)) teachers.push(r.who);
-            if(!teachers.includes(r.by)) teachers.push(r.by);
-            if(!subjects.includes(r.subject)) subjects.push(r.subject);
+            localStorage.setItem('v16_data', JSON.stringify(reps));
+            localStorage.setItem('v16_master', JSON.stringify(master));
         };
 
         const render = () => {
+            const container = document.getElementById('mobileBody');
             const sorted = [...reps].sort((a,b) => new Date(b.date) - new Date(a.date));
             
-            // Desktop
-            document.getElementById('tableBody').innerHTML = sorted.map(r => `
-                <tr class="hover:bg-blue-50/50 text-sm">
-                    <td class="px-6 py-4 font-bold text-slate-400">${new Date(r.date).toLocaleDateString('ru-RU')}</td>
-                    <td class="px-6 py-4 font-black text-blue-700 italic">${r.subject}</td>
-                    <td class="px-6 py-4 text-slate-500">${r.who}</td>
-                    <td class="px-6 py-4 font-bold text-slate-800">${r.by}</td>
-                    <td class="px-6 py-4 text-center">
-                        <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase ${r.type == '100' ? 'bg-emerald-100 text-emerald-600' : 'bg-amber-100 text-amber-600'}">${r.type}%</span>
-                    </td>
-                    <td class="px-6 py-4 text-right no-print">
-                        <button onclick="del(${r.id})" class="text-rose-400 hover:text-rose-600">✕</button>
-                    </td>
-                </tr>
-            `).join('');
-
-            // Mobile
-            document.getElementById('mobileBody').innerHTML = sorted.map(r => `
-                <div class="record-card p-4 rounded-2xl shadow-sm fade-in">
-                    <div class="flex justify-between items-start mb-3">
-                        <div>
-                            <span class="text-sm font-black text-blue-900 uppercase">${new Date(r.date).toLocaleDateString('ru-RU')}</span>
-                            <div class="text-xs font-bold text-blue-500 italic uppercase tracking-tighter">${r.subject}</div>
+            container.innerHTML = sorted.map(r => {
+                const d = new Date(r.date);
+                const day = d.getDate();
+                const month = d.toLocaleDateString('ru-RU', { month: 'short' }).replace('.', '');
+                
+                return `
+                <div class="swipe-container shadow-sm border border-slate-100">
+                    <div class="swipe-action" onclick="confirmDelete(${r.id})">УДАЛИТЬ</div>
+                    <div class="swipe-item p-5 flex items-center gap-5" 
+                         ontouchstart="handleTouchStart(event)" 
+                         ontouchmove="handleTouchMove(event, this)" 
+                         ontouchend="handleTouchEnd(event, this)">
+                        
+                        <!-- Date Block -->
+                        <div class="flex flex-col items-center bg-slate-50 px-3 py-2 rounded-xl min-w-[55px]">
+                            <span class="text-xl font-black text-slate-800 leading-none">${day}</span>
+                            <span class="text-[10px] uppercase font-bold text-slate-400">${month}</span>
                         </div>
-                        <span class="px-2 py-1 rounded-lg text-[10px] font-black ${r.type == '100' ? 'bg-emerald-100 text-emerald-600' : 'bg-amber-100 text-amber-600'}">${r.type}%</span>
-                    </div>
-                    <div class="grid grid-cols-2 gap-2 text-xs">
-                        <div><div class="text-[9px] text-slate-400 uppercase font-bold">Отсутствует</div><div class="font-bold text-slate-600">${r.who}</div></div>
-                        <div><div class="text-[9px] text-slate-400 uppercase font-bold">Замещает</div><div class="font-bold text-slate-800">${r.by}</div></div>
-                    </div>
-                    <div class="mt-3 flex justify-end"><button onclick="del(${r.id})" class="text-rose-300 text-sm">Удалить запись ✕</button></div>
-                </div>
-            `).join('') || '<div class="text-center py-20 text-slate-300 font-bold uppercase tracking-widest italic">Журнал пуст</div>';
 
+                        <!-- Info -->
+                        <div class="flex-1">
+                            <div class="text-[10px] font-black uppercase tracking-widest text-blue-500 mb-0.5">${r.subject}</div>
+                            <div class="text-sm font-bold text-slate-800 line-clamp-1">${r.by} <span class="text-slate-300 font-normal">вместо</span> ${r.who}</div>
+                        </div>
+
+                        <!-- Badge -->
+                        <div class="text-right">
+                            <div class="text-lg font-black ${r.type == '100' ? 'text-blue-600' : 'text-amber-500'}">${r.type}%</div>
+                            <div class="text-[8px] font-bold text-slate-400 uppercase tracking-tighter">${r.type == '100' ? 'ОКНО' : 'СОВМЕЩЕНИЕ'}</div>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('') || '<div class="text-center py-20 text-slate-300 font-bold uppercase tracking-widest italic">Журнал пуст</div>';
+            
             updateStats();
             updateDatalists();
         };
 
-        const updateStats = () => {
-            const now = new Date();
-            document.getElementById('statTotal').textContent = reps.length;
-            document.getElementById('stat100').textContent = reps.filter(r => r.type == '100').length;
-            document.getElementById('stat50').textContent = reps.filter(r => r.type == '50').length;
-            document.getElementById('statMonth').textContent = reps.filter(r => new Date(r.date).getMonth() === now.getMonth()).length;
+        // Swipe Logic
+        let startX = 0;
+        const handleTouchStart = e => startX = e.touches[0].clientX;
+        const handleTouchMove = (e, el) => {
+            let moveX = e.touches[0].clientX - startX;
+            if (moveX < 0 && moveX > -120) el.style.transform = `translateX(${moveX}px)`;
+        };
+        const handleTouchEnd = (e, el) => {
+            let finalX = parseInt(el.style.transform.replace(/[^-0-9]/g, '')) || 0;
+            el.style.transform = finalX < -60 ? 'translateX(-100px)' : 'translateX(0)';
         };
 
-        const updateDatalists = () => {
-            document.getElementById('teachers').innerHTML = teachers.map(t => `<option value="${t}">`).join('');
-            document.getElementById('subjects').innerHTML = subjects.map(s => `<option value="${s}">`).join('');
+        const confirmDelete = id => {
+            if(confirm('Удалить эту замену?')) {
+                reps = reps.filter(r => r.id !== id);
+                save();
+                render();
+                showToast('Запись удалена');
+            } else {
+                render(); // Reset swipe state
+            }
         };
 
-        const del = (id) => confirm('Удалить?') && (reps = reps.filter(r => r.id !== id), save(), render());
+        const showToast = msg => {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 2000);
+        };
 
-        // Modal Control
         const openForm = () => document.getElementById('modal').classList.replace('hidden', 'flex');
         const closeForm = () => document.getElementById('modal').classList.replace('flex', 'hidden');
 
-        // Form Handlers
-        const handleAdd = (data) => {
-            reps.push(data);
-            updateMaster(data);
+        document.getElementById('mainForm').onsubmit = function(e) {
+            e.preventDefault();
+            const rec = {
+                id: Date.now(),
+                date: document.getElementById('fDate').value,
+                type: document.getElementById('fType').value,
+                subject: document.getElementById('fSubject').value.trim(),
+                who: document.getElementById('fWho').value.trim(),
+                by: document.getElementById('fBy').value.trim()
+            };
+            
+            reps.push(rec);
+            if(!master.t.includes(rec.who)) master.t.push(rec.who);
+            if(!master.t.includes(rec.by)) master.t.push(rec.by);
+            if(!master.s.includes(rec.subject)) master.s.push(rec.subject);
+            
             save();
             render();
-            alert('✓ Сохранено');
-        };
-
-        document.getElementById('desktopForm').onsubmit = function(e) {
-            e.preventDefault();
-            const f = new FormData(this);
-            handleAdd({
-                id: Date.now(),
-                date: f.get('date'),
-                type: f.get('type'),
-                subject: f.get('subject').trim(),
-                who: f.get('who').trim(),
-                by: f.get('by').trim()
-            });
-            this.reset();
-            this.date.valueAsDate = new Date();
-        };
-
-        document.getElementById('mobileForm').onsubmit = function(e) {
-            e.preventDefault();
-            handleAdd({
-                id: Date.now(),
-                date: document.getElementById('mDate').value,
-                type: document.getElementById('mType').value,
-                subject: document.getElementById('mSubject').value.trim(),
-                who: document.getElementById('mWho').value.trim(),
-                by: document.getElementById('mBy').value.trim()
-            });
             closeForm();
+            showToast('✓ Сохранено в журнал');
+            this.reset();
+            document.getElementById('fDate').valueAsDate = new Date();
+        };
+
+        const updateStats = () => {
+            document.getElementById('statTotal').textContent = reps.length;
+            document.getElementById('stat100').textContent = reps.filter(r => r.type == '100').length;
+            document.getElementById('stat50').textContent = reps.filter(r => r.type == '50').length;
+            document.getElementById('statMonth').textContent = reps.filter(r => new Date(r.date).getMonth() === new Date().getMonth()).length;
+        };
+
+        const updateDatalists = () => {
+            document.getElementById('teachers').innerHTML = master.t.map(t => `<option value="${t}">`).join('');
+            document.getElementById('subjects').innerHTML = master.s.map(s => `<option value="${s}">`).join('');
         };
 
         function exportJSON() {
-            const data = { reps, teachers, subjects };
-            const blob = new Blob([JSON.stringify(data)], {type: 'application/json'});
+            const blob = new Blob([JSON.stringify({reps, master})], {type: 'application/json'});
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
-            a.download = `zavuch_ultra_${new Date().toISOString().slice(0,10)}.json`;
+            a.download = `zavuch_v16_backup.json`;
             a.click();
         }
 
-        // Init
-        document.getElementById('desktopForm').date.valueAsDate = new Date();
-        document.getElementById('mDate').valueAsDate = new Date();
+        document.getElementById('fDate').valueAsDate = new Date();
         render();
     </script>
 </body>
