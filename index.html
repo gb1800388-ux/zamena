@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -12,61 +11,77 @@
         * { -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; }
         body { 
             overscroll-behavior-y: contain;
-            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
             min-height: 100vh;
-            font-family: system-ui, -apple-system, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
         .safe-top { padding-top: env(safe-area-inset-top); }
+        .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
         .glass { background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
-        .glass-dark { background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+        .glass-dark { background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); }
 
-        /* Исправленный свайп */
+        /* Скроллинг списков ФИО и предметов */
+        .quick-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            max-height: 180px; 
+            overflow-y: auto;
+            padding: 10px;
+            -webkit-overflow-scrolling: touch;
+            background: rgba(248, 250, 252, 0.5);
+            border-radius: 1.25rem;
+        }
+
+        /* Swipe Logic */
         .swipe-container { position: relative; overflow: hidden; border-radius: 1.5rem; margin-bottom: 0.75rem; background: #ef4444; }
         .swipe-item { 
             position: relative; z-index: 10; background: white; 
-            transition: transform 0.25s ease-out;
-            touch-action: pan-y; /* Плавность на iPhone */
+            transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            touch-action: pan-y;
         }
         .swipe-action { position: absolute; right: 0; top: 0; bottom: 0; width: 80px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 900; font-size: 0.6rem; }
 
+        /* Wizard & Modals */
         .modal-sheet {
             position: fixed; bottom: 0; left: 0; right: 0; background: white;
             border-radius: 2.5rem 2.5rem 0 0; z-index: 101;
             transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
-            max-height: 94vh; overflow-y: auto;
+            max-height: 92vh; overflow-y: auto;
         }
         .modal-sheet.active { transform: translateY(0); }
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 100; visibility: hidden; opacity: 0; transition: 0.3s; }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(6px); z-index: 100; visibility: hidden; opacity: 0; transition: 0.3s; }
         .modal-overlay.active { visibility: visible; opacity: 1; }
 
-        .big-input { font-size: 1.25rem; font-weight: 700; text-align: center; background: #f1f5f9; border: 2px solid transparent; border-radius: 1rem; padding: 1rem; width: 100%; outline: none; }
+        .big-input { font-size: 1.5rem; font-weight: 800; text-align: center; background: #f8fafc; border: 3px solid #e2e8f0; border-radius: 1.5rem; padding: 1.25rem; width: 100%; outline: none; transition: 0.3s; }
         .big-input:focus { border-color: #6366f1; background: white; }
+        
+        .lesson-btn { width: 48px; height: 48px; border-radius: 1rem; display: flex; align-items: center; justify-content: center; font-weight: 900; background: #f1f5f9; cursor: pointer; transition: 0.2s; }
+        .lesson-btn.active { background: #6366f1; color: white; transform: scale(1.1); box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4); }
 
-        .lesson-btn { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 900; background: #f1f5f9; cursor: pointer; }
-        .lesson-btn.active { background: #6366f1; color: white; transform: scale(1.1); }
-
-        .toast { position: fixed; bottom: 5rem; left: 50%; transform: translateX(-50%) translateY(100px); background: #1e293b; color: white; padding: 1rem 2rem; border-radius: 1rem; transition: 0.3s; z-index: 1000; font-weight: 600; }
+        .toast { position: fixed; bottom: 6rem; left: 50%; transform: translateX(-50%) translateY(100px); background: #1e293b; color: white; padding: 1rem 2rem; border-radius: 1.25rem; transition: 0.3s; z-index: 1000; font-weight: 600; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
         .toast.show { transform: translateX(-50%) translateY(0); }
-
-        .fab { position: fixed; bottom: 2rem; right: 1.5rem; width: 64px; height: 64px; background: #f59e0b; color: white; border-radius: 50%; font-size: 32px; display: flex; align-items: center; justify-content: center; shadow: 0 10px 25px rgba(245,158,11,0.4); z-index: 50; border: none; }
+        
+        .fab { position: fixed; bottom: 2.5rem; right: 1.5rem; width: 68px; height: 68px; background: #f59e0b; color: white; border-radius: 50%; font-size: 36px; display: flex; align-items: center; justify-content: center; box-shadow: 0 12px 30px rgba(245, 158, 11, 0.5); z-index: 50; border: none; cursor: pointer; }
     </style>
 </head>
 <body class="safe-top">
 
-    <div class="max-w-xl mx-auto px-4 py-6">
+    <div class="max-w-xl mx-auto px-4 py-4 pb-32">
         <header class="flex justify-between items-center mb-6 no-print">
-            <h1 class="text-2xl font-black text-white italic tracking-tighter">ЗАВУЧ<span class="text-yellow-300">.PRO</span></h1>
-            <div class="flex gap-2 text-white/80 text-xs font-bold">
-                <button onclick="exportJSON()">Backup</button>
-                <button onclick="window.print()">Печать</button>
+            <h1 class="text-2xl font-black text-white italic tracking-tighter drop-shadow-md">ЗАВУЧ<span class="text-yellow-300">.PRO</span></h1>
+            <div class="flex gap-3 text-white/90 text-xs font-bold uppercase tracking-widest">
+                <button onclick="exportJSON()">Backup 📥</button>
+                <button onclick="window.print()">Печать 🖨️</button>
             </div>
         </header>
 
-        <!-- Stats -->
+        <!-- Статистика -->
         <div class="grid grid-cols-4 gap-2 mb-6 no-print">
             <div class="glass p-3 rounded-2xl text-center shadow-sm">
                 <div id="statTotal" class="text-lg font-black text-slate-800">0</div>
-                <div class="text-[8px] font-bold text-slate-400 uppercase">Всего</div>
+                <div class="text-[8px] font-bold text-slate-400 uppercase leading-none">Всего</div>
             </div>
             <div class="glass p-3 rounded-2xl border-b-4 border-blue-500 text-center shadow-sm">
                 <div id="stat100" class="text-lg font-black text-blue-600">0</div>
@@ -82,9 +97,9 @@
             </div>
         </div>
 
-        <!-- Filter -->
+        <!-- Фильтр -->
         <div class="mb-4 no-print">
-            <input type="text" id="search" placeholder="Поиск (ФИО, Предмет)..." oninput="render()" class="w-full glass border-none rounded-xl px-5 py-3 text-sm focus:ring-2 focus:ring-white">
+            <input type="text" id="search" placeholder="Поиск учителя или предмета..." oninput="render()" class="w-full glass border-none rounded-2xl px-6 py-4 text-sm focus:ring-2 focus:ring-white outline-none shadow-sm">
         </div>
 
         <div id="journal" class="space-y-1"></div>
@@ -92,42 +107,77 @@
 
     <button onclick="openWizard()" class="fab no-print">+</button>
 
-    <!-- Wizard -->
+    <!-- Wizard Modal -->
     <div id="overlay" class="modal-overlay" onclick="closeWizard()"></div>
-    <div id="wizard" class="modal-sheet p-8">
-        <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6"></div>
-
-        <div id="step1" class="step active space-y-4">
-            <h3 class="text-xl font-black text-center text-slate-800 uppercase italic">Когда замена?</h3>
-            <input type="date" id="wDate" class="big-input text-blue-600 font-bold">
-            <div class="flex justify-between gap-2" id="lessonGrid">
-                <!-- Lessons 1-7 -->
+    <div id="wizard" class="modal-sheet p-8 safe-bottom">
+        <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-8"></div>
+        
+        <!-- Шаг 1: Дата и Урок -->
+        <div id="step1" class="step active space-y-6">
+            <div class="text-center">
+                <div class="text-4xl mb-2">📅</div>
+                <h3 class="text-xl font-black text-slate-800 uppercase italic tracking-tight">Когда замена?</h3>
             </div>
-            <button onclick="next(2)" class="w-full bg-indigo-600 text-white font-black py-4 rounded-2xl shadow-lg">ДАЛЕЕ →</button>
+            <input type="date" id="wDate" class="big-input text-blue-600">
+            <div class="flex justify-between gap-1" id="lessonGrid"></div>
+            <button onclick="next(2)" class="w-full bg-indigo-600 text-white font-black py-5 rounded-2xl shadow-xl active:scale-[0.98] transition">ДАЛЕЕ →</button>
         </div>
 
-        <div id="step2" class="step hidden space-y-4 text-center">
-            <h3 class="text-xl font-black text-slate-800 uppercase italic">Детали</h3>
-            <input type="text" id="wClass" placeholder="Класс (напр. 5А)" class="big-input uppercase">
-            <input type="text" id="wSubject" placeholder="Предмет" class="big-input">
-            <div class="flex gap-2">
-                <button onclick="next(1)" class="w-1/3 bg-slate-100 py-4 rounded-2xl font-bold">←</button>
-                <button onclick="next(3)" class="w-2/3 bg-indigo-600 text-white font-black py-4 rounded-2xl shadow-lg">ДАЛЕЕ →</button>
+        <!-- Шаг 2: Класс и Предмет -->
+        <div id="step2" class="step hidden space-y-6">
+            <div class="text-center">
+                <div class="text-4xl mb-2">🏫</div>
+                <h3 class="text-xl font-black text-slate-800 uppercase italic tracking-tight">Где и что?</h3>
+            </div>
+            <input type="text" id="wClass" placeholder="КЛАСС (НАПР. 5А)" class="big-input uppercase">
+            <input type="text" id="wSubject" placeholder="ПРЕДМЕТ" class="big-input">
+            <div class="flex gap-3">
+                <button onclick="next(1)" class="w-1/3 bg-slate-100 py-5 rounded-2xl font-bold text-slate-400">←</button>
+                <button onclick="next(3)" class="w-2/3 bg-indigo-600 text-white font-black py-5 rounded-2xl shadow-xl">ДАЛЕЕ →</button>
             </div>
         </div>
 
-        <div id="step3" class="step hidden space-y-4 text-center">
-            <h3 class="text-xl font-black text-slate-800 uppercase italic">Кто и кого?</h3>
-            <input type="text" id="wWho" placeholder="Кто отсутствует" class="big-input">
-            <input type="text" id="wBy" placeholder="Кто заменяет" class="big-input">
-            <div class="flex gap-4 mb-4">
-                <button onclick="setType('100')" id="btn100" class="flex-1 p-4 rounded-2xl font-black border-4 border-blue-500 bg-blue-50 text-blue-700">100% ОКНО</button>
-                <button onclick="setType('50')" id="btn50" class="flex-1 p-4 rounded-2xl font-black border-4 border-transparent bg-slate-50 text-slate-400">50% УРОК</button>
+        <!-- Шаг 3: Учителя -->
+        <div id="step3" class="step hidden space-y-6">
+            <div class="text-center">
+                <div class="text-4xl mb-2">👨‍🏫</div>
+                <h3 class="text-xl font-black text-slate-800 uppercase italic tracking-tight">Кто кого?</h3>
             </div>
-            <div id="summary" class="bg-slate-50 p-4 rounded-xl text-left text-xs space-y-1 font-medium text-slate-500"></div>
-            <div class="flex gap-2">
-                <button onclick="next(2)" class="w-1/3 bg-slate-100 py-4 rounded-2xl font-bold">←</button>
-                <button onclick="saveRec()" class="w-2/3 bg-emerald-500 text-white font-black py-4 rounded-2xl shadow-lg shadow-emerald-200 uppercase tracking-widest">ДОБАВИТЬ ✓</button>
+            <div class="space-y-3">
+                <input type="text" id="wWho" placeholder="КТО ОТСУТСТВУЕТ" class="big-input text-base">
+                <input type="text" id="wBy" placeholder="КТО ЗАМЕНЯЕТ" class="big-input text-base">
+            </div>
+            <div class="flex gap-3">
+                <button onclick="next(2)" class="w-1/3 bg-slate-100 py-5 rounded-2xl font-bold text-slate-400">←</button>
+                <button onclick="next(4)" class="w-2/3 bg-indigo-600 text-white font-black py-5 rounded-2xl shadow-xl">ДАЛЕЕ →</button>
+            </div>
+        </div>
+
+        <!-- Шаг 4 (Финал): Оплата и Итог -->
+        <div id="step4" class="step hidden space-y-6">
+            <div class="text-center">
+                <div class="text-4xl mb-2">💰</div>
+                <h3 class="text-xl font-black text-slate-800 uppercase italic tracking-tight">Тип оплаты</h3>
+            </div>
+            
+            <!-- Компактный переключатель в стиле iOS -->
+            <div class="flex bg-slate-100 p-1.5 rounded-2xl border border-slate-200">
+                <button type="button" onclick="selectType('100')" id="btn100" class="flex-1 py-4 rounded-xl font-black text-sm transition-all bg-white shadow-sm text-blue-600">
+                    🔥 100% (ОКНО)
+                </button>
+                <button type="button" onclick="selectType('50')" id="btn50" class="flex-1 py-4 rounded-xl font-black text-sm transition-all text-slate-400">
+                    ⏳ 50% (УРОК)
+                </button>
+            </div>
+            
+            <div class="bg-indigo-50 rounded-3xl p-6 border border-indigo-100">
+                <div class="text-[10px] font-bold text-indigo-400 uppercase mb-3 tracking-widest text-center">Проверьте данные:</div>
+                <div id="summaryContent" class="space-y-1 text-sm text-slate-700 font-bold italic"></div>
+            </div>
+            
+            <div class="flex gap-3">
+                <button onclick="next(3)" class="w-1/3 bg-slate-100 py-5 rounded-2xl font-bold text-slate-400">←</button>
+                <button onclick="saveRecord()" class="w-2/3 bg-emerald-500 text-white font-black py-5 rounded-2xl shadow-lg shadow-emerald-200">✓ ГОТОВО</button>
             </div>
         </div>
     </div>
@@ -135,12 +185,11 @@
     <div id="toast" class="toast"></div>
 
     <script>
-        let reps = JSON.parse(localStorage.getItem('v61_reps')) || [];
-        let curStep = 1;
+        let reps = JSON.parse(localStorage.getItem('subpro_v61_data')) || [];
         let curLesson = 1;
         let curType = '100';
 
-        // Инициализация сетки уроков
+        // Рендер сетки уроков
         const lg = document.getElementById('lessonGrid');
         for(let i=1; i<=7; i++) {
             lg.innerHTML += `<div class="lesson-btn ${i==1?'active':''}" onclick="setLesson(${i}, this)">${i}</div>`;
@@ -152,18 +201,26 @@
             el.classList.add('active');
         }
 
-        function setType(t) {
-            curType = t;
-            document.getElementById('btn100').className = t=='100' ? 'flex-1 p-4 rounded-2xl font-black border-4 border-blue-500 bg-blue-50 text-blue-700' : 'flex-1 p-4 rounded-2xl font-black border-4 border-transparent bg-slate-50 text-slate-400';
-            document.getElementById('btn50').className = t=='50' ? 'flex-1 p-4 rounded-2xl font-black border-4 border-amber-500 bg-amber-50 text-amber-700' : 'flex-1 p-4 rounded-2xl font-black border-4 border-transparent bg-slate-50 text-slate-400';
+        function selectType(val) {
+            curType = val;
+            const b100 = document.getElementById('btn100');
+            const b50 = document.getElementById('btn50');
+            if(val === '100') {
+                b100.className = "flex-1 py-4 rounded-xl font-black text-sm transition-all bg-white shadow-sm text-blue-600";
+                b50.className = "flex-1 py-4 rounded-xl font-black text-sm transition-all text-slate-400";
+            } else {
+                b100.className = "flex-1 py-4 rounded-xl font-black text-sm transition-all text-slate-400";
+                b50.className = "flex-1 py-4 rounded-xl font-black text-sm transition-all bg-white shadow-sm text-amber-500";
+            }
             updateSummary();
         }
 
         function openWizard() {
-            curStep = 1; next(1);
+            next(1);
             document.getElementById('wDate').valueAsDate = new Date();
             document.getElementById('wizard').classList.add('active');
             document.getElementById('overlay').classList.add('active');
+            selectType('100'); // Сброс на 100% по умолчанию
         }
 
         function closeWizard() {
@@ -174,24 +231,23 @@
         function next(step) {
             document.querySelectorAll('.step').forEach(s => s.classList.add('hidden'));
             document.getElementById('step' + step).classList.remove('hidden');
-            if(step == 3) updateSummary();
+            if(step == 4) updateSummary();
         }
 
         function updateSummary() {
-            const s = document.getElementById('summary');
-            const subject = document.getElementById('wSubject').value || '---';
-            const who = document.getElementById('wWho').value || '---';
-            const by = document.getElementById('wBy').value || '---';
-            s.innerHTML = `
-                <div><b class="text-slate-800 uppercase">Предмет:</b> ${subject}</div>
-                <div><b class="text-slate-800 uppercase">Заменяет:</b> ${by}</div>
-                <div><b class="text-slate-800 uppercase">Вместо:</b> ${who}</div>
-                <div><b class="text-slate-800 uppercase">Оплата:</b> ${curType}% (${curType=='100'?'Окно':'Совмещение'})</div>
+            const sum = document.getElementById('summaryContent');
+            sum.innerHTML = `
+                <div>• ${document.getElementById('wDate').value} (${curLesson} урок)</div>
+                <div>• Класс: ${document.getElementById('wClass').value.toUpperCase()}</div>
+                <div>• Предмет: ${document.getElementById('wSubject').value}</div>
+                <div>• Кто: ${document.getElementById('wBy').value}</div>
+                <div>• Вместо: ${document.getElementById('wWho').value}</div>
+                <div class="text-indigo-600 mt-2 text-center">Тип оплаты: ${curType}%</div>
             `;
         }
 
-        function saveRec() {
-            const rec = {
+        function saveRecord() {
+            const data = {
                 id: Date.now(),
                 date: document.getElementById('wDate').value,
                 lesson: curLesson,
@@ -202,18 +258,13 @@
                 type: curType
             };
 
-            if(!rec.date || !rec.cls || !rec.subject || !rec.by) return showToast('Заполните все поля!');
+            if(!data.date || !data.cls || !data.by) return showToast('Заполните данные!');
 
-            // Проверка на дубликаты
-            const isDup = reps.find(r => r.date == rec.date && r.lesson == rec.lesson && r.cls == rec.cls);
-            if(isDup && !confirm('Внимание! В этом классе на этом уроке уже есть замена. Продолжить?')) return;
-
-            reps.push(rec);
-            localStorage.setItem('v61_reps', JSON.stringify(reps));
+            reps.push(data);
+            localStorage.setItem('subpro_v61_data', JSON.stringify(reps));
             render();
             closeWizard();
-            showToast('✓ Сохранено в журнал');
-            document.getElementById('mainForm').reset();
+            showToast('✓ Запись добавлена');
         }
 
         function render() {
@@ -224,21 +275,21 @@
             ).sort((a,b) => new Date(b.date) - new Date(a.date));
 
             container.innerHTML = filtered.map(r => `
-                <div class="swipe-container">
-                    <div class="swipe-action" onclick="del(${r.id})">УДАЛИТЬ</div>
-                    <div class="swipe-item p-4 flex items-center gap-4" 
+                <div class="swipe-container shadow-sm border border-slate-100">
+                    <div class="swipe-action" onclick="del(${r.id})">УДАЛИТЬ 🗑️</div>
+                    <div class="swipe-item p-4 flex items-center gap-4" onclick="this.style.transform='translateX(0)'"
                          ontouchstart="ts(event)" ontouchmove="tm(event, this)" ontouchend="te(event, this)">
-                        <div class="flex flex-col items-center bg-slate-50 min-w-[45px] py-1 rounded-xl">
-                            <span class="text-lg font-black leading-none">${new Date(r.date).getDate()}</span>
-                            <span class="text-[8px] font-bold text-slate-400 uppercase">${new Date(r.date).toLocaleDateString('ru-RU',{month:'short'}).replace('.','')}</span>
+                        <div class="flex flex-col items-center bg-slate-50 min-w-[50px] py-1 rounded-2xl">
+                            <span class="text-xl font-black leading-none">${new Date(r.date).getDate()}</span>
+                            <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">${new Date(r.date).toLocaleDateString('ru-RU',{month:'short'}).replace('.','')}</span>
                         </div>
                         <div class="flex-1 min-w-0">
-                            <div class="flex items-center gap-2">
-                                <span class="text-[9px] font-black bg-blue-100 text-blue-600 px-1.5 rounded uppercase">${r.cls}</span>
-                                <span class="text-[9px] font-bold text-slate-400 italic truncate tracking-tight">${r.subject}</span>
+                            <div class="flex items-center gap-2 mb-0.5">
+                                <span class="text-[9px] font-black bg-indigo-600 text-white px-1.5 rounded uppercase leading-tight">${r.cls}</span>
+                                <span class="text-[10px] font-bold text-indigo-400 italic truncate">${r.subject}</span>
                             </div>
                             <div class="text-sm font-black text-slate-800 truncate">${r.by}</div>
-                            <div class="text-[10px] text-slate-400 truncate">вместо: ${r.who}</div>
+                            <div class="text-[10px] text-slate-400 truncate tracking-tight">заменяет: ${r.who}</div>
                         </div>
                         <div class="text-right">
                             <div class="text-lg font-black ${r.type=='100'?'text-blue-600':'text-amber-500'} italic leading-none">${r.type}%</div>
@@ -246,14 +297,14 @@
                         </div>
                     </div>
                 </div>
-            `).join('') || '<div class="py-20 text-center text-white/50 font-bold uppercase text-xs italic tracking-widest">Журнал пуст</div>';
-
+            `).join('') || '<div class="py-20 text-center text-white/40 font-bold uppercase italic tracking-widest text-xs">Журнал пуст</div>';
+            
             updateStats();
         }
 
         // Swipe Logic
         let sX = 0;
-        const ts = e => { sX = e.touches[0].clientX; resetSwipes(); };
+        const ts = e => { sX = e.touches[0].clientX; document.querySelectorAll('.swipe-item').forEach(el => {if(el !== e.currentTarget) el.style.transform = 'translateX(0)'}); };
         const tm = (e, el) => {
             let mX = e.touches[0].clientX - sX;
             if (mX < 0 && mX > -120) el.style.transform = `translateX(${mX}px)`;
@@ -262,12 +313,11 @@
             let fX = parseInt(el.style.transform.replace(/[^-0-9]/g,'')) || 0;
             el.style.transform = fX < -60 ? 'translateX(-80px)' : 'translateX(0)';
         };
-        const resetSwipes = () => document.querySelectorAll('.swipe-item').forEach(el => el.style.transform = 'translateX(0)');
 
         function del(id) {
-            if(confirm('Удалить?')) {
+            if(confirm('Удалить запись?')) {
                 reps = reps.filter(r => r.id !== id);
-                localStorage.setItem('v61_reps', JSON.stringify(reps));
+                localStorage.setItem('subpro_v61_data', JSON.stringify(reps));
                 render();
             }
         }
@@ -287,7 +337,7 @@
         function exportJSON() {
             const b = new Blob([JSON.stringify(reps)], {type:'application/json'});
             const a = document.createElement('a'); a.href = URL.createObjectURL(b);
-            a.download = `zavuch_backup_${new Date().toISOString().slice(0,10)}.json`; a.click();
+            a.download = `zavuch_pro_v61.json`; a.click();
         }
 
         render();
