@@ -1,303 +1,224 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Журнал Замен v1.1</title>
+    <title>Завуч-Про: Учёт замен</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
-        :root {
-            --primary: #6c5ce7;
-            --secondary: #a29bfe;
-            --accent: #fab1a0;
-            --bg: #f0f3f7;
-            --white: #ffffff;
-            --text: #2d3436;
-            --shadow: 0 4px 15px rgba(0,0,0,0.05);
-        }
-
-        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; }
-
-        .container { max-width: 950px; margin: 0 auto; }
-        header { text-align: center; margin-bottom: 30px; }
-        h1 { color: var(--primary); font-size: 1.8rem; margin: 0; }
-
-        .card { background: var(--white); padding: 20px; border-radius: 20px; box-shadow: var(--shadow); margin-bottom: 20px; }
-
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; }
-        .full-width { grid-column: span 3; }
-
-        label { display: block; font-size: 0.85rem; margin-bottom: 5px; color: #636e72; font-weight: 600; }
-        input, select, button { width: 100%; padding: 12px; border: 1.5px solid #dfe6e9; border-radius: 12px; font-size: 1rem; outline: none; transition: 0.3s; }
-        input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1); }
-
-        .btn { cursor: pointer; border: none; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-        .btn-add { background: var(--primary); color: white; margin-top: 10px; }
-        .btn-secondary { background: var(--secondary); color: white; }
-
-        .filters { display: flex; gap: 10px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; }
-        .filter-item { min-width: 140px; }
-
-        .table-container { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th { text-align: left; background: #f9f9f9; padding: 12px; font-size: 0.8rem; border-bottom: 2px solid var(--bg); color: #636e72; }
-        td { padding: 12px; border-bottom: 1px solid #f1f1f1; font-size: 0.9rem; }
-        .badge { padding: 4px 8px; border-radius: 8px; font-size: 0.75rem; font-weight: bold; white-space: nowrap; }
-        .badge-100 { background: #dff9fb; color: #130f40; }
-        .badge-50 { background: #fff9db; color: #f39c12; }
-        .subject-tag { color: var(--primary); font-style: italic; font-size: 0.85rem; }
-
-        .actions { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
-        .actions button { flex: 1; min-width: 150px; }
-
-        @media (max-width: 768px) {
-            .form-grid { grid-template-columns: 1fr 1fr; }
-            .full-width { grid-column: span 2; }
-        }
-
-        @media (max-width: 480px) {
-            .form-grid { grid-template-columns: 1fr; }
-            .full-width { grid-column: span 1; }
-            body { padding: 10px; }
-            h1 { font-size: 1.4rem; }
-        }
-
         @media print {
-            .no-print, .actions, .btn-add, .form-grid, .filters, .settings-section { display: none !important; }
-            .card { box-shadow: none; border: none; padding: 0; }
-            body { background: white; padding: 0; }
-            .container { max-width: 100%; }
-            th { background: #eee !important; color: black; }
-            td { border-bottom: 1px solid #ccc; }
+            .no-print { display: none !important; }
+            body { background: white !important; }
+            table { border-collapse: collapse; width: 100%; font-size: 12px; }
+            th, td { border: 1px solid #000 !important; padding: 6px !important; }
+            .badge-50 { color: #000 !important; background: none !important; border: 1px solid #000; }
         }
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body>
+<body class="bg-slate-50 min-h-screen font-sans text-slate-900">
 
-<div class="container">
-    <header>
-        <h1>🍎 Журнал замен</h1>
-        <p style="font-size: 0.8rem; color: #b2bec3;">v1.1.0 • С учетом предметов</p>
+<div class="max-w-6xl mx-auto px-4 py-6">
+    <!-- Header -->
+    <header class="flex justify-between items-center mb-8 no-print">
+        <div>
+            <h1 class="text-3xl font-bold text-indigo-700">🍎 Завуч-Про</h1>
+            <p class="text-slate-500 text-sm">Система фиксации школьных замен</p>
+        </div>
+        <div class="text-right">
+            <span class="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">v1.2 Active</span>
+        </div>
     </header>
 
-    <div class="card no-print">
-        <div class="form-grid">
-            <div>
-                <label>Дата</label>
-                <input type="date" id="repDate">
+    <!-- Stats -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 no-print">
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 text-center">
+            <div id="statTotal" class="text-2xl font-bold text-indigo-600">0</div>
+            <div class="text-xs text-slate-500 uppercase font-semibold">Всего замен</div>
+        </div>
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 text-center">
+            <div id="stat100" class="text-2xl font-bold text-emerald-600">0</div>
+            <div class="text-xs text-slate-500 uppercase font-semibold text-nowrap">Окно (100%)</div>
+        </div>
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 text-center">
+            <div id="stat50" class="text-2xl font-bold text-amber-500">0</div>
+            <div class="text-xs text-slate-500 uppercase font-semibold text-nowrap">Свой урок (50%)</div>
+        </div>
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 text-center">
+            <div id="statMonth" class="text-2xl font-bold text-slate-700">0</div>
+            <div class="text-xs text-slate-500 uppercase font-semibold">В этом месяце</div>
+        </div>
+    </div>
+
+    <!-- Form -->
+    <div class="bg-white rounded-3xl shadow-xl p-6 mb-8 no-print border border-slate-100">
+        <h2 class="text-lg font-bold mb-4 flex items-center gap-2 text-slate-700">
+            <span class="bg-indigo-600 text-white p-1 rounded-lg">➕</span> Новая запись
+        </h2>
+        <form id="repForm" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="md:col-span-1">
+                <label class="block text-xs font-bold text-slate-500 mb-1 uppercase">Дата</label>
+                <input type="date" id="date" required class="w-full bg-slate-50 border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 transition">
             </div>
-            <div>
-                <label>Тип оплаты</label>
-                <select id="repType">
+            <div class="md:col-span-1">
+                <label class="block text-xs font-bold text-slate-500 mb-1 uppercase">Тип оплаты</label>
+                <select id="type" class="w-full bg-slate-50 border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 transition">
                     <option value="100">100% (Окно)</option>
                     <option value="50">50% (Свой урок)</option>
                 </select>
             </div>
-            <div>
-                <label>Предмет</label>
-                <input list="subjects" id="repSubject" placeholder="Напр: Математика">
+            <div class="md:col-span-1">
+                <label class="block text-xs font-bold text-slate-500 mb-1 uppercase">Предмет</label>
+                <input list="subjects" id="subject" placeholder="Математика" required class="w-full bg-slate-50 border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 transition">
             </div>
-            <div>
-                <label>Кого заменяем</label>
-                <input list="teachers" id="whoReplaced" placeholder="ФИО...">
+            <div class="md:col-span-1">
+                <label class="block text-xs font-bold text-slate-500 mb-1 uppercase">Заменяемый</label>
+                <input list="teachers" id="who" placeholder="ФИО отсутствующего" required class="w-full bg-slate-50 border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 transition">
             </div>
-            <div style="grid-column: span 2">
-                <label>Кто заменяет</label>
-                <input list="teachers" id="whoIsReplacing" placeholder="ФИО...">
+            <div class="md:col-span-2">
+                <label class="block text-xs font-bold text-slate-500 mb-1 uppercase">Заменяющий</label>
+                <input list="teachers" id="by" placeholder="ФИО кто ведет урок" required class="w-full bg-slate-50 border-none rounded-xl px-4 py-3 focus:ring-2 focus:ring-indigo-500 transition">
             </div>
-            <button class="btn btn-add full-width" onclick="addEntry()">Добавить в журнал</button>
-        </div>
+            <button type="submit" class="md:col-span-3 bg-indigo-600 text-white font-bold py-4 rounded-xl hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition active:scale-[0.98]">
+                ДОБАВИТЬ В ЖУРНАЛ
+            </button>
+        </form>
     </div>
 
-    <datalist id="teachers"></datalist>
-    <datalist id="subjects"></datalist>
-
-    <div class="card">
-        <div class="filters no-print">
-            <input type="text" id="filterGeneral" class="filter-item" placeholder="Поиск (ФИО или предмет)" oninput="renderTable()">
-            <input type="date" id="filterStart" class="filter-item" oninput="renderTable()">
-            <input type="date" id="filterEnd" class="filter-item" oninput="renderTable()">
+    <!-- Table -->
+    <div id="printArea" class="bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100 p-2 md:p-6">
+        <div class="flex flex-col md:flex-row justify-between items-center mb-6 px-4 no-print gap-4">
+            <h2 class="text-xl font-bold text-slate-800">Журнал замен</h2>
+            <div class="flex gap-2">
+                <button onclick="window.print()" class="bg-emerald-500 text-white px-5 py-2 rounded-xl text-sm font-bold hover:bg-emerald-600 transition">🖨️ ПЕЧАТЬ</button>
+                <button onclick="exportJSON()" class="bg-slate-700 text-white px-5 py-2 rounded-xl text-sm font-bold hover:bg-slate-800 transition">📥 EXPORT</button>
+            </div>
         </div>
 
-        <div class="table-container">
-            <table id="replacementTable">
+        <div class="overflow-x-auto">
+            <table class="w-full">
                 <thead>
-                    <tr>
-                        <th>Дата</th>
-                        <th>Предмет</th>
-                        <th>Кого</th>
-                        <th>Кто</th>
-                        <th>Оплата</th>
-                        <th class="no-print"></th>
+                    <tr class="bg-slate-50 text-slate-500 text-xs uppercase tracking-widest font-bold">
+                        <th class="px-6 py-4 text-left">Дата</th>
+                        <th class="px-6 py-4 text-left">Предмет</th>
+                        <th class="px-6 py-4 text-left">Заменяемый</th>
+                        <th class="px-6 py-4 text-left">Заменяющий</th>
+                        <th class="px-6 py-4 text-center">Тип</th>
+                        <th class="px-6 py-4 text-right no-print">Действие</th>
                     </tr>
                 </thead>
-                <tbody id="tableBody"></tbody>
+                <tbody id="tableBody" class="divide-y divide-slate-100"></tbody>
             </table>
         </div>
-    </div>
 
-    <div class="actions no-print">
-        <button class="btn btn-secondary" onclick="exportJSON()">Экспорт (JSON)</button>
-        <button class="btn btn-secondary" onclick="importJSON()">Импорт</button>
-        <button class="btn btn-add" onclick="window.print()">Печать для бухгалтерии</button>
-    </div>
-
-    <div class="card no-print settings-section">
-        <h3 style="margin:0 0 15px 0; color: var(--primary);">Настройки базы</h3>
-        <div class="form-grid">
-            <div style="grid-column: span 3">
-                <label>Учителя (через запятую)</label>
-                <textarea id="teacherList" rows="2" style="width:100%; padding:10px; border-radius:12px; border: 1.5px solid #dfe6e9;"></textarea>
+        <!-- Print Footer -->
+        <div class="hidden print:block mt-12 px-6">
+            <div class="grid grid-cols-2 gap-20">
+                <div class="border-t border-slate-400 pt-2 text-sm text-center font-medium">Заместитель директора (подпись / ФИО)</div>
+                <div class="border-t border-slate-400 pt-2 text-sm text-center font-medium">Бухгалтерия (принял)</div>
             </div>
-            <div style="grid-column: span 3">
-                <label>Предметы (через запятую)</label>
-                <textarea id="subjectList" rows="2" style="width:100%; padding:10px; border-radius:12px; border: 1.5px solid #dfe6e9;"></textarea>
-            </div>
-            <button class="btn btn-secondary full-width" onclick="saveSettings()">Сохранить базу</button>
         </div>
     </div>
 </div>
 
+<datalist id="teachers"></datalist>
+<datalist id="subjects"></datalist>
+
 <script>
-    let entries = JSON.parse(localStorage.getItem('replacements_v1.1')) || [];
-    let teachers = JSON.parse(localStorage.getItem('teachers_v1.1')) || [];
-    let subjects = JSON.parse(localStorage.getItem('subjects_v1.1')) || [];
+    let replacements = JSON.parse(localStorage.getItem('subpro_v12')) || [];
+    let teachers = JSON.parse(localStorage.getItem('teachers_v12')) || [];
+    let subjects = JSON.parse(localStorage.getItem('subjects_v12')) || [];
 
-    function saveSettings() {
-        const tInput = document.getElementById('teacherList').value;
-        const sInput = document.getElementById('subjectList').value;
+    document.getElementById('date').valueAsDate = new Date();
 
-        teachers = tInput.split(',').map(t => t.trim()).filter(t => t);
-        subjects = sInput.split(',').map(s => s.trim()).filter(s => s);
+    document.getElementById('repForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const rec = {
+            id: Date.now(),
+            date: document.getElementById('date').value,
+            type: document.getElementById('type').value,
+            subject: document.getElementById('subject').value.trim(),
+            who: document.getElementById('who').value.trim(),
+            by: document.getElementById('by').value.trim()
+        };
 
-        localStorage.setItem('teachers_v1.1', JSON.stringify(teachers));
-        localStorage.setItem('subjects_v1.1', JSON.stringify(subjects));
+        replacements.push(rec);
+        updateMasterData(rec);
+        save();
+        render();
+        this.reset();
+        document.getElementById('date').valueAsDate = new Date();
+    });
+
+    function updateMasterData(rec) {
+        if(!teachers.includes(rec.who)) teachers.push(rec.who);
+        if(!teachers.includes(rec.by)) teachers.push(rec.by);
+        if(!subjects.includes(rec.subject)) subjects.push(rec.subject);
+    }
+
+    function save() {
+        localStorage.setItem('subpro_v12', JSON.stringify(replacements));
+        localStorage.setItem('teachers_v12', JSON.stringify(teachers));
+        localStorage.setItem('subjects_v12', JSON.stringify(subjects));
+    }
+
+    function render() {
+        const tbody = document.getElementById('tableBody');
+        const sorted = [...replacements].sort((a,b) => new Date(b.date) - new Date(a.date));
+        
+        tbody.innerHTML = sorted.map(r => `
+            <tr class="hover:bg-indigo-50 transition fade-in text-sm">
+                <td class="px-6 py-4 font-medium">${new Date(r.date).toLocaleDateString('ru-RU')}</td>
+                <td class="px-6 py-4 text-indigo-600 font-semibold">${r.subject}</td>
+                <td class="px-6 py-4 text-slate-500">${r.who}</td>
+                <td class="px-6 py-4 font-bold text-slate-700">${r.by}</td>
+                <td class="px-6 py-4 text-center">
+                    <span class="px-3 py-1 rounded-lg text-[10px] font-bold ${r.type == '100' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}">
+                        ${r.type}%
+                    </span>
+                </td>
+                <td class="px-6 py-4 text-right no-print">
+                    <button onclick="del(${r.id})" class="text-rose-400 hover:text-rose-600 transition p-2">✕</button>
+                </td>
+            </tr>
+        `).join('') || '<tr><td colspan="6" class="text-center py-12 text-slate-400">Пока нет записей. Самое время добавить первую!</td></tr>';
+
+        updateStats();
         updateDatalists();
-        alert('База обновлена!');
+    }
+
+    function updateStats() {
+        const now = new Date();
+        document.getElementById('statTotal').textContent = replacements.length;
+        document.getElementById('stat100').textContent = replacements.filter(r => r.type == '100').length;
+        document.getElementById('stat50').textContent = replacements.filter(r => r.type == '50').length;
+        document.getElementById('statMonth').textContent = replacements.filter(r => new Date(r.date).getMonth() === now.getMonth()).length;
     }
 
     function updateDatalists() {
         document.getElementById('teachers').innerHTML = teachers.map(t => `<option value="${t}">`).join('');
         document.getElementById('subjects').innerHTML = subjects.map(s => `<option value="${s}">`).join('');
-        document.getElementById('teacherList').value = teachers.join(', ');
-        document.getElementById('subjectList').value = subjects.join(', ');
     }
 
-    function addEntry() {
-        const entry = {
-            id: Date.now(),
-            date: document.getElementById('repDate').value,
-            type: document.getElementById('repType').value,
-            subject: document.getElementById('repSubject').value.trim(),
-            who: document.getElementById('whoReplaced').value.trim(),
-            by: document.getElementById('whoIsReplacing').value.trim()
-        };
-
-        if(!entry.date || !entry.who || !entry.by || !entry.subject) return alert('Заполните все поля, включая предмет!');
-
-        // Автодобавление в базу, если нового предмета или учителя там нет
-        if(entry.subject && !subjects.includes(entry.subject)) {
-            subjects.push(entry.subject);
-            localStorage.setItem('subjects_v1.1', JSON.stringify(subjects));
-        }
-        if(entry.who && !teachers.includes(entry.who)) teachers.push(entry.who);
-        if(entry.by && !teachers.includes(entry.by)) teachers.push(entry.by);
-
-        localStorage.setItem('teachers_v1.1', JSON.stringify(teachers));
-        updateDatalists();
-
-        entries.push(entry);
-        saveEntries();
-        renderTable();
-
-        // Очистка полей для следующего ввода (кроме даты)
-        document.getElementById('repSubject').value = '';
-        document.getElementById('whoReplaced').value = '';
-        document.getElementById('whoIsReplacing').value = '';
-    }
-
-    function saveEntries() {
-        localStorage.setItem('replacements_v1.1', JSON.stringify(entries));
-    }
-
-    function renderTable() {
-        const tbody = document.getElementById('tableBody');
-        const filter = document.getElementById('filterGeneral').value.toLowerCase();
-        const fStart = document.getElementById('filterStart').value;
-        const fEnd = document.getElementById('filterEnd').value;
-
-        const filtered = entries.filter(e => {
-            const matchesText = e.who.toLowerCase().includes(filter) || 
-                               e.by.toLowerCase().includes(filter) || 
-                               e.subject.toLowerCase().includes(filter);
-            const matchesStart = !fStart || e.date >= fStart;
-            const matchesEnd = !fEnd || e.date <= fEnd;
-            return matchesText && matchesStart && matchesEnd;
-        }).sort((a,b) => new Date(b.date) - new Date(a.date));
-
-        tbody.innerHTML = filtered.map(e => `
-            <tr>
-                <td style="white-space:nowrap">${new Date(e.date).toLocaleDateString('ru-RU')}</td>
-                <td class="subject-tag">${e.subject}</td>
-                <td>${e.who}</td>
-                <td>${e.by}</td>
-                <td><span class="badge badge-${e.type}">${e.type}%</span></td>
-                <td class="no-print"><button onclick="deleteEntry(${e.id})" style="background:none; border:none; color:#ff7675; cursor:pointer; font-size:1.2rem;">&times;</button></td>
-            </tr>
-        `).join('');
-    }
-
-    function deleteEntry(id) {
+    function del(id) {
         if(confirm('Удалить эту запись?')) {
-            entries = entries.filter(e => e.id !== id);
-            saveEntries();
-            renderTable();
+            replacements = replacements.filter(r => r.id !== id);
+            save();
+            render();
         }
     }
 
     function exportJSON() {
-        const data = { entries, teachers, subjects, version: "1.1" };
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data));
-        const downloadAnchorNode = document.createElement('a');
-        downloadAnchorNode.setAttribute("href", dataStr);
-        downloadAnchorNode.setAttribute("download", `school_replacements_${new Date().toISOString().slice(0,10)}.json`);
-        document.body.appendChild(downloadAnchorNode);
-        downloadAnchorNode.click();
-        downloadAnchorNode.remove();
+        const data = { replacements, teachers, subjects };
+        const blob = new Blob([JSON.stringify(data)], {type: 'application/json'});
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `zameny_pro_${new Date().toISOString().slice(0,10)}.json`;
+        a.click();
     }
 
-    function importJSON() {
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.onchange = e => {
-            const file = e.target.files[0];
-            const reader = new FileReader();
-            reader.onload = event => {
-                try {
-                    const data = JSON.parse(event.target.result);
-                    entries = data.entries || [];
-                    teachers = data.teachers || [];
-                    subjects = data.subjects || [];
-                    saveEntries();
-                    localStorage.setItem('teachers_v1.1', JSON.stringify(teachers));
-                    localStorage.setItem('subjects_v1.1', JSON.stringify(subjects));
-                    updateDatalists();
-                    renderTable();
-                    alert('Данные успешно импортированы!');
-                } catch(err) {
-                    alert('Ошибка при чтении файла');
-                }
-            };
-            reader.readAsText(file);
-        };
-        input.click();
-    }
-
-    // Init
-    document.getElementById('repDate').valueAsDate = new Date();
-    updateDatalists();
-    renderTable();
+    render();
 </script>
 </body>
 </html>
