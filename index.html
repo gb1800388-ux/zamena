@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -5,842 +6,128 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Завуч.PRO v6.0</title>
+    <title>Завуч.PRO v6.1</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
-        * { 
-            -webkit-tap-highlight-color: transparent; 
-            -webkit-touch-callout: none;
-        }
-        
+        * { -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; }
         body { 
             overscroll-behavior-y: contain;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
             min-height: 100vh;
+            font-family: system-ui, -apple-system, sans-serif;
         }
-        
         .safe-top { padding-top: env(safe-area-inset-top); }
-        .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
-        
-        .glass {
-            background: rgba(255,255,255,0.95);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-        }
-        
-        .glass-dark {
-            background: rgba(255,255,255,0.15);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-        }
-        
-        .swipe-container { 
-            position: relative; 
-            overflow: hidden; 
-            border-radius: 1.5rem; 
-            margin-bottom: 0.75rem;
-        }
-        
-        .swipe-item { 
-            position: relative; 
-            z-index: 10; 
-            background: white; 
-            transition: transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            touch-action: pan-y;
-        }
-        
-        .swipe-item.swiping { transition: none; }
-        
-        .swipe-actions {
-            position: absolute;
-            right: 0;
-            top: 0;
-            bottom: 0;
-            display: flex;
-        }
-        
-        .swipe-action { 
-            width: 80px;
-            height: 100%;
-            color: white; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            font-size: 0.6rem; 
-            font-weight: 900;
-            flex-direction: column;
-            gap: 4px;
-        }
+        .glass { background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); }
+        .glass-dark { background: rgba(255,255,255,0.15); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
 
-        .toast {
-            position: fixed; 
-            bottom: calc(2rem + env(safe-area-inset-bottom)); 
-            left: 50%; 
-            transform: translateX(-50%) translateY(100px);
-            background: #1e293b; 
-            color: white; 
-            padding: 1rem 2rem; 
-            border-radius: 1rem;
-            transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            z-index: 1000;
-            font-weight: 600;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        /* Исправленный свайп */
+        .swipe-container { position: relative; overflow: hidden; border-radius: 1.5rem; margin-bottom: 0.75rem; background: #ef4444; }
+        .swipe-item { 
+            position: relative; z-index: 10; background: white; 
+            transition: transform 0.25s ease-out;
+            touch-action: pan-y; /* Плавность на iPhone */
         }
+        .swipe-action { position: absolute; right: 0; top: 0; bottom: 0; width: 80px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 900; font-size: 0.6rem; }
+
+        .modal-sheet {
+            position: fixed; bottom: 0; left: 0; right: 0; background: white;
+            border-radius: 2.5rem 2.5rem 0 0; z-index: 101;
+            transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            max-height: 94vh; overflow-y: auto;
+        }
+        .modal-sheet.active { transform: translateY(0); }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 100; visibility: hidden; opacity: 0; transition: 0.3s; }
+        .modal-overlay.active { visibility: visible; opacity: 1; }
+
+        .big-input { font-size: 1.25rem; font-weight: 700; text-align: center; background: #f1f5f9; border: 2px solid transparent; border-radius: 1rem; padding: 1rem; width: 100%; outline: none; }
+        .big-input:focus { border-color: #6366f1; background: white; }
+
+        .lesson-btn { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 900; background: #f1f5f9; cursor: pointer; }
+        .lesson-btn.active { background: #6366f1; color: white; transform: scale(1.1); }
+
+        .toast { position: fixed; bottom: 5rem; left: 50%; transform: translateX(-50%) translateY(100px); background: #1e293b; color: white; padding: 1rem 2rem; border-radius: 1rem; transition: 0.3s; z-index: 1000; font-weight: 600; }
         .toast.show { transform: translateX(-50%) translateY(0); }
 
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(15, 23, 42, 0.7);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            z-index: 100;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-        }
-        
-        .modal-overlay.active { opacity: 1; visibility: visible; }
-        
-        .modal-sheet {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: white;
-            border-radius: 2.5rem 2.5rem 0 0;
-            z-index: 101;
-            transform: translateY(100%);
-            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            max-height: 92vh;
-            overflow: hidden;
-        }
-        
-        .modal-sheet.active { transform: translateY(0); }
-        
-        .modal-handle {
-            width: 40px;
-            height: 5px;
-            background: #e2e8f0;
-            border-radius: 3px;
-            margin: 12px auto;
-        }
-
-        .fab {
-            position: fixed;
-            bottom: calc(1.5rem + env(safe-area-inset-bottom));
-            right: 1.5rem;
-            width: 70px;
-            height: 70px;
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-            color: white;
-            border-radius: 50%;
-            box-shadow: 0 8px 32px rgba(245, 158, 11, 0.5);
-            font-size: 36px;
-            font-weight: 300;
-            z-index: 50;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s ease;
-            border: none;
-            cursor: pointer;
-        }
-        
-        .fab:active { transform: scale(0.92); }
-        
-        .wizard-step {
-            display: none;
-            animation: fadeSlide 0.4s ease;
-        }
-        
-        .wizard-step.active { display: block; }
-        
-        @keyframes fadeSlide {
-            from { opacity: 0; transform: translateX(30px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-        
-        .wizard-step.back { animation: fadeSlideBack 0.4s ease; }
-        
-        @keyframes fadeSlideBack {
-            from { opacity: 0; transform: translateX(-30px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-        
-        .progress-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: #e2e8f0;
-            transition: all 0.3s ease;
-        }
-        
-        .progress-dot.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            transform: scale(1.4);
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2);
-        }
-        
-        .progress-dot.done { background: #10b981; }
-        
-        .progress-line {
-            height: 3px;
-            background: #e2e8f0;
-            flex: 1;
-            margin: 0 4px;
-            border-radius: 2px;
-            overflow: hidden;
-        }
-        
-        .progress-line-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #10b981, #667eea);
-            width: 0%;
-            transition: width 0.4s ease;
-        }
-        
-        .big-input {
-            font-size: 1.5rem;
-            font-weight: 700;
-            text-align: center;
-            background: #f8fafc;
-            border: 3px solid #e2e8f0;
-            border-radius: 1.5rem;
-            padding: 1.25rem;
-            width: 100%;
-            outline: none;
-            transition: all 0.3s ease;
-        }
-        
-        .big-input:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
-        }
-        
-        .class-btn {
-            padding: 0.75rem 1.25rem;
-            border-radius: 1rem;
-            font-weight: 800;
-            font-size: 1rem;
-            background: #f8fafc;
-            border: 3px solid #e2e8f0;
-            transition: all 0.2s ease;
-            cursor: pointer;
-        }
-        
-        .class-btn:hover, .class-btn.active {
-            border-color: #667eea;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            transform: scale(1.05);
-        }
-        
-        .lesson-btn {
-            width: 48px;
-            height: 48px;
-            border-radius: 1rem;
-            font-weight: 900;
-            font-size: 1.2rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            background: #f8fafc;
-            border: 3px solid #e2e8f0;
-        }
-        
-        .lesson-btn.active {
-            background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
-            color: white;
-            border-color: transparent;
-            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
-            transform: scale(1.1);
-        }
-        
-        .type-card {
-            flex: 1;
-            padding: 1.5rem 1rem;
-            border-radius: 2rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 4px solid transparent;
-        }
-        
-        .type-card-window {
-            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-        }
-        
-        .type-card-window.active {
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-            color: white;
-            border-color: #1d4ed8;
-            transform: scale(1.02);
-            box-shadow: 0 8px 30px rgba(59, 130, 246, 0.4);
-        }
-        
-        .type-card-lesson {
-            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
-        }
-        
-        .type-card-lesson.active {
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-            color: white;
-            border-color: #d97706;
-            transform: scale(1.02);
-            box-shadow: 0 8px 30px rgba(245, 158, 11, 0.4);
-        }
-        
-        .nav-btn {
-            padding: 1rem 2rem;
-            border-radius: 1rem;
-            font-weight: 800;
-            font-size: 1rem;
-            transition: all 0.2s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        
-        .nav-btn:active { transform: scale(0.95); }
-        
-        .record-card { animation: slideIn 0.3s ease; }
-        
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .badge-100 {
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
-        }
-        
-        .badge-50 {
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
-        }
-
-        .tab-btn {
-            flex: 1;
-            padding: 0.6rem;
-            font-weight: 700;
-            font-size: 0.65rem;
-            text-align: center;
-            border-radius: 0.75rem;
-            transition: all 0.2s;
-            text-transform: uppercase;
-            letter-spacing: 0.02em;
-        }
-        
-        .tab-btn.active {
-            background: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .completed-card { opacity: 0.5; }
-        .completed-card .swipe-item { background: #f8fafc; }
-
-        .select-mode .swipe-item { cursor: pointer; }
-        .select-mode .select-checkbox { display: flex !important; }
-        
-        .select-checkbox {
-            display: none;
-            width: 28px;
-            height: 28px;
-            border: 3px solid #e2e8f0;
-            border-radius: 8px;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-            flex-shrink: 0;
-        }
-        
-        .select-checkbox.checked {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-color: transparent;
-        }
-        
-        .floating-bar {
-            position: fixed;
-            bottom: calc(6rem + env(safe-area-inset-bottom));
-            left: 1rem;
-            right: 1rem;
-            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-            border-radius: 1.5rem;
-            padding: 1rem 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            z-index: 60;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-            transform: translateY(200px);
-            transition: transform 0.3s ease;
-        }
-        
-        .floating-bar.show { transform: translateY(0); }
-
-        .ref-tab {
-            padding: 0.75rem 1rem;
-            font-weight: 700;
-            font-size: 0.75rem;
-            border-radius: 0.75rem;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .ref-tab.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-        
-        .ref-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0.75rem 1rem;
-            background: #f8fafc;
-            border-radius: 0.75rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .ref-item:hover { background: #f1f5f9; }
-        
-        .chip {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.25rem;
-            padding: 0.25rem 0.5rem;
-            background: #e2e8f0;
-            border-radius: 0.5rem;
-            font-size: 0.7rem;
-            font-weight: 600;
-        }
-        
-        .chip-remove {
-            cursor: pointer;
-            opacity: 0.5;
-        }
-        
-        .chip-remove:hover { opacity: 1; }
-
-        @media (min-width: 768px) {
-            .modal-sheet {
-                left: 50%;
-                right: auto;
-                bottom: 50%;
-                transform: translate(-50%, 50%) scale(0.95);
-                opacity: 0;
-                width: 100%;
-                max-width: 500px;
-                border-radius: 2.5rem;
-                max-height: 85vh;
-            }
-            
-            .modal-sheet.active {
-                transform: translate(-50%, 50%) scale(1);
-                opacity: 1;
-            }
-            
-            .modal-sheet.wide {
-                max-width: 700px;
-            }
-            
-            .modal-handle { display: none; }
-        }
-
-        @media print {
-            .no-print { display: none !important; }
-            body { padding: 0; background: white !important; }
-            .record-card { 
-                break-inside: avoid; 
-                margin-bottom: 8px !important;
-                box-shadow: none !important;
-                border: 1px solid #e2e8f0 !important;
-            }
-        }
-
-        .filter-toggle {
-            transition: all 0.3s ease;
-        }
-        
-        .filter-toggle.open .filter-arrow {
-            transform: rotate(180deg);
-        }
-        
-        .filter-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s ease;
-        }
-        
-        .filter-content.open {
-            max-height: 200px;
-        }
+        .fab { position: fixed; bottom: 2rem; right: 1.5rem; width: 64px; height: 64px; background: #f59e0b; color: white; border-radius: 50%; font-size: 32px; display: flex; align-items: center; justify-content: center; shadow: 0 10px 25px rgba(245,158,11,0.4); z-index: 50; border: none; }
     </style>
 </head>
 <body class="safe-top">
 
-    <div class="max-w-2xl mx-auto px-4 py-4 pb-32">
-        
-        <!-- Compact Header -->
-        <header class="flex justify-between items-center mb-3 no-print">
-            <div class="flex items-center gap-3">
-                <h1 class="text-xl font-black tracking-tight text-white drop-shadow-lg">ЗАВУЧ<span class="text-yellow-300">.PRO</span></h1>
-                <span class="text-[9px] text-white/50 font-medium">v6.0</span>
-            </div>
-            <div class="flex gap-1.5">
-                <button onclick="openReference()" class="glass-dark text-white text-xs font-bold px-2.5 py-1.5 rounded-lg">📚</button>
-                <button onclick="openStats()" class="glass-dark text-white text-xs font-bold px-2.5 py-1.5 rounded-lg">📈</button>
-                <button onclick="openReport()" class="glass-dark text-white text-xs font-bold px-2.5 py-1.5 rounded-lg">📊</button>
-                <button onclick="openSettings()" class="glass-dark text-white text-xs font-bold px-2.5 py-1.5 rounded-lg">⚙️</button>
+    <div class="max-w-xl mx-auto px-4 py-6">
+        <header class="flex justify-between items-center mb-6 no-print">
+            <h1 class="text-2xl font-black text-white italic tracking-tighter">ЗАВУЧ<span class="text-yellow-300">.PRO</span></h1>
+            <div class="flex gap-2 text-white/80 text-xs font-bold">
+                <button onclick="exportJSON()">Backup</button>
+                <button onclick="window.print()">Печать</button>
             </div>
         </header>
 
-        <!-- Quick Stats Row -->
-        <div class="flex gap-2 mb-3 no-print">
-            <div class="glass flex-1 p-2 rounded-xl text-center">
-                <div id="statTotal" class="text-lg font-black text-slate-700">0</div>
-                <div class="text-[7px] font-bold text-slate-400 uppercase">Всего</div>
+        <!-- Stats -->
+        <div class="grid grid-cols-4 gap-2 mb-6 no-print">
+            <div class="glass p-3 rounded-2xl text-center shadow-sm">
+                <div id="statTotal" class="text-lg font-black text-slate-800">0</div>
+                <div class="text-[8px] font-bold text-slate-400 uppercase">Всего</div>
             </div>
-            <div class="glass flex-1 p-2 rounded-xl text-center border-2 border-blue-300">
+            <div class="glass p-3 rounded-2xl border-b-4 border-blue-500 text-center shadow-sm">
                 <div id="stat100" class="text-lg font-black text-blue-600">0</div>
-                <div class="text-[7px] font-bold text-blue-500 uppercase">🪟 Окна</div>
+                <div class="text-[8px] font-bold text-slate-400 uppercase leading-none">Окно</div>
             </div>
-            <div class="glass flex-1 p-2 rounded-xl text-center border-2 border-amber-300">
+            <div class="glass p-3 rounded-2xl border-b-4 border-amber-500 text-center shadow-sm">
                 <div id="stat50" class="text-lg font-black text-amber-600">0</div>
-                <div class="text-[7px] font-bold text-amber-500 uppercase">📚 Уроки</div>
+                <div class="text-[8px] font-bold text-slate-400 uppercase leading-none">Урок</div>
             </div>
-            <div class="glass flex-1 p-2 rounded-xl text-center border-2 border-emerald-300">
-                <div id="statCompleted" class="text-lg font-black text-emerald-600">0</div>
-                <div class="text-[7px] font-bold text-emerald-500 uppercase">✓</div>
-            </div>
-        </div>
-
-        <!-- Tabs -->
-        <div class="glass p-1 rounded-xl flex gap-1 mb-2 no-print">
-            <button class="tab-btn active" onclick="setTab('today')" id="tabToday">
-                📅 Сегодня <span id="todayCount" class="ml-1 bg-purple-600 text-white text-[9px] px-1.5 py-0.5 rounded-full">0</span>
-            </button>
-            <button class="tab-btn" onclick="setTab('all')" id="tabAll">📋 Все</button>
-            <button class="tab-btn" onclick="setTab('pending')" id="tabPending">
-                ⏳ Ждут <span id="pendingCount" class="ml-1 bg-amber-500 text-white text-[9px] px-1.5 py-0.5 rounded-full">0</span>
-            </button>
-            <button class="tab-btn" onclick="toggleSelectMode()" id="tabSelect">☑️</button>
-        </div>
-
-        <!-- Collapsible Filter -->
-        <div class="glass rounded-xl mb-3 no-print overflow-hidden">
-            <div class="filter-toggle flex items-center justify-between p-2.5 cursor-pointer" onclick="toggleFilter()">
-                <div class="flex items-center gap-2">
-                    <span class="text-sm">🔍</span>
-                    <span id="filterLabel" class="text-xs font-bold text-slate-500">Фильтры</span>
-                </div>
-                <span class="filter-arrow text-slate-400 text-xs transition-transform">▼</span>
-            </div>
-            <div class="filter-content" id="filterContent">
-                <div class="px-2.5 pb-2.5 space-y-2">
-                    <input type="text" id="search" placeholder="Поиск по ФИО, предмету..." oninput="render()" 
-                        class="w-full bg-slate-50 border-0 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500 outline-none">
-                    <div class="flex gap-2">
-                        <select id="filterClass" onchange="render()" class="flex-1 bg-slate-50 rounded-lg px-3 py-2 text-xs">
-                            <option value="">Все классы</option>
-                        </select>
-                        <select id="filterTeacher" onchange="render()" class="flex-1 bg-slate-50 rounded-lg px-3 py-2 text-xs">
-                            <option value="">Все учителя</option>
-                        </select>
-                    </div>
-                    <div class="flex gap-2">
-                        <input type="date" id="filterDateFrom" onchange="render()" class="flex-1 bg-slate-50 rounded-lg px-2 py-2 text-xs">
-                        <span class="flex items-center text-slate-400 text-xs">—</span>
-                        <input type="date" id="filterDateTo" onchange="render()" class="flex-1 bg-slate-50 rounded-lg px-2 py-2 text-xs">
-                        <button onclick="clearFilter()" class="bg-slate-200 px-3 rounded-lg text-xs font-bold text-slate-500">✕</button>
-                    </div>
-                </div>
+            <div class="glass p-3 rounded-2xl text-center shadow-sm">
+                <div id="statMonth" class="text-lg font-black text-slate-700">0</div>
+                <div class="text-[8px] font-bold text-slate-400 uppercase leading-none">Месяц</div>
             </div>
         </div>
 
-        <!-- Journal -->
-        <div id="mobileBody" class="space-y-2"></div>
-        
-        <!-- Empty State -->
-        <div id="emptyState" class="hidden text-center py-12">
-            <div class="text-5xl mb-3">📋</div>
-            <div class="text-white/70 font-bold uppercase text-sm mb-1">Нет записей</div>
-            <div class="text-white/50 text-xs">Нажмите + чтобы добавить замену</div>
+        <!-- Filter -->
+        <div class="mb-4 no-print">
+            <input type="text" id="search" placeholder="Поиск (ФИО, Предмет)..." oninput="render()" class="w-full glass border-none rounded-xl px-5 py-3 text-sm focus:ring-2 focus:ring-white">
         </div>
+
+        <div id="journal" class="space-y-1"></div>
     </div>
 
-    <!-- FAB -->
-    <button onclick="openWizard()" class="fab no-print" id="mainFab">+</button>
+    <button onclick="openWizard()" class="fab no-print">+</button>
 
-    <!-- Floating Selection Bar -->
-    <div class="floating-bar no-print" id="floatingBar">
-        <div class="text-white">
-            <span class="text-lg font-black" id="selectedCount">0</span>
-            <span class="text-sm opacity-70">выбрано</span>
-        </div>
-        <div class="flex gap-2">
-            <button onclick="selectAll()" class="bg-white/20 text-white px-4 py-2 rounded-xl text-sm font-bold">Все</button>
-            <button onclick="markSelectedComplete()" class="bg-emerald-500 text-white px-4 py-2 rounded-xl text-sm font-bold">✓ Готово</button>
-            <button onclick="cancelSelection()" class="bg-white/20 text-white px-3 py-2 rounded-xl text-sm">✕</button>
-        </div>
-    </div>
+    <!-- Wizard -->
+    <div id="overlay" class="modal-overlay" onclick="closeWizard()"></div>
+    <div id="wizard" class="modal-sheet p-8">
+        <div class="w-12 h-1.5 bg-slate-200 rounded-full mx-auto mb-6"></div>
 
-    <!-- Modal Overlay -->
-    <div id="modalOverlay" class="modal-overlay no-print" onclick="closeWizard()"></div>
-    
-    <!-- Wizard Modal -->
-    <div id="modalSheet" class="modal-sheet no-print" onclick="event.stopPropagation()">
-        <div class="modal-handle"></div>
-        
-        <!-- Progress Bar -->
-        <div class="px-6 pt-2 pb-3">
-            <div class="flex items-center justify-center" id="progressBar">
-                <div class="progress-dot active" data-step="1"></div>
-                <div class="progress-line"><div class="progress-line-fill" id="progress1"></div></div>
-                <div class="progress-dot" data-step="2"></div>
-                <div class="progress-line"><div class="progress-line-fill" id="progress2"></div></div>
-                <div class="progress-dot" data-step="3"></div>
-                <div class="progress-line"><div class="progress-line-fill" id="progress3"></div></div>
-                <div class="progress-dot" data-step="4"></div>
-                <div class="progress-line"><div class="progress-line-fill" id="progress4"></div></div>
-                <div class="progress-dot" data-step="5"></div>
-                <div class="progress-line"><div class="progress-line-fill" id="progress5"></div></div>
-                <div class="progress-dot" data-step="6"></div>
+        <div id="step1" class="step active space-y-4">
+            <h3 class="text-xl font-black text-center text-slate-800 uppercase italic">Когда замена?</h3>
+            <input type="date" id="wDate" class="big-input text-blue-600 font-bold">
+            <div class="flex justify-between gap-2" id="lessonGrid">
+                <!-- Lessons 1-7 -->
             </div>
+            <button onclick="next(2)" class="w-full bg-indigo-600 text-white font-black py-4 rounded-2xl shadow-lg">ДАЛЕЕ →</button>
         </div>
-        
-        <div class="px-6 pb-8 overflow-y-auto" style="max-height: calc(90vh - 80px);">
-            
-            <!-- Step 1: Date & Lesson -->
-            <div class="wizard-step active" data-step="1">
-                <div class="text-center mb-4">
-                    <div class="text-3xl mb-1">📅</div>
-                    <h3 class="text-lg font-black text-slate-800">Когда замена?</h3>
-                </div>
-                
-                <div class="mb-4">
-                    <input type="date" id="wDate" class="big-input text-lg">
-                </div>
-                
-                <div class="text-center mb-2">
-                    <span class="text-xs font-bold text-slate-400 uppercase">Номер урока</span>
-                </div>
-                
-                <div class="flex justify-center gap-2 mb-6" id="lessonSelector">
-                    <div class="lesson-btn active" onclick="selectLesson(1)">1</div>
-                    <div class="lesson-btn" onclick="selectLesson(2)">2</div>
-                    <div class="lesson-btn" onclick="selectLesson(3)">3</div>
-                    <div class="lesson-btn" onclick="selectLesson(4)">4</div>
-                    <div class="lesson-btn" onclick="selectLesson(5)">5</div>
-                    <div class="lesson-btn" onclick="selectLesson(6)">6</div>
-                    <div class="lesson-btn" onclick="selectLesson(7)">7</div>
-                </div>
-                
-                <button onclick="nextStep()" class="nav-btn w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg">
-                    Далее →
-                </button>
-            </div>
-            
-            <!-- Step 2: Class -->
-            <div class="wizard-step" data-step="2">
-                <div class="text-center mb-4">
-                    <div class="text-3xl mb-1">🏫</div>
-                    <h3 class="text-lg font-black text-slate-800">Какой класс?</h3>
-                </div>
-                
-                <div class="mb-4">
-                    <input type="text" id="wClass" placeholder="5А" class="big-input uppercase" autocomplete="off">
-                </div>
-                
-                <div class="flex flex-wrap justify-center gap-2 mb-6" id="quickClasses"></div>
-                
-                <div class="flex gap-3">
-                    <button onclick="prevStep()" class="nav-btn flex-1 bg-slate-200 text-slate-600">←</button>
-                    <button onclick="nextStep()" class="nav-btn flex-[2] bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg">Далее →</button>
-                </div>
-            </div>
-            
-            <!-- Step 3: Subject -->
-            <div class="wizard-step" data-step="3">
-                <div class="text-center mb-4">
-                    <div class="text-3xl mb-1">📖</div>
-                    <h3 class="text-lg font-black text-slate-800">Какой предмет?</h3>
-                    <p class="text-xs text-slate-400" id="subjectHint"></p>
-                </div>
-                
-                <div class="mb-4">
-                    <input type="text" id="wSubject" placeholder="Математика" class="big-input text-lg" autocomplete="off">
-                </div>
-                
-                <div class="flex flex-wrap justify-center gap-2 mb-6" id="quickSubjects"></div>
-                
-                <div class="flex gap-3">
-                    <button onclick="prevStep()" class="nav-btn flex-1 bg-slate-200 text-slate-600">←</button>
-                    <button onclick="nextStep()" class="nav-btn flex-[2] bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg">Далее →</button>
-                </div>
-            </div>
-            
-            <!-- Step 4: Who is absent -->
-            <div class="wizard-step" data-step="4">
-                <div class="text-center mb-4">
-                    <div class="text-3xl mb-1">😷</div>
-                    <h3 class="text-lg font-black text-slate-800">Кто отсутствует?</h3>
-                </div>
-                
-                <div class="mb-4">
-                    <input type="text" id="wWho" placeholder="Иванова А.П." class="big-input text-lg" autocomplete="off">
-                </div>
-                
-                <div class="flex flex-wrap justify-center gap-2 mb-6" id="quickTeachersWho"></div>
-                
-                <div class="flex gap-3">
-                    <button onclick="prevStep()" class="nav-btn flex-1 bg-slate-200 text-slate-600">←</button>
-                    <button onclick="nextStep()" class="nav-btn flex-[2] bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg">Далее →</button>
-                </div>
-            </div>
-            
-            <!-- Step 5: Who replaces -->
-            <div class="wizard-step" data-step="5">
-                <div class="text-center mb-4">
-                    <div class="text-3xl mb-1">🦸</div>
-                    <h3 class="text-lg font-black text-slate-800">Кто заменяет?</h3>
-                </div>
-                
-                <div class="mb-4">
-                    <input type="text" id="wBy" placeholder="Петрова М.И." class="big-input text-lg" autocomplete="off">
-                </div>
-                
-                <div class="flex flex-wrap justify-center gap-2 mb-6" id="quickTeachersBy"></div>
-                
-                <div class="flex gap-3">
-                    <button onclick="prevStep()" class="nav-btn flex-1 bg-slate-200 text-slate-600">←</button>
-                    <button onclick="nextStep()" class="nav-btn flex-[2] bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg">Далее →</button>
-                </div>
-            </div>
-            
-            <!-- Step 6: Type & Summary -->
-            <div class="wizard-step" data-step="6">
-                <div class="text-center mb-3">
-                    <div class="text-3xl mb-1">💰</div>
-                    <h3 class="text-lg font-black text-slate-800">Тип оплаты</h3>
-                </div>
-                
-                <div class="flex gap-3 mb-4">
-                    <div class="type-card type-card-window active" onclick="selectType('100')" id="typeCardWindow">
-                        <div class="text-4xl mb-1">🪟</div>
-                        <div class="text-xl font-black">100%</div>
-                        <div class="text-[10px] font-bold opacity-70 uppercase">Было окно</div>
-                    </div>
-                    <div class="type-card type-card-lesson" onclick="selectType('50')" id="typeCardLesson">
-                        <div class="text-4xl mb-1">📚</div>
-                        <div class="text-xl font-black">50%</div>
-                        <div class="text-[10px] font-bold opacity-70 uppercase">Был урок</div>
-                    </div>
-                </div>
-                
-                <!-- Summary -->
-                <div class="bg-slate-50 rounded-xl p-3 mb-4">
-                    <div class="text-[10px] font-bold text-slate-400 uppercase mb-2">📋 Проверьте:</div>
-                    <div id="summaryContent" class="space-y-1"></div>
-                </div>
-                
-                <div class="flex gap-3">
-                    <button onclick="prevStep()" class="nav-btn flex-1 bg-slate-200 text-slate-600">←</button>
-                    <button onclick="saveRecord()" class="nav-btn flex-[2] bg-gradient-to-r from-emerald-500 to-green-600 text-white shadow-lg">✓ Добавить</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Reference Modal (Справочник) -->
-    <div id="refOverlay" class="modal-overlay no-print" onclick="closeReference()"></div>
-    <div id="refSheet" class="modal-sheet wide no-print" onclick="event.stopPropagation()">
-        <div class="modal-handle"></div>
-        <div class="px-6 py-4">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-black uppercase tracking-tight">📚 Справочник</h3>
-                <button onclick="closeReference()" class="w-10 h-10 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-2xl">×</button>
-            </div>
-            
-            <!-- Reference Tabs -->
-            <div class="flex gap-2 mb-4 overflow-x-auto pb-1">
-                <div class="ref-tab active" onclick="setRefTab('teachers')" id="refTabTeachers">👩‍🏫 Учителя</div>
-                <div class="ref-tab" onclick="setRefTab('subjects')" id="refTabSubjects">📖 Предметы</div>
-                <div class="ref-tab" onclick="setRefTab('classes')" id="refTabClasses">🏫 Классы</div>
-                <div class="ref-tab" onclick="setRefTab('bindings')" id="refTabBindings">🔗 Привязки</div>
-            </div>
-            
-            <div class="space-y-4 max-h-[55vh] overflow-y-auto" id="refContent">
-                <!-- Заполняется динамически -->
+        <div id="step2" class="step hidden space-y-4 text-center">
+            <h3 class="text-xl font-black text-slate-800 uppercase italic">Детали</h3>
+            <input type="text" id="wClass" placeholder="Класс (напр. 5А)" class="big-input uppercase">
+            <input type="text" id="wSubject" placeholder="Предмет" class="big-input">
+            <div class="flex gap-2">
+                <button onclick="next(1)" class="w-1/3 bg-slate-100 py-4 rounded-2xl font-bold">←</button>
+                <button onclick="next(3)" class="w-2/3 bg-indigo-600 text-white font-black py-4 rounded-2xl shadow-lg">ДАЛЕЕ →</button>
             </div>
         </div>
-    </div>
 
-    <!-- Report Modal -->
-    <div id="reportOverlay" class="modal-overlay no-print" onclick="closeReport()"></div>
-    <div id="reportSheet" class="modal-sheet no-print" onclick="event.stopPropagation()">
-        <div class="modal-handle"></div>
-        <div class="px-6 py-4">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-black uppercase tracking-tight">📊 Отчёт</h3>
-                <button onclick="closeReport()" class="w-10 h-10 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-2xl">×</button>
+        <div id="step3" class="step hidden space-y-4 text-center">
+            <h3 class="text-xl font-black text-slate-800 uppercase italic">Кто и кого?</h3>
+            <input type="text" id="wWho" placeholder="Кто отсутствует" class="big-input">
+            <input type="text" id="wBy" placeholder="Кто заменяет" class="big-input">
+            <div class="flex gap-4 mb-4">
+                <button onclick="setType('100')" id="btn100" class="flex-1 p-4 rounded-2xl font-black border-4 border-blue-500 bg-blue-50 text-blue-700">100% ОКНО</button>
+                <button onclick="setType('50')" id="btn50" class="flex-1 p-4 rounded-2xl font-black border-4 border-transparent bg-slate-50 text-slate-400">50% УРОК</button>
             </div>
-            
-            <div class="flex gap-2 mb-3">
-                <input type="date" id="reportDateFrom" class="flex-1 bg-slate-100 p-3 rounded-xl text-sm">
-                <span class="flex items-center text-slate-400">—</span>
-                <input type="date" id="reportDateTo" class="flex-1 bg-slate-100 p-3 rounded-xl text-sm">
-            </div>
-            
-            <div class="flex gap-2 mb-4">
-                <button onclick="generateReport()" class="flex-1 bg-emerald-600 text-white font-bold py-3 rounded-xl">📊 Сформировать</button>
-                <button onclick="exportCSV()" class="flex-1 bg-blue-600 text-white font-bold py-3 rounded-xl">📥 Excel</button>
-            </div>
-            
-            <div id="reportContent" class="space-y-3 max-h-[45vh] overflow-y-auto"></div>
-        </div>
-    </div>
-
-    <!-- Stats Modal -->
-    <div id="statsOverlay" class="modal-overlay no-print" onclick="closeStats()"></div>
-    <div id="statsSheet" class="modal-sheet no-print" onclick="event.stopPropagation()">
-        <div class="modal-handle"></div>
-        <div class="px-6 py-4">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-black uppercase tracking-tight">📈 Статистика</h3>
-                <button onclick="closeStats()" class="w-10 h-10 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-2xl">×</button>
-            </div>
-            <div class="space-y-3 max-h-[60vh] overflow-y-auto" id="statsContent"></div>
-        </div>
-    </div>
-
-    <!-- Settings Modal -->
-    <div id="settingsOverlay" class="modal-overlay no-print" onclick="closeSettings()"></div>
-    <div id="settingsSheet" class="modal-sheet no-print" onclick="event.stopPropagation()">
-        <div class="modal-handle"></div>
-        <div class="px-6 py-4">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-black uppercase tracking-tight">⚙️ Настройки</h3>
-                <button onclick="closeSettings()" class="w-10 h-10 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-2xl">×</button>
-            </div>
-            
-            <div class="space-y-3">
-                <div class="flex gap-2">
-                    <button onclick="exportJSON()" class="flex-1 bg-slate-100 text-slate-600 font-bold py-3 rounded-xl">📤 Экспорт JSON</button>
-                    <button onclick="document.getElementById('importInput').click()" class="flex-1 bg-slate-100 text-slate-600 font-bold py-3 rounded-xl">📥 Импорт</button>
-                </div>
-                <input type="file" id="importInput" accept=".json" class="hidden" onchange="importJSON(event)">
-                
-                <button onclick="clearAllData()" class="w-full bg-red-50 text-red-600 font-bold py-3 rounded-xl">🗑️ Очистить все данные</button>
-                
-                <div class="text-center text-xs text-slate-400 pt-4 border-t">
-                    Завуч.PRO v6.0 • 2024
-                </div>
+            <div id="summary" class="bg-slate-50 p-4 rounded-xl text-left text-xs space-y-1 font-medium text-slate-500"></div>
+            <div class="flex gap-2">
+                <button onclick="next(2)" class="w-1/3 bg-slate-100 py-4 rounded-2xl font-bold">←</button>
+                <button onclick="saveRec()" class="w-2/3 bg-emerald-500 text-white font-black py-4 rounded-2xl shadow-lg shadow-emerald-200 uppercase tracking-widest">ДОБАВИТЬ ✓</button>
             </div>
         </div>
     </div>
@@ -848,910 +135,161 @@
     <div id="toast" class="toast"></div>
 
     <script>
-        // ===== DATA =====
-        let reps = JSON.parse(localStorage.getItem('v6_data')) || [];
-        let master = JSON.parse(localStorage.getItem('v6_master')) || {
-            teachers: [],
-            subjects: [],
-            classes: [],
-            bindings: {} // { "5А": ["Математика", "Русский"], "5Б": [...] }
-        };
-        
-        let currentStep = 1;
-        let currentTab = 'today';
-        let selectedLesson = 1;
-        let selectedType = '100';
-        let currentSwipeEl = null;
-        let selectMode = false;
-        let selectedIds = new Set();
-        let currentRefTab = 'teachers';
+        let reps = JSON.parse(localStorage.getItem('v61_reps')) || [];
+        let curStep = 1;
+        let curLesson = 1;
+        let curType = '100';
 
-        const save = () => {
-            localStorage.setItem('v6_data', JSON.stringify(reps));
-            localStorage.setItem('v6_master', JSON.stringify(master));
-        };
+        // Инициализация сетки уроков
+        const lg = document.getElementById('lessonGrid');
+        for(let i=1; i<=7; i++) {
+            lg.innerHTML += `<div class="lesson-btn ${i==1?'active':''}" onclick="setLesson(${i}, this)">${i}</div>`;
+        }
 
-        const getToday = () => new Date().toISOString().slice(0, 10);
-        
-        const formatDate = (dateStr) => {
-            const d = new Date(dateStr);
-            const dayNames = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
-            const monthNames = ['янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
-            return {
-                day: d.getDate(),
-                month: monthNames[d.getMonth()],
-                weekday: dayNames[d.getDay()]
-            };
-        };
+        function setLesson(num, el) {
+            curLesson = num;
+            document.querySelectorAll('.lesson-btn').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+        }
 
-        // ===== TABS =====
-        const setTab = (tab) => {
-            currentTab = tab;
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            const tabEl = document.getElementById('tab' + tab.charAt(0).toUpperCase() + tab.slice(1));
-            if (tabEl) tabEl.classList.add('active');
-            render();
-        };
+        function setType(t) {
+            curType = t;
+            document.getElementById('btn100').className = t=='100' ? 'flex-1 p-4 rounded-2xl font-black border-4 border-blue-500 bg-blue-50 text-blue-700' : 'flex-1 p-4 rounded-2xl font-black border-4 border-transparent bg-slate-50 text-slate-400';
+            document.getElementById('btn50').className = t=='50' ? 'flex-1 p-4 rounded-2xl font-black border-4 border-amber-500 bg-amber-50 text-amber-700' : 'flex-1 p-4 rounded-2xl font-black border-4 border-transparent bg-slate-50 text-slate-400';
+            updateSummary();
+        }
 
-        // ===== FILTER =====
-        const toggleFilter = () => {
-            document.querySelector('.filter-toggle').classList.toggle('open');
-            document.getElementById('filterContent').classList.toggle('open');
-        };
-
-        const clearFilter = () => { 
-            document.getElementById('search').value = ''; 
-            document.getElementById('filterClass').value = '';
-            document.getElementById('filterTeacher').value = '';
-            document.getElementById('filterDateFrom').value = '';
-            document.getElementById('filterDateTo').value = '';
-            render(); 
-        };
-
-        // ===== SELECT MODE =====
-        const toggleSelectMode = () => {
-            selectMode = !selectMode;
-            selectedIds.clear();
-            document.getElementById('mobileBody').classList.toggle('select-mode', selectMode);
-            document.getElementById('floatingBar').classList.toggle('show', selectMode);
-            document.getElementById('mainFab').style.display = selectMode ? 'none' : 'flex';
-            document.getElementById('tabSelect').classList.toggle('active', selectMode);
-            updateSelectedCount();
-        };
-
-        const cancelSelection = () => {
-            selectMode = false;
-            selectedIds.clear();
-            document.getElementById('mobileBody').classList.remove('select-mode');
-            document.getElementById('floatingBar').classList.remove('show');
-            document.getElementById('mainFab').style.display = 'flex';
-            document.getElementById('tabSelect').classList.remove('active');
-            render();
-        };
-
-        const toggleCardSelection = (id) => {
-            if (!selectMode) return;
-            if (selectedIds.has(id)) {
-                selectedIds.delete(id);
-            } else {
-                selectedIds.add(id);
-            }
-            updateSelectedCount();
-            updateCheckboxes();
-        };
-
-        const updateSelectedCount = () => {
-            document.getElementById('selectedCount').textContent = selectedIds.size;
-        };
-
-        const updateCheckboxes = () => {
-            document.querySelectorAll('.select-checkbox').forEach(cb => {
-                const id = parseInt(cb.dataset.id);
-                cb.classList.toggle('checked', selectedIds.has(id));
-                cb.innerHTML = selectedIds.has(id) ? '<span class="text-white text-sm">✓</span>' : '';
-            });
-        };
-
-        const selectAll = () => {
-            const visible = document.querySelectorAll('.swipe-container[data-id]');
-            visible.forEach(el => selectedIds.add(parseInt(el.dataset.id)));
-            updateSelectedCount();
-            updateCheckboxes();
-        };
-
-        const markSelectedComplete = () => {
-            selectedIds.forEach(id => {
-                const r = reps.find(r => r.id === id);
-                if (r) r.completed = true;
-            });
-            save();
-            cancelSelection();
-            showToast(`✓ Отмечено: ${selectedIds.size}`);
-        };
-
-        // ===== RENDER =====
-        const render = () => {
-            const container = document.getElementById('mobileBody');
-            const search = document.getElementById('search').value.toLowerCase();
-            const filterClass = document.getElementById('filterClass').value;
-            const filterTeacher = document.getElementById('filterTeacher').value;
-            const dateFrom = document.getElementById('filterDateFrom').value;
-            const dateTo = document.getElementById('filterDateTo').value;
-            const today = getToday();
-            
-            let filtered = [...reps];
-            
-            if (currentTab === 'today') {
-                filtered = filtered.filter(r => r.date === today);
-            } else if (currentTab === 'pending') {
-                filtered = filtered.filter(r => !r.completed && r.date <= today);
-            }
-            
-            if (search) {
-                filtered = filtered.filter(r => 
-                    r.by.toLowerCase().includes(search) || 
-                    r.who.toLowerCase().includes(search) || 
-                    r.subject.toLowerCase().includes(search) ||
-                    (r.class && r.class.toLowerCase().includes(search))
-                );
-            }
-            
-            if (filterClass) filtered = filtered.filter(r => r.class === filterClass);
-            if (filterTeacher) filtered = filtered.filter(r => r.by === filterTeacher || r.who === filterTeacher);
-            if (dateFrom) filtered = filtered.filter(r => r.date >= dateFrom);
-            if (dateTo) filtered = filtered.filter(r => r.date <= dateTo);
-            
-            filtered.sort((a, b) => {
-                if (a.date !== b.date) return new Date(b.date) - new Date(a.date);
-                return (a.lesson || 1) - (b.lesson || 1);
-            });
-            
-            if (filtered.length === 0) {
-                container.innerHTML = '';
-                document.getElementById('emptyState').classList.remove('hidden');
-            } else {
-                document.getElementById('emptyState').classList.add('hidden');
-                container.innerHTML = filtered.map(r => {
-                    const d = formatDate(r.date);
-                    const is100 = r.type === '100';
-                    const isCompleted = r.completed;
-                    
-                    return `
-                    <div class="swipe-container record-card shadow-lg ${isCompleted ? 'completed-card' : ''}" data-id="${r.id}">
-                        <div class="swipe-actions">
-                            <div class="swipe-action bg-emerald-500" onclick="toggleComplete(${r.id})">
-                                <span class="text-lg">${isCompleted ? '↩️' : '✓'}</span>
-                                <span>${isCompleted ? 'ОТМЕНА' : 'ГОТОВО'}</span>
-                            </div>
-                            <div class="swipe-action bg-red-500" onclick="del(${r.id})">
-                                <span class="text-lg">🗑️</span>
-                                <span>УДАЛИТЬ</span>
-                            </div>
-                        </div>
-                        <div class="swipe-item p-3" 
-                             onclick="toggleCardSelection(${r.id})"
-                             ontouchstart="handleTouchStart(event)"
-                             ontouchmove="handleTouchMove(event)"
-                             ontouchend="handleTouchEnd(event)">
-                            
-                            <div class="flex gap-3 items-center">
-                                <!-- Checkbox for select mode -->
-                                <div class="select-checkbox" data-id="${r.id}"></div>
-                                
-                                <!-- Date -->
-                                <div class="flex flex-col items-center min-w-[50px]">
-                                    <div class="bg-gradient-to-br from-slate-100 to-slate-50 px-2.5 py-1.5 rounded-xl text-center border border-slate-200">
-                                        <div class="text-xl font-black text-slate-700 leading-none">${d.day}</div>
-                                        <div class="text-[8px] font-bold text-slate-400 uppercase">${d.month}</div>
-                                        <div class="text-[7px] font-medium text-slate-300">${d.weekday}</div>
-                                    </div>
-                                    <div class="mt-1 bg-purple-100 text-purple-700 text-[9px] font-black px-2 py-0.5 rounded-md">
-                                        ${r.lesson || 1} ур.
-                                    </div>
-                                </div>
-                                
-                                <!-- Info -->
-                                <div class="flex-1 min-w-0">
-                                    <div class="flex items-center gap-2 mb-1">
-                                        <span class="bg-indigo-100 text-indigo-700 text-[10px] font-bold px-1.5 py-0.5 rounded">${r.class || '—'}</span>
-                                        <span class="text-xs font-bold text-slate-600 truncate">${r.subject}</span>
-                                    </div>
-                                    
-                                    <div class="flex items-center gap-1.5 mb-0.5">
-                                        <span class="text-sm">🦸</span>
-                                        <span class="font-bold text-slate-800 text-sm truncate">${r.by}</span>
-                                    </div>
-                                    <div class="flex items-center gap-1.5">
-                                        <span class="text-sm">😷</span>
-                                        <span class="text-xs text-slate-500 truncate">за ${r.who}</span>
-                                    </div>
-                                </div>
-                                
-                                <!-- Type Badge -->
-                                <div class="${is100 ? 'badge-100' : 'badge-50'} px-3 py-2 rounded-xl text-center flex-shrink-0">
-                                    <div class="text-xl font-black">${r.type}%</div>
-                                    <div class="text-[8px] font-bold uppercase opacity-90">${is100 ? '🪟ОКНО' : '📚УРОК'}</div>
-                                </div>
-                            </div>
-                            
-                            ${isCompleted ? '<div class="absolute top-1.5 right-1.5 text-emerald-500 text-lg">✓</div>' : ''}
-                        </div>
-                    </div>
-                    `;
-                }).join('');
-            }
-            
-            updateStats();
-            updateFilters();
-        };
-
-        // ===== SWIPE =====
-        let startX = 0, startY = 0, isSwiping = false;
-        
-        const handleTouchStart = (e) => {
-            if (selectMode) return;
-            if (currentSwipeEl && currentSwipeEl !== e.currentTarget) {
-                currentSwipeEl.style.transform = 'translateX(0)';
-            }
-            startX = e.touches[0].clientX;
-            startY = e.touches[0].clientY;
-            isSwiping = false;
-            e.currentTarget.classList.add('swiping');
-            currentSwipeEl = e.currentTarget;
-        };
-        
-        const handleTouchMove = (e) => {
-            if (selectMode || !currentSwipeEl) return;
-            const deltaX = e.touches[0].clientX - startX;
-            const deltaY = e.touches[0].clientY - startY;
-            
-            if (!isSwiping && Math.abs(deltaX) > 10) {
-                isSwiping = Math.abs(deltaX) > Math.abs(deltaY);
-            }
-            
-            if (isSwiping) {
-                e.preventDefault();
-                const moveX = Math.max(-160, Math.min(0, deltaX));
-                currentSwipeEl.style.transform = `translateX(${moveX}px)`;
-            }
-        };
-        
-        const handleTouchEnd = (e) => {
-            if (selectMode || !currentSwipeEl) return;
-            currentSwipeEl.classList.remove('swiping');
-            const currentX = parseInt(currentSwipeEl.style.transform.replace(/[^-\d]/g, '')) || 0;
-            currentSwipeEl.style.transform = currentX < -60 ? 'translateX(-160px)' : 'translateX(0)';
-            if (currentX >= -60) currentSwipeEl = null;
-            isSwiping = false;
-        };
-
-        const del = id => {
-            if(confirm('Удалить запись?')) {
-                reps = reps.filter(r => r.id !== id);
-                save(); render(); showToast('🗑️ Удалено');
-            }
-        };
-        
-        const toggleComplete = id => {
-            const r = reps.find(r => r.id === id);
-            if (r) {
-                r.completed = !r.completed;
-                save(); render();
-                showToast(r.completed ? '✓ Выполнено' : '↩️ Отменено');
-            }
-        };
-
-        // ===== WIZARD =====
-        const selectLesson = (n) => {
-            selectedLesson = n;
-            document.querySelectorAll('.lesson-btn').forEach((btn, i) => {
-                btn.classList.toggle('active', i + 1 === n);
-            });
-        };
-        
-        const selectType = (type) => {
-            selectedType = type;
-            document.getElementById('typeCardWindow').classList.toggle('active', type === '100');
-            document.getElementById('typeCardLesson').classList.toggle('active', type === '50');
-        };
-
-        const showToast = msg => {
-            const t = document.getElementById('toast');
-            t.textContent = msg; t.classList.add('show');
-            setTimeout(() => t.classList.remove('show'), 2500);
-        };
-
-        const openWizard = () => {
-            currentStep = 1;
-            selectedLesson = 1;
-            selectedType = '100';
+        function openWizard() {
+            curStep = 1; next(1);
             document.getElementById('wDate').valueAsDate = new Date();
-            document.getElementById('wClass').value = '';
-            document.getElementById('wSubject').value = '';
-            document.getElementById('wWho').value = '';
-            document.getElementById('wBy').value = '';
-            selectLesson(1);
-            selectType('100');
-            updateWizardStep();
-            updateQuickButtons();
-            
-            document.getElementById('modalOverlay').classList.add('active');
-            document.getElementById('modalSheet').classList.add('active');
-            document.body.style.overflow = 'hidden';
-        };
-        
-        const closeWizard = () => {
-            document.getElementById('modalOverlay').classList.remove('active');
-            document.getElementById('modalSheet').classList.remove('active');
-            document.body.style.overflow = '';
-        };
-        
-        const updateWizardStep = (direction = 'next') => {
-            document.querySelectorAll('.wizard-step').forEach(step => {
-                step.classList.remove('active', 'back');
-            });
-            
-            const currentStepEl = document.querySelector(`.wizard-step[data-step="${currentStep}"]`);
-            currentStepEl.classList.add('active');
-            if (direction === 'back') currentStepEl.classList.add('back');
-            
-            document.querySelectorAll('.progress-dot').forEach((dot, i) => {
-                const stepNum = i + 1;
-                dot.classList.remove('active', 'done');
-                if (stepNum === currentStep) dot.classList.add('active');
-                else if (stepNum < currentStep) dot.classList.add('done');
-            });
-            
-            for (let i = 1; i < currentStep; i++) {
-                document.getElementById(`progress${i}`).style.width = '100%';
-            }
-            for (let i = currentStep; i <= 5; i++) {
-                document.getElementById(`progress${i}`).style.width = '0%';
-            }
-            
-            if (currentStep === 3) {
-                updateSubjectsForClass();
-            }
-            
-            if (currentStep === 6) {
-                updateSummary();
-            }
-        };
-        
-        const nextStep = () => {
-            if (currentStep === 1 && !document.getElementById('wDate').value) {
-                showToast('⚠️ Выберите дату'); return;
-            }
-            if (currentStep === 2 && !document.getElementById('wClass').value.trim()) {
-                showToast('⚠️ Укажите класс'); return;
-            }
-            if (currentStep === 3 && !document.getElementById('wSubject').value.trim()) {
-                showToast('⚠️ Укажите предмет'); return;
-            }
-            if (currentStep === 4 && !document.getElementById('wWho').value.trim()) {
-                showToast('⚠️ Укажите кто отсутствует'); return;
-            }
-            if (currentStep === 5 && !document.getElementById('wBy').value.trim()) {
-                showToast('⚠️ Укажите кто заменяет'); return;
-            }
-            
-            if (currentStep < 6) {
-                currentStep++;
-                updateWizardStep('next');
-                updateQuickButtons();
-            }
-        };
-        
-        const prevStep = () => {
-            if (currentStep > 1) {
-                currentStep--;
-                updateWizardStep('back');
-                updateQuickButtons();
-            }
-        };
-        
-        const updateSubjectsForClass = () => {
-            const cls = document.getElementById('wClass').value.trim().toUpperCase();
-            const hint = document.getElementById('subjectHint');
-            const container = document.getElementById('quickSubjects');
-            
-            if (master.bindings[cls] && master.bindings[cls].length > 0) {
-                hint.textContent = `Предметы для ${cls}`;
-                container.innerHTML = master.bindings[cls].map(s => 
-                    `<button type="button" class="class-btn text-sm" onclick="document.getElementById('wSubject').value='${s}'">${s}</button>`
-                ).join('');
-            } else {
-                hint.textContent = '';
-                container.innerHTML = master.subjects.slice(0, 6).map(s => 
-                    `<button type="button" class="class-btn text-sm" onclick="document.getElementById('wSubject').value='${s}'">${s}</button>`
-                ).join('');
-            }
-        };
-        
-        const updateSummary = () => {
-            const d = formatDate(document.getElementById('wDate').value);
-            document.getElementById('summaryContent').innerHTML = `
-                <div class="flex justify-between text-sm"><span class="text-slate-400">📅</span><span class="font-bold">${d.day} ${d.month}, ${d.weekday} • ${selectedLesson} урок</span></div>
-                <div class="flex justify-between text-sm"><span class="text-slate-400">🏫</span><span class="font-bold">${document.getElementById('wClass').value.toUpperCase()}</span></div>
-                <div class="flex justify-between text-sm"><span class="text-slate-400">📖</span><span class="font-bold">${document.getElementById('wSubject').value}</span></div>
-                <div class="flex justify-between text-sm"><span class="text-slate-400">😷</span><span class="font-bold">${document.getElementById('wWho').value}</span></div>
-                <div class="flex justify-between text-sm"><span class="text-slate-400">🦸</span><span class="font-bold text-purple-600">${document.getElementById('wBy').value}</span></div>
+            document.getElementById('wizard').classList.add('active');
+            document.getElementById('overlay').classList.add('active');
+        }
+
+        function closeWizard() {
+            document.getElementById('wizard').classList.remove('active');
+            document.getElementById('overlay').classList.remove('active');
+        }
+
+        function next(step) {
+            document.querySelectorAll('.step').forEach(s => s.classList.add('hidden'));
+            document.getElementById('step' + step).classList.remove('hidden');
+            if(step == 3) updateSummary();
+        }
+
+        function updateSummary() {
+            const s = document.getElementById('summary');
+            const subject = document.getElementById('wSubject').value || '---';
+            const who = document.getElementById('wWho').value || '---';
+            const by = document.getElementById('wBy').value || '---';
+            s.innerHTML = `
+                <div><b class="text-slate-800 uppercase">Предмет:</b> ${subject}</div>
+                <div><b class="text-slate-800 uppercase">Заменяет:</b> ${by}</div>
+                <div><b class="text-slate-800 uppercase">Вместо:</b> ${who}</div>
+                <div><b class="text-slate-800 uppercase">Оплата:</b> ${curType}% (${curType=='100'?'Окно':'Совмещение'})</div>
             `;
-        };
-        
-        const saveRecord = () => {
-            const data = {
+        }
+
+        function saveRec() {
+            const rec = {
                 id: Date.now(),
                 date: document.getElementById('wDate').value,
-                lesson: selectedLesson,
-                type: selectedType,
-                class: document.getElementById('wClass').value.trim().toUpperCase(),
+                lesson: curLesson,
+                cls: document.getElementById('wClass').value.trim().toUpperCase(),
                 subject: document.getElementById('wSubject').value.trim(),
                 who: document.getElementById('wWho').value.trim(),
                 by: document.getElementById('wBy').value.trim(),
-                completed: false
+                type: curType
             };
-            
-            reps.push(data);
-            
-            // Auto-add to master
-            if(!master.teachers.includes(data.who)) master.teachers.push(data.who);
-            if(!master.teachers.includes(data.by)) master.teachers.push(data.by);
-            if(!master.subjects.includes(data.subject)) master.subjects.push(data.subject);
-            if(data.class && !master.classes.includes(data.class)) master.classes.push(data.class);
-            
-            save(); render(); closeWizard();
-            showToast('✅ Замена добавлена!');
-        };
-        
-        const updateQuickButtons = () => {
-            // Classes
-            const classesContainer = document.getElementById('quickClasses');
-            if (classesContainer) {
-                classesContainer.innerHTML = master.classes.slice(0, 10).map(c => 
-                    `<button type="button" class="class-btn" onclick="document.getElementById('wClass').value='${c}'">${c}</button>`
-                ).join('');
-            }
-            
-            // Teachers Who
-            const teachersWhoContainer = document.getElementById('quickTeachersWho');
-            if (teachersWhoContainer) {
-                teachersWhoContainer.innerHTML = master.teachers.slice(0, 6).map(t => 
-                    `<button type="button" class="class-btn text-xs" onclick="document.getElementById('wWho').value='${t}'">${t}</button>`
-                ).join('');
-            }
-            
-            // Teachers By
-            const teachersByContainer = document.getElementById('quickTeachersBy');
-            if (teachersByContainer) {
-                teachersByContainer.innerHTML = master.teachers.slice(0, 6).map(t => 
-                    `<button type="button" class="class-btn text-xs" onclick="document.getElementById('wBy').value='${t}'">${t}</button>`
-                ).join('');
-            }
-        };
 
-        // ===== STATS & FILTERS =====
-        const updateStats = () => {
-            const today = getToday();
+            if(!rec.date || !rec.cls || !rec.subject || !rec.by) return showToast('Заполните все поля!');
+
+            // Проверка на дубликаты
+            const isDup = reps.find(r => r.date == rec.date && r.lesson == rec.lesson && r.cls == rec.cls);
+            if(isDup && !confirm('Внимание! В этом классе на этом уроке уже есть замена. Продолжить?')) return;
+
+            reps.push(rec);
+            localStorage.setItem('v61_reps', JSON.stringify(reps));
+            render();
+            closeWizard();
+            showToast('✓ Сохранено в журнал');
+            document.getElementById('mainForm').reset();
+        }
+
+        function render() {
+            const container = document.getElementById('journal');
+            const search = document.getElementById('search').value.toLowerCase();
+            const filtered = reps.filter(r => 
+                r.by.toLowerCase().includes(search) || r.subject.toLowerCase().includes(search) || r.cls.toLowerCase().includes(search)
+            ).sort((a,b) => new Date(b.date) - new Date(a.date));
+
+            container.innerHTML = filtered.map(r => `
+                <div class="swipe-container">
+                    <div class="swipe-action" onclick="del(${r.id})">УДАЛИТЬ</div>
+                    <div class="swipe-item p-4 flex items-center gap-4" 
+                         ontouchstart="ts(event)" ontouchmove="tm(event, this)" ontouchend="te(event, this)">
+                        <div class="flex flex-col items-center bg-slate-50 min-w-[45px] py-1 rounded-xl">
+                            <span class="text-lg font-black leading-none">${new Date(r.date).getDate()}</span>
+                            <span class="text-[8px] font-bold text-slate-400 uppercase">${new Date(r.date).toLocaleDateString('ru-RU',{month:'short'}).replace('.','')}</span>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center gap-2">
+                                <span class="text-[9px] font-black bg-blue-100 text-blue-600 px-1.5 rounded uppercase">${r.cls}</span>
+                                <span class="text-[9px] font-bold text-slate-400 italic truncate tracking-tight">${r.subject}</span>
+                            </div>
+                            <div class="text-sm font-black text-slate-800 truncate">${r.by}</div>
+                            <div class="text-[10px] text-slate-400 truncate">вместо: ${r.who}</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-lg font-black ${r.type=='100'?'text-blue-600':'text-amber-500'} italic leading-none">${r.type}%</div>
+                            <div class="text-[7px] font-black text-slate-300 uppercase">${r.type=='100'?'ОКНО':'УРОК'}</div>
+                        </div>
+                    </div>
+                </div>
+            `).join('') || '<div class="py-20 text-center text-white/50 font-bold uppercase text-xs italic tracking-widest">Журнал пуст</div>';
+
+            updateStats();
+        }
+
+        // Swipe Logic
+        let sX = 0;
+        const ts = e => { sX = e.touches[0].clientX; resetSwipes(); };
+        const tm = (e, el) => {
+            let mX = e.touches[0].clientX - sX;
+            if (mX < 0 && mX > -120) el.style.transform = `translateX(${mX}px)`;
+        };
+        const te = (e, el) => {
+            let fX = parseInt(el.style.transform.replace(/[^-0-9]/g,'')) || 0;
+            el.style.transform = fX < -60 ? 'translateX(-80px)' : 'translateX(0)';
+        };
+        const resetSwipes = () => document.querySelectorAll('.swipe-item').forEach(el => el.style.transform = 'translateX(0)');
+
+        function del(id) {
+            if(confirm('Удалить?')) {
+                reps = reps.filter(r => r.id !== id);
+                localStorage.setItem('v61_reps', JSON.stringify(reps));
+                render();
+            }
+        }
+
+        function showToast(m) {
+            const t = document.getElementById('toast'); t.textContent = m;
+            t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2000);
+        }
+
+        function updateStats() {
             document.getElementById('statTotal').textContent = reps.length;
-            document.getElementById('stat100').textContent = reps.filter(r => r.type === '100').length;
-            document.getElementById('stat50').textContent = reps.filter(r => r.type === '50').length;
-            document.getElementById('statCompleted').textContent = reps.filter(r => r.completed).length;
-            document.getElementById('todayCount').textContent = reps.filter(r => r.date === today).length;
-            document.getElementById('pendingCount').textContent = reps.filter(r => !r.completed && r.date <= today).length;
-        };
-
-        const updateFilters = () => {
-            const classSelect = document.getElementById('filterClass');
-            const teacherSelect = document.getElementById('filterTeacher');
-            const currentClass = classSelect.value;
-            const currentTeacher = teacherSelect.value;
-            
-            const classes = [...new Set(reps.map(r => r.class).filter(Boolean))].sort();
-            const teachers = [...new Set([...reps.map(r => r.by), ...reps.map(r => r.who)])].sort();
-            
-            classSelect.innerHTML = '<option value="">Все классы</option>' + classes.map(c => 
-                `<option value="${c}" ${c === currentClass ? 'selected' : ''}>${c}</option>`
-            ).join('');
-            
-            teacherSelect.innerHTML = '<option value="">Все учителя</option>' + teachers.map(t => 
-                `<option value="${t}" ${t === currentTeacher ? 'selected' : ''}>${t}</option>`
-            ).join('');
-        };
-
-        // ===== REFERENCE (СПРАВОЧНИК) =====
-        const openReference = () => {
-            document.getElementById('refOverlay').classList.add('active');
-            document.getElementById('refSheet').classList.add('active');
-            document.body.style.overflow = 'hidden';
-            renderReference();
-        };
-        
-        const closeReference = () => {
-            document.getElementById('refOverlay').classList.remove('active');
-            document.getElementById('refSheet').classList.remove('active');
-            document.body.style.overflow = '';
-        };
-        
-        const setRefTab = (tab) => {
-            currentRefTab = tab;
-            document.querySelectorAll('.ref-tab').forEach(t => t.classList.remove('active'));
-            document.getElementById('refTab' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
-            renderReference();
-        };
-        
-        const renderReference = () => {
-            const container = document.getElementById('refContent');
-            
-            if (currentRefTab === 'teachers') {
-                container.innerHTML = `
-                    <div class="flex gap-2 mb-3">
-                        <input type="text" id="newTeacher" placeholder="ФИО учителя" class="flex-1 bg-slate-100 px-4 py-3 rounded-xl">
-                        <button onclick="addTeacher()" class="bg-purple-600 text-white px-4 rounded-xl font-bold">+</button>
-                    </div>
-                    <div class="text-xs text-slate-400 mb-2">Всего: ${master.teachers.length}</div>
-                    <div id="teachersList">
-                        ${master.teachers.sort().map(t => `
-                            <div class="ref-item">
-                                <span class="font-medium">${t}</span>
-                                <button onclick="removeTeacher('${t}')" class="text-red-400 text-lg">×</button>
-                            </div>
-                        `).join('')}
-                    </div>
-                `;
-            } else if (currentRefTab === 'subjects') {
-                container.innerHTML = `
-                    <div class="flex gap-2 mb-3">
-                        <input type="text" id="newSubject" placeholder="Название предмета" class="flex-1 bg-slate-100 px-4 py-3 rounded-xl">
-                        <button onclick="addSubject()" class="bg-purple-600 text-white px-4 rounded-xl font-bold">+</button>
-                    </div>
-                    <div class="text-xs text-slate-400 mb-2">Всего: ${master.subjects.length}</div>
-                    <div id="subjectsList">
-                        ${master.subjects.sort().map(s => `
-                            <div class="ref-item">
-                                <span class="font-medium">${s}</span>
-                                <button onclick="removeSubject('${s}')" class="text-red-400 text-lg">×</button>
-                            </div>
-                        `).join('')}
-                    </div>
-                `;
-            } else if (currentRefTab === 'classes') {
-                container.innerHTML = `
-                    <div class="flex gap-2 mb-3">
-                        <input type="text" id="newClass" placeholder="Например: 5А" class="flex-1 bg-slate-100 px-4 py-3 rounded-xl uppercase">
-                        <button onclick="addClass()" class="bg-purple-600 text-white px-4 rounded-xl font-bold">+</button>
-                    </div>
-                    <div class="text-xs text-slate-400 mb-2">Всего: ${master.classes.length}</div>
-                    <div id="classesList">
-                        ${master.classes.sort().map(c => `
-                            <div class="ref-item">
-                                <span class="font-medium">${c}</span>
-                                <div class="flex items-center gap-2">
-                                    <span class="text-xs text-slate-400">${(master.bindings[c] || []).length} предм.</span>
-                                    <button onclick="removeClass('${c}')" class="text-red-400 text-lg">×</button>
-                                </div>
-                            </div>
-                        `).join('')}
-                    </div>
-                `;
-            } else if (currentRefTab === 'bindings') {
-                container.innerHTML = `
-                    <div class="mb-3">
-                        <label class="text-xs font-bold text-slate-500 uppercase mb-1 block">Выберите класс:</label>
-                        <select id="bindingClass" onchange="renderBindingSubjects()" class="w-full bg-slate-100 px-4 py-3 rounded-xl">
-                            <option value="">— Выберите класс —</option>
-                            ${master.classes.sort().map(c => `<option value="${c}">${c}</option>`).join('')}
-                        </select>
-                    </div>
-                    <div id="bindingSubjects"></div>
-                `;
-            }
-        };
-        
-        const renderBindingSubjects = () => {
-            const cls = document.getElementById('bindingClass').value;
-            const container = document.getElementById('bindingSubjects');
-            
-            if (!cls) {
-                container.innerHTML = '<div class="text-center text-slate-400 py-8">Выберите класс</div>';
-                return;
-            }
-            
-            const bound = master.bindings[cls] || [];
-            
-            container.innerHTML = `
-                <div class="text-xs font-bold text-slate-500 uppercase mb-2">Предметы для ${cls}:</div>
-                <div class="flex flex-wrap gap-2 mb-4">
-                    ${bound.map(s => `
-                        <div class="chip bg-purple-100 text-purple-700">
-                            ${s}
-                            <span class="chip-remove" onclick="unbindSubject('${cls}', '${s}')">×</span>
-                        </div>
-                    `).join('') || '<span class="text-slate-400 text-sm">Нет привязанных предметов</span>'}
-                </div>
-                <div class="text-xs font-bold text-slate-500 uppercase mb-2">Добавить предмет:</div>
-                <div class="flex flex-wrap gap-2">
-                    ${master.subjects.filter(s => !bound.includes(s)).map(s => `
-                        <button onclick="bindSubject('${cls}', '${s}')" class="chip bg-slate-200 hover:bg-purple-200 transition cursor-pointer">${s}</button>
-                    `).join('') || '<span class="text-slate-400 text-sm">Все предметы привязаны</span>'}
-                </div>
-            `;
-        };
-        
-        const addTeacher = () => {
-            const input = document.getElementById('newTeacher');
-            const val = input.value.trim();
-            if (val && !master.teachers.includes(val)) {
-                master.teachers.push(val);
-                save();
-                input.value = '';
-                renderReference();
-                showToast('✓ Добавлено');
-            }
-        };
-        
-        const removeTeacher = (t) => {
-            master.teachers = master.teachers.filter(x => x !== t);
-            save();
-            renderReference();
-        };
-        
-        const addSubject = () => {
-            const input = document.getElementById('newSubject');
-            const val = input.value.trim();
-            if (val && !master.subjects.includes(val)) {
-                master.subjects.push(val);
-                save();
-                input.value = '';
-                renderReference();
-                showToast('✓ Добавлено');
-            }
-        };
-        
-        const removeSubject = (s) => {
-            master.subjects = master.subjects.filter(x => x !== s);
-            // Удаляем из привязок
-            Object.keys(master.bindings).forEach(cls => {
-                master.bindings[cls] = master.bindings[cls].filter(x => x !== s);
-            });
-            save();
-            renderReference();
-        };
-        
-        const addClass = () => {
-            const input = document.getElementById('newClass');
-            const val = input.value.trim().toUpperCase();
-            if (val && !master.classes.includes(val)) {
-                master.classes.push(val);
-                if (!master.bindings[val]) master.bindings[val] = [];
-                save();
-                input.value = '';
-                renderReference();
-                showToast('✓ Добавлено');
-            }
-        };
-        
-        const removeClass = (c) => {
-            master.classes = master.classes.filter(x => x !== c);
-            delete master.bindings[c];
-            save();
-            renderReference();
-        };
-        
-        const bindSubject = (cls, subj) => {
-            if (!master.bindings[cls]) master.bindings[cls] = [];
-            if (!master.bindings[cls].includes(subj)) {
-                master.bindings[cls].push(subj);
-                save();
-                renderBindingSubjects();
-            }
-        };
-        
-        const unbindSubject = (cls, subj) => {
-            if (master.bindings[cls]) {
-                master.bindings[cls] = master.bindings[cls].filter(s => s !== subj);
-                save();
-                renderBindingSubjects();
-            }
-        };
-
-        // ===== REPORT =====
-        const openReport = () => {
-            const now = new Date();
-            const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
-            document.getElementById('reportDateFrom').value = firstDay.toISOString().slice(0,10);
-            document.getElementById('reportDateTo').value = now.toISOString().slice(0,10);
-            
-            document.getElementById('reportOverlay').classList.add('active');
-            document.getElementById('reportSheet').classList.add('active');
-            document.body.style.overflow = 'hidden';
-        };
-        
-        const closeReport = () => {
-            document.getElementById('reportOverlay').classList.remove('active');
-            document.getElementById('reportSheet').classList.remove('active');
-            document.body.style.overflow = '';
-        };
-        
-        const generateReport = () => {
-            const from = document.getElementById('reportDateFrom').value;
-            const to = document.getElementById('reportDateTo').value;
-            
-            const filtered = reps.filter(r => {
-                if (from && r.date < from) return false;
-                if (to && r.date > to) return false;
-                return true;
-            });
-            
-            const byTeacher = {};
-            filtered.forEach(r => {
-                if (!byTeacher[r.by]) byTeacher[r.by] = { count100: 0, count50: 0, total: 0 };
-                if (r.type === '100') byTeacher[r.by].count100++;
-                else byTeacher[r.by].count50++;
-                byTeacher[r.by].total++;
-            });
-            
-            const sorted = Object.entries(byTeacher).sort((a,b) => b[1].total - a[1].total);
-            
-            document.getElementById('reportContent').innerHTML = `
-                <div class="bg-gradient-to-r from-purple-100 to-indigo-100 p-4 rounded-xl mb-4">
-                    <div class="text-center mb-2">
-                        <div class="text-2xl font-black text-slate-700">${filtered.length}</div>
-                        <div class="text-xs text-slate-500 uppercase font-bold">Замен за период</div>
-                    </div>
-                    <div class="flex justify-center gap-6">
-                        <div class="text-center">
-                            <div class="text-lg font-black text-blue-600">${filtered.filter(r=>r.type==='100').length}</div>
-                            <div class="text-[9px] text-blue-500 uppercase font-bold">🪟 100%</div>
-                        </div>
-                        <div class="text-center">
-                            <div class="text-lg font-black text-amber-600">${filtered.filter(r=>r.type==='50').length}</div>
-                            <div class="text-[9px] text-amber-500 uppercase font-bold">📚 50%</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="text-xs font-bold text-slate-400 uppercase mb-2">По учителям:</div>
-                ${sorted.map(([name, data]) => `
-                    <div class="bg-white border border-slate-100 p-3 rounded-xl mb-2 shadow-sm">
-                        <div class="flex justify-between items-center">
-                            <div class="font-bold text-slate-700">${name}</div>
-                            <div class="text-lg font-black text-slate-600">${data.total}</div>
-                        </div>
-                        <div class="flex gap-3 mt-1">
-                            <span class="text-xs text-blue-600 font-medium">🪟 ${data.count100}</span>
-                            <span class="text-xs text-amber-600 font-medium">📚 ${data.count50}</span>
-                        </div>
-                    </div>
-                `).join('')}
-            `;
-        };
-        
-        const exportCSV = () => {
-            const from = document.getElementById('reportDateFrom').value;
-            const to = document.getElementById('reportDateTo').value;
-            
-            const filtered = reps.filter(r => {
-                if (from && r.date < from) return false;
-                if (to && r.date > to) return false;
-                return true;
-            }).sort((a,b) => new Date(a.date) - new Date(b.date));
-            
-            const headers = ['Дата', 'Урок', 'Класс', 'Предмет', 'Отсутствует', 'Заменяет', 'Тип %', 'Выполнено'];
-            const rows = filtered.map(r => [
-                r.date, r.lesson || 1, r.class || '', r.subject, r.who, r.by, r.type, r.completed ? 'Да' : 'Нет'
-            ]);
-            
-            const csv = [headers, ...rows].map(row => row.map(cell => `"${cell}"`).join(';')).join('\n');
-            const blob = new Blob(['\ufeff' + csv], {type: 'text/csv;charset=utf-8'});
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = `zameny_${from}_${to}.csv`;
-            a.click();
-            showToast('📥 Excel файл создан');
-        };
-
-        // ===== STATS =====
-        const openStats = () => {
-            const byAbsent = {};
-            reps.forEach(r => {
-                if (!byAbsent[r.who]) byAbsent[r.who] = 0;
-                byAbsent[r.who]++;
-            });
-            
-            const sorted = Object.entries(byAbsent).sort((a,b) => b[1] - a[1]);
-            
-            document.getElementById('statsContent').innerHTML = `
-                <div class="text-xs font-bold text-slate-400 uppercase mb-2">🏥 Кто чаще отсутствует:</div>
-                ${sorted.slice(0, 10).map(([name, count]) => `
-                    <div class="bg-white border border-slate-100 p-3 rounded-xl shadow-sm">
-                        <div class="flex justify-between items-center">
-                            <div class="font-bold text-slate-700">${name}</div>
-                            <div class="text-lg font-black text-red-500">${count}</div>
-                        </div>
-                    </div>
-                `).join('')}
-            `;
-            
-            document.getElementById('statsOverlay').classList.add('active');
-            document.getElementById('statsSheet').classList.add('active');
-            document.body.style.overflow = 'hidden';
-        };
-        
-        const closeStats = () => {
-            document.getElementById('statsOverlay').classList.remove('active');
-            document.getElementById('statsSheet').classList.remove('active');
-            document.body.style.overflow = '';
-        };
-
-        // ===== SETTINGS =====
-        const openSettings = () => {
-            document.getElementById('settingsOverlay').classList.add('active');
-            document.getElementById('settingsSheet').classList.add('active');
-            document.body.style.overflow = 'hidden';
-        };
-        
-        const closeSettings = () => {
-            document.getElementById('settingsOverlay').classList.remove('active');
-            document.getElementById('settingsSheet').classList.remove('active');
-            document.body.style.overflow = '';
-        };
+            document.getElementById('stat100').textContent = reps.filter(r => r.type == '100').length;
+            document.getElementById('stat50').textContent = reps.filter(r => r.type == '50').length;
+            document.getElementById('statMonth').textContent = reps.filter(r => new Date(r.date).getMonth() == new Date().getMonth()).length;
+        }
 
         function exportJSON() {
-            const data = { reps, master, exportDate: new Date().toISOString(), version: '6.0' };
-            const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
-            const a = document.createElement('a'); 
-            a.href = URL.createObjectURL(blob);
-            a.download = `zavuch_backup_${getToday()}.json`; 
-            a.click();
-            showToast('📦 Бэкап создан');
-        }
-        
-        function importJSON(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const data = JSON.parse(e.target.result);
-                    if (data.reps) {
-                        if (confirm(`Импортировать ${data.reps.length} записей?`)) {
-                            reps = data.reps;
-                            master = data.master || { teachers: [], subjects: [], classes: [], bindings: {} };
-                            save(); render();
-                            showToast(`✅ Импорт: ${reps.length} записей`);
-                        }
-                    }
-                } catch (err) {
-                    showToast('❌ Ошибка файла');
-                }
-            };
-            reader.readAsText(file);
-            event.target.value = '';
-        }
-        
-        function clearAllData() {
-            if (confirm('⚠️ Удалить ВСЕ данные?')) {
-                if (confirm('Точно удалить? Это необратимо!')) {
-                    reps = [];
-                    master = { teachers: [], subjects: [], classes: [], bindings: {} };
-                    save(); render();
-                    closeSettings();
-                    showToast('🗑️ Данные удалены');
-                }
-            }
+            const b = new Blob([JSON.stringify(reps)], {type:'application/json'});
+            const a = document.createElement('a'); a.href = URL.createObjectURL(b);
+            a.download = `zavuch_backup_${new Date().toISOString().slice(0,10)}.json`; a.click();
         }
 
-        // Close swipes on tap outside
-        document.addEventListener('touchstart', (e) => {
-            if (!e.target.closest('.swipe-container') && currentSwipeEl) {
-                currentSwipeEl.style.transform = 'translateX(0)';
-                currentSwipeEl = null;
-            }
-        });
-
-        // Init
         render();
     </script>
 </body>
