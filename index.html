@@ -5,110 +5,52 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Завуч.PRO v7.0</title>
+    <title>Завуч.PRO v6.3</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
-        * {
-            -webkit-tap-highlight-color: transparent;
+        * { 
+            -webkit-tap-highlight-color: transparent; 
             -webkit-touch-callout: none;
-            box-sizing: border-box;
         }
-
-        body {
+        
+        body { 
             overscroll-behavior-y: contain;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
-
+        
         .safe-top { padding-top: env(safe-area-inset-top); }
         .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
-
+        
         .glass {
             background: rgba(255,255,255,0.95);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
         }
-
+        
         .glass-dark {
             background: rgba(255,255,255,0.15);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
         }
-
-        /* ===== DESKTOP LAYOUT ===== */
-        .app-container {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        .sidebar {
-            display: none;
-            width: 280px;
-            background: rgba(255,255,255,0.98);
-            border-right: 1px solid rgba(0,0,0,0.1);
-            flex-shrink: 0;
-            flex-direction: column;
-        }
-
-        .main-content {
-            flex: 1;
-            overflow-y: auto;
-            min-height: 100vh;
-        }
-
-        @media (min-width: 1024px) {
-            .sidebar {
-                display: flex;
-            }
-
-            .mobile-header {
-                display: none;
-            }
-
-            .main-content {
-                padding: 2rem 3rem;
-            }
-
-            .content-wrapper {
-                max-width: 1200px;
-                margin: 0 auto;
-            }
-
-            .cards-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-                gap: 1rem;
-            }
-
-            .fab {
-                display: none;
-            }
-        }
-
-        @media (max-width: 1023px) {
-            .desktop-only {
-                display: none !important;
-            }
-        }
-
-        .swipe-container {
-            position: relative;
-            overflow: hidden;
-            border-radius: 1.25rem;
+        
+        .swipe-container { 
+            position: relative; 
+            overflow: hidden; 
+            border-radius: 1.5rem; 
             margin-bottom: 0.75rem;
         }
-
-        .swipe-item {
-            position: relative;
-            z-index: 10;
-            background: white;
+        
+        .swipe-item { 
+            position: relative; 
+            z-index: 10; 
+            background: white; 
             transition: transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             touch-action: pan-y;
         }
-
+        
         .swipe-item.swiping { transition: none; }
-
+        
         .swipe-actions {
             position: absolute;
             right: 0;
@@ -116,29 +58,28 @@
             bottom: 0;
             display: flex;
         }
-
-        .swipe-action {
+        
+        .swipe-action { 
             width: 80px;
             height: 100%;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.65rem;
+            color: white; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-size: 0.6rem; 
             font-weight: 900;
             flex-direction: column;
             gap: 4px;
-            cursor: pointer;
         }
 
         .toast {
-            position: fixed;
-            bottom: calc(2rem + env(safe-area-inset-bottom));
-            left: 50%;
+            position: fixed; 
+            bottom: calc(2rem + env(safe-area-inset-bottom)); 
+            left: 50%; 
             transform: translateX(-50%) translateY(100px);
-            background: #1e293b;
-            color: white;
-            padding: 1rem 2rem;
+            background: #1e293b; 
+            color: white; 
+            padding: 1rem 2rem; 
             border-radius: 1rem;
             transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             z-index: 1000;
@@ -158,25 +99,25 @@
             visibility: hidden;
             transition: all 0.3s ease;
         }
-
+        
         .modal-overlay.active { opacity: 1; visibility: visible; }
-
+        
         .modal-sheet {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
             background: white;
-            border-radius: 2rem 2rem 0 0;
+            border-radius: 2.5rem 2.5rem 0 0;
             z-index: 101;
             transform: translateY(100%);
             transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             max-height: 92vh;
             overflow: hidden;
         }
-
+        
         .modal-sheet.active { transform: translateY(0); }
-
+        
         .modal-handle {
             width: 40px;
             height: 5px;
@@ -189,13 +130,13 @@
             position: fixed;
             bottom: calc(1.5rem + env(safe-area-inset-bottom));
             right: 1.5rem;
-            width: 64px;
-            height: 64px;
+            width: 70px;
+            height: 70px;
             background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
             color: white;
             border-radius: 50%;
             box-shadow: 0 8px 32px rgba(245, 158, 11, 0.5);
-            font-size: 32px;
+            font-size: 36px;
             font-weight: 300;
             z-index: 50;
             display: flex;
@@ -205,44 +146,44 @@
             border: none;
             cursor: pointer;
         }
-
+        
         .fab:active { transform: scale(0.92); }
-
+        
         .wizard-step {
             display: none;
             animation: fadeSlide 0.4s ease;
         }
-
+        
         .wizard-step.active { display: block; }
-
+        
         @keyframes fadeSlide {
             from { opacity: 0; transform: translateX(30px); }
             to { opacity: 1; transform: translateX(0); }
         }
-
+        
         .wizard-step.back { animation: fadeSlideBack 0.4s ease; }
-
+        
         @keyframes fadeSlideBack {
             from { opacity: 0; transform: translateX(-30px); }
             to { opacity: 1; transform: translateX(0); }
         }
-
+        
         .progress-dot {
-            width: 12px;
-            height: 12px;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
             background: #e2e8f0;
             transition: all 0.3s ease;
         }
-
+        
         .progress-dot.active {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            transform: scale(1.3);
+            transform: scale(1.4);
             box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2);
         }
-
+        
         .progress-dot.done { background: #10b981; }
-
+        
         .progress-line {
             height: 3px;
             background: #e2e8f0;
@@ -251,57 +192,56 @@
             border-radius: 2px;
             overflow: hidden;
         }
-
+        
         .progress-line-fill {
             height: 100%;
             background: linear-gradient(90deg, #10b981, #667eea);
             width: 0%;
             transition: width 0.4s ease;
         }
-
+        
         .big-input {
-            font-size: 1.25rem;
+            font-size: 1.5rem;
             font-weight: 700;
             text-align: center;
             background: #f8fafc;
             border: 3px solid #e2e8f0;
-            border-radius: 1.25rem;
-            padding: 1rem;
+            border-radius: 1.5rem;
+            padding: 1.25rem;
             width: 100%;
             outline: none;
             transition: all 0.3s ease;
         }
-
+        
         .big-input:focus {
             border-color: #667eea;
             box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
         }
-
+        
         .class-btn {
-            padding: 0.625rem 1rem;
-            border-radius: 0.875rem;
-            font-weight: 700;
-            font-size: 0.9rem;
+            padding: 0.75rem 1.25rem;
+            border-radius: 1rem;
+            font-weight: 800;
+            font-size: 1rem;
             background: #f8fafc;
-            border: 2px solid #e2e8f0;
+            border: 3px solid #e2e8f0;
             transition: all 0.2s ease;
             cursor: pointer;
         }
-
+        
         .class-btn:hover, .class-btn.active {
             border-color: #667eea;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             transform: scale(1.05);
         }
-
-        /* FIXED: Lesson buttons as actual buttons */
+        
         .lesson-btn {
-            width: 52px;
-            height: 52px;
+            width: 48px;
+            height: 48px;
             border-radius: 1rem;
             font-weight: 900;
-            font-size: 1.25rem;
+            font-size: 1.2rem;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -309,14 +249,8 @@
             transition: all 0.2s ease;
             background: #f8fafc;
             border: 3px solid #e2e8f0;
-            color: #334155;
         }
-
-        .lesson-btn:hover {
-            border-color: #a78bfa;
-            background: #f5f3ff;
-        }
-
+        
         .lesson-btn.active {
             background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
             color: white;
@@ -324,11 +258,45 @@
             box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
             transform: scale(1.1);
         }
-
-        /* Type selection cards */
-        .type-select-card {
+        
+        .type-card {
             flex: 1;
             padding: 1.5rem 1rem;
+            border-radius: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 4px solid transparent;
+        }
+        
+        .type-card-window {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+        }
+        
+        .type-card-window.active {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            border-color: #1d4ed8;
+            transform: scale(1.02);
+            box-shadow: 0 8px 30px rgba(59, 130, 246, 0.4);
+        }
+        
+        .type-card-lesson {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+        }
+        
+        .type-card-lesson.active {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            border-color: #d97706;
+            transform: scale(1.02);
+            box-shadow: 0 8px 30px rgba(245, 158, 11, 0.4);
+        }
+        
+        /* Новые красивые карточки выбора типа */
+        .type-select-card {
+            flex: 1;
+            padding: 1.25rem 0.75rem;
             border-radius: 1.5rem;
             text-align: center;
             cursor: pointer;
@@ -337,88 +305,90 @@
             position: relative;
             overflow: hidden;
         }
-
+        
         .type-select-window {
             background: linear-gradient(145deg, #dbeafe 0%, #bfdbfe 50%, #93c5fd 100%);
             border-color: #93c5fd;
         }
-
+        
         .type-select-window:hover {
             transform: scale(1.02);
             box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
         }
-
+        
         .type-select-window.active {
             background: linear-gradient(145deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%);
             border-color: #1d4ed8;
             transform: scale(1.03);
             box-shadow: 0 12px 35px rgba(59, 130, 246, 0.5);
         }
-
+        
         .type-select-window.active .type-select-percent,
         .type-select-window.active .type-select-label,
         .type-select-window.active .type-select-desc {
             color: white;
         }
-
+        
         .type-select-lesson {
             background: linear-gradient(145deg, #fef3c7 0%, #fde68a 50%, #fcd34d 100%);
             border-color: #fcd34d;
         }
-
+        
         .type-select-lesson:hover {
             transform: scale(1.02);
             box-shadow: 0 8px 25px rgba(245, 158, 11, 0.3);
         }
-
+        
         .type-select-lesson.active {
             background: linear-gradient(145deg, #f59e0b 0%, #d97706 50%, #b45309 100%);
             border-color: #b45309;
             transform: scale(1.03);
             box-shadow: 0 12px 35px rgba(245, 158, 11, 0.5);
         }
-
+        
         .type-select-lesson.active .type-select-percent,
         .type-select-lesson.active .type-select-label,
         .type-select-lesson.active .type-select-desc {
             color: white;
         }
-
+        
         .type-select-icon {
             font-size: 2.5rem;
             margin-bottom: 0.25rem;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
         }
-
+        
         .type-select-percent {
             font-size: 2rem;
             font-weight: 900;
             line-height: 1;
             color: #1e293b;
         }
-
+        
         .type-select-window .type-select-percent { color: #1d4ed8; }
         .type-select-lesson .type-select-percent { color: #b45309; }
-
+        
         .type-select-label {
-            font-size: 0.9rem;
+            font-size: 0.875rem;
             font-weight: 900;
             letter-spacing: 0.1em;
             margin-top: 0.25rem;
         }
-
+        
         .type-select-window .type-select-label { color: #2563eb; }
         .type-select-lesson .type-select-label { color: #d97706; }
-
+        
         .type-select-desc {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             color: #64748b;
             margin-top: 0.5rem;
+            opacity: 0.8;
         }
-
+        
         .type-select-check {
             position: absolute;
-            top: 0.75rem;
-            right: 0.75rem;
+            top: 0.5rem;
+            right: 0.5rem;
             width: 28px;
             height: 28px;
             background: white;
@@ -431,42 +401,40 @@
             transform: scale(0);
             transition: all 0.3s ease;
         }
-
+        
         .type-select-window .type-select-check { color: #1d4ed8; }
         .type-select-lesson .type-select-check { color: #d97706; }
-
+        
         .type-select-card.active .type-select-check {
             opacity: 1;
             transform: scale(1);
         }
-
+        
         .nav-btn {
-            padding: 1rem 1.5rem;
+            padding: 1rem 2rem;
             border-radius: 1rem;
             font-weight: 800;
             font-size: 1rem;
             transition: all 0.2s ease;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            border: none;
-            cursor: pointer;
         }
-
+        
         .nav-btn:active { transform: scale(0.95); }
-
+        
         .record-card { animation: slideIn 0.3s ease; }
-
+        
         @keyframes slideIn {
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-
+        
         .badge-100 {
             background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
             color: white;
             box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
         }
-
+        
         .badge-50 {
             background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
             color: white;
@@ -475,19 +443,16 @@
 
         .tab-btn {
             flex: 1;
-            padding: 0.75rem;
+            padding: 0.6rem;
             font-weight: 700;
-            font-size: 0.8rem;
+            font-size: 0.65rem;
             text-align: center;
             border-radius: 0.75rem;
             transition: all 0.2s;
             text-transform: uppercase;
             letter-spacing: 0.02em;
-            cursor: pointer;
-            border: none;
-            background: transparent;
         }
-
+        
         .tab-btn.active {
             background: white;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
@@ -498,7 +463,7 @@
 
         .select-mode .swipe-item { cursor: pointer; }
         .select-mode .select-checkbox { display: flex !important; }
-
+        
         .select-checkbox {
             display: none;
             width: 28px;
@@ -510,15 +475,15 @@
             transition: all 0.2s;
             flex-shrink: 0;
         }
-
+        
         .select-checkbox.checked {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border-color: transparent;
         }
-
+        
         .floating-bar {
             position: fixed;
-            bottom: calc(5.5rem + env(safe-area-inset-bottom));
+            bottom: calc(6rem + env(safe-area-inset-bottom));
             left: 1rem;
             right: 1rem;
             background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
@@ -532,138 +497,52 @@
             transform: translateY(200px);
             transition: transform 0.3s ease;
         }
-
+        
         .floating-bar.show { transform: translateY(0); }
-
-        .sidebar-nav-btn {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            width: 100%;
-            padding: 0.875rem 1.25rem;
-            font-weight: 600;
-            font-size: 0.95rem;
-            border-radius: 0.75rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: none;
-            background: transparent;
-            color: #475569;
-            text-align: left;
-        }
-
-        .sidebar-nav-btn:hover {
-            background: #f1f5f9;
-        }
-
-        .sidebar-nav-btn.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
 
         .ref-tab {
             padding: 0.75rem 1rem;
             font-weight: 700;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             border-radius: 0.75rem;
             cursor: pointer;
             transition: all 0.2s;
-            border: none;
-            background: transparent;
         }
-
+        
         .ref-tab.active {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
         }
-
+        
         .ref-item {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0.875rem 1rem;
+            padding: 0.75rem 1rem;
             background: #f8fafc;
             border-radius: 0.75rem;
             margin-bottom: 0.5rem;
         }
-
+        
         .ref-item:hover { background: #f1f5f9; }
-
+        
         .chip {
             display: inline-flex;
             align-items: center;
             gap: 0.25rem;
-            padding: 0.375rem 0.625rem;
+            padding: 0.25rem 0.5rem;
             background: #e2e8f0;
             border-radius: 0.5rem;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 600;
         }
-
+        
         .chip-remove {
             cursor: pointer;
             opacity: 0.5;
         }
-
+        
         .chip-remove:hover { opacity: 1; }
-
-        /* Calendar styles */
-        .calendar-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 2px;
-        }
-
-        .calendar-day {
-            aspect-ratio: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 0.9rem;
-            font-weight: 600;
-            position: relative;
-            min-height: 48px;
-        }
-
-        .calendar-day:hover {
-            background: #f1f5f9;
-        }
-
-        .calendar-day.today {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .calendar-day.has-items::after {
-            content: '';
-            position: absolute;
-            bottom: 4px;
-            width: 6px;
-            height: 6px;
-            background: #f59e0b;
-            border-radius: 50%;
-        }
-
-        .calendar-day.today.has-items::after {
-            background: white;
-        }
-
-        .calendar-day.other-month {
-            color: #cbd5e1;
-        }
-
-        .calendar-header-day {
-            text-align: center;
-            font-weight: 700;
-            font-size: 0.75rem;
-            color: #94a3b8;
-            padding: 0.5rem;
-            text-transform: uppercase;
-        }
 
         @media (min-width: 768px) {
             .modal-sheet {
@@ -673,28 +552,28 @@
                 transform: translate(-50%, 50%) scale(0.95);
                 opacity: 0;
                 width: 100%;
-                max-width: 520px;
-                border-radius: 2rem;
+                max-width: 500px;
+                border-radius: 2.5rem;
                 max-height: 85vh;
             }
-
+            
             .modal-sheet.active {
                 transform: translate(-50%, 50%) scale(1);
                 opacity: 1;
             }
-
+            
             .modal-sheet.wide {
-                max-width: 800px;
+                max-width: 700px;
             }
-
+            
             .modal-handle { display: none; }
         }
 
         @media print {
             .no-print { display: none !important; }
             body { padding: 0; background: white !important; }
-            .record-card {
-                break-inside: avoid;
+            .record-card { 
+                break-inside: avoid; 
                 margin-bottom: 8px !important;
                 box-shadow: none !important;
                 border: 1px solid #e2e8f0 !important;
@@ -704,296 +583,112 @@
         .filter-toggle {
             transition: all 0.3s ease;
         }
-
+        
         .filter-toggle.open .filter-arrow {
             transform: rotate(180deg);
         }
-
+        
         .filter-content {
             max-height: 0;
             overflow: hidden;
             transition: max-height 0.3s ease;
         }
-
+        
         .filter-content.open {
-            max-height: 250px;
-        }
-
-        /* Notification badge */
-        .notification-badge {
-            position: absolute;
-            top: -4px;
-            right: -4px;
-            width: 18px;
-            height: 18px;
-            background: #ef4444;
-            color: white;
-            border-radius: 50%;
-            font-size: 10px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* Desktop card actions */
-        .desktop-actions {
-            display: none;
-            gap: 0.5rem;
-        }
-
-        @media (min-width: 1024px) {
-            .desktop-actions {
-                display: flex;
-            }
-            .swipe-actions {
-                display: none;
-            }
-        }
-
-        .action-btn {
-            padding: 0.5rem 0.75rem;
-            border-radius: 0.5rem;
-            font-size: 0.75rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: none;
-        }
-
-        .action-btn-success {
-            background: #dcfce7;
-            color: #16a34a;
-        }
-
-        .action-btn-success:hover {
-            background: #16a34a;
-            color: white;
-        }
-
-        .action-btn-danger {
-            background: #fee2e2;
-            color: #dc2626;
-        }
-
-        .action-btn-danger:hover {
-            background: #dc2626;
-            color: white;
-        }
-
-        /* Stats cards for desktop */
-        .stat-card {
-            background: white;
-            border-radius: 1rem;
-            padding: 1.25rem;
-            text-align: center;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-
-        .stat-card-value {
-            font-size: 2rem;
-            font-weight: 900;
-        }
-
-        .stat-card-label {
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            color: #64748b;
-            margin-top: 0.25rem;
-        }
-
-        /* Bulk import textarea */
-        .bulk-textarea {
-            width: 100%;
-            min-height: 150px;
-            padding: 1rem;
-            border: 2px solid #e2e8f0;
-            border-radius: 1rem;
-            font-family: inherit;
-            font-size: 0.9rem;
-            resize: vertical;
-            outline: none;
-        }
-
-        .bulk-textarea:focus {
-            border-color: #667eea;
+            max-height: 200px;
         }
     </style>
 </head>
 <body class="safe-top">
-    <div class="app-container">
-        <!-- Sidebar for Desktop -->
-        <aside class="sidebar">
-            <div class="p-6 border-b border-slate-100">
-                <h1 class="text-2xl font-black tracking-tight">
-                    ЗАВУЧ<span class="text-purple-600">.PRO</span>
-                </h1>
-                <span class="text-xs text-slate-400">v7.0</span>
+
+    <div class="max-w-2xl mx-auto px-4 py-4 pb-32">
+        
+        <!-- Compact Header -->
+        <header class="flex justify-between items-center mb-3 no-print">
+            <div class="flex items-center gap-3">
+                <h1 class="text-xl font-black tracking-tight text-white drop-shadow-lg">ЗАВУЧ<span class="text-yellow-300">.PRO</span></h1>
+                <span class="text-[9px] text-white/50 font-medium">v6.3</span>
             </div>
-
-            <nav class="p-4 flex-1">
-                <button onclick="setView('journal')" class="sidebar-nav-btn active" id="navJournal">
-                    <span class="text-xl">📋</span> Журнал замен
-                </button>
-                <button onclick="setView('calendar')" class="sidebar-nav-btn" id="navCalendar">
-                    <span class="text-xl">📅</span> Календарь
-                </button>
-                <button onclick="openReference()" class="sidebar-nav-btn">
-                    <span class="text-xl">📚</span> Справочник
-                </button>
-                <button onclick="openReport()" class="sidebar-nav-btn">
-                    <span class="text-xl">📊</span> Отчёты
-                </button>
-                <button onclick="openStats()" class="sidebar-nav-btn">
-                    <span class="text-xl">📈</span> Статистика
-                </button>
-            </nav>
-
-            <div class="p-4 border-t border-slate-100">
-                <button onclick="openWizard()" class="w-full py-3 px-4 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all">
-                    + Добавить замену
-                </button>
+            <div class="flex gap-1.5">
+                <button onclick="openReference()" class="glass-dark text-white text-xs font-bold px-2.5 py-1.5 rounded-lg">📚</button>
+                <button onclick="openStats()" class="glass-dark text-white text-xs font-bold px-2.5 py-1.5 rounded-lg">📈</button>
+                <button onclick="openReport()" class="glass-dark text-white text-xs font-bold px-2.5 py-1.5 rounded-lg">📊</button>
+                <button onclick="openSettings()" class="glass-dark text-white text-xs font-bold px-2.5 py-1.5 rounded-lg">⚙️</button>
             </div>
+        </header>
 
-            <div class="p-4 border-t border-slate-100">
-                <button onclick="openSettings()" class="sidebar-nav-btn w-full">
-                    <span class="text-xl">⚙️</span> Настройки
-                </button>
-                <div class="relative">
-                    <button onclick="checkNotifications()" class="sidebar-nav-btn w-full">
-                        <span class="text-xl">🔔</span> Уведомления
-                        <span id="notifBadgeDesktop" class="notification-badge hidden">0</span>
-                    </button>
-                </div>
+        <!-- Quick Stats Row -->
+        <div class="flex gap-2 mb-3 no-print">
+            <div class="glass flex-1 p-2 rounded-xl text-center">
+                <div id="statTotal" class="text-lg font-black text-slate-700">0</div>
+                <div class="text-[7px] font-bold text-slate-400 uppercase">Всего</div>
             </div>
-        </aside>
+            <div class="glass flex-1 p-2 rounded-xl text-center border-2 border-blue-300">
+                <div id="stat100" class="text-lg font-black text-blue-600">0</div>
+                <div class="text-[7px] font-bold text-blue-500 uppercase">🪟 Окна</div>
+            </div>
+            <div class="glass flex-1 p-2 rounded-xl text-center border-2 border-amber-300">
+                <div id="stat50" class="text-lg font-black text-amber-600">0</div>
+                <div class="text-[7px] font-bold text-amber-500 uppercase">📚 Уроки</div>
+            </div>
+            <div class="glass flex-1 p-2 rounded-xl text-center border-2 border-emerald-300">
+                <div id="statCompleted" class="text-lg font-black text-emerald-600">0</div>
+                <div class="text-[7px] font-bold text-emerald-500 uppercase">✓</div>
+            </div>
+        </div>
 
-        <!-- Main Content -->
-        <main class="main-content safe-bottom">
-            <!-- Mobile Header -->
-            <header class="mobile-header flex justify-between items-center p-4 no-print">
-                <div class="flex items-center gap-3">
-                    <h1 class="text-xl font-black tracking-tight text-white drop-shadow-lg">ЗАВУЧ<span class="text-yellow-300">.PRO</span></h1>
-                    <span class="text-[10px] text-white/50 font-medium">v7.0</span>
+        <!-- Tabs -->
+        <div class="glass p-1 rounded-xl flex gap-1 mb-2 no-print">
+            <button class="tab-btn active" onclick="setTab('today')" id="tabToday">
+                📅 Сегодня <span id="todayCount" class="ml-1 bg-purple-600 text-white text-[9px] px-1.5 py-0.5 rounded-full">0</span>
+            </button>
+            <button class="tab-btn" onclick="setTab('all')" id="tabAll">📋 Все</button>
+            <button class="tab-btn" onclick="setTab('pending')" id="tabPending">
+                ⏳ Ждут <span id="pendingCount" class="ml-1 bg-amber-500 text-white text-[9px] px-1.5 py-0.5 rounded-full">0</span>
+            </button>
+            <button class="tab-btn" onclick="toggleSelectMode()" id="tabSelect">☑️</button>
+        </div>
+
+        <!-- Collapsible Filter -->
+        <div class="glass rounded-xl mb-3 no-print overflow-hidden">
+            <div class="filter-toggle flex items-center justify-between p-2.5 cursor-pointer" onclick="toggleFilter()">
+                <div class="flex items-center gap-2">
+                    <span class="text-sm">🔍</span>
+                    <span id="filterLabel" class="text-xs font-bold text-slate-500">Фильтры</span>
                 </div>
-                <div class="flex gap-2">
-                    <button onclick="openReference()" class="glass-dark text-white text-sm font-bold px-3 py-2 rounded-lg">📚</button>
-                    <button onclick="openStats()" class="glass-dark text-white text-sm font-bold px-3 py-2 rounded-lg">📈</button>
-                    <button onclick="openReport()" class="glass-dark text-white text-sm font-bold px-3 py-2 rounded-lg">📊</button>
-                    <div class="relative">
-                        <button onclick="checkNotifications()" class="glass-dark text-white text-sm font-bold px-3 py-2 rounded-lg">🔔</button>
-                        <span id="notifBadgeMobile" class="notification-badge hidden">0</span>
+                <span class="filter-arrow text-slate-400 text-xs transition-transform">▼</span>
+            </div>
+            <div class="filter-content" id="filterContent">
+                <div class="px-2.5 pb-2.5 space-y-2">
+                    <input type="text" id="search" placeholder="Поиск по ФИО, предмету..." oninput="render()" 
+                        class="w-full bg-slate-50 border-0 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-purple-500 outline-none">
+                    <div class="flex gap-2">
+                        <select id="filterClass" onchange="render()" class="flex-1 bg-slate-50 rounded-lg px-3 py-2 text-xs">
+                            <option value="">Все классы</option>
+                        </select>
+                        <select id="filterTeacher" onchange="render()" class="flex-1 bg-slate-50 rounded-lg px-3 py-2 text-xs">
+                            <option value="">Все учителя</option>
+                        </select>
                     </div>
-                    <button onclick="openSettings()" class="glass-dark text-white text-sm font-bold px-3 py-2 rounded-lg">⚙️</button>
-                </div>
-            </header>
-
-            <div class="content-wrapper p-4 lg:p-0 pb-28 lg:pb-8">
-                <!-- Stats Row -->
-                <div class="grid grid-cols-4 lg:grid-cols-4 gap-2 lg:gap-4 mb-4 no-print">
-                    <div class="glass lg:stat-card flex-1 p-3 lg:p-4 rounded-xl text-center">
-                        <div id="statTotal" class="text-xl lg:stat-card-value font-black text-slate-700">0</div>
-                        <div class="text-[9px] lg:text-xs font-bold text-slate-400 uppercase">Всего</div>
-                    </div>
-                    <div class="glass lg:stat-card flex-1 p-3 lg:p-4 rounded-xl text-center border-2 border-blue-300">
-                        <div id="stat100" class="text-xl lg:stat-card-value font-black text-blue-600">0</div>
-                        <div class="text-[9px] lg:text-xs font-bold text-blue-500 uppercase">🪟 Окна</div>
-                    </div>
-                    <div class="glass lg:stat-card flex-1 p-3 lg:p-4 rounded-xl text-center border-2 border-amber-300">
-                        <div id="stat50" class="text-xl lg:stat-card-value font-black text-amber-600">0</div>
-                        <div class="text-[9px] lg:text-xs font-bold text-amber-500 uppercase">📚 Уроки</div>
-                    </div>
-                    <div class="glass lg:stat-card flex-1 p-3 lg:p-4 rounded-xl text-center border-2 border-emerald-300">
-                        <div id="statCompleted" class="text-xl lg:stat-card-value font-black text-emerald-600">0</div>
-                        <div class="text-[9px] lg:text-xs font-bold text-emerald-500 uppercase">✓ Готово</div>
-                    </div>
-                </div>
-
-                <!-- View: Journal -->
-                <div id="viewJournal">
-                    <!-- Tabs -->
-                    <div class="glass p-1.5 rounded-xl flex gap-1 mb-3 no-print">
-                        <button class="tab-btn active" onclick="setTab('today')" id="tabToday">
-                            📅 Сегодня <span id="todayCount" class="ml-1 bg-purple-600 text-white text-[10px] px-2 py-0.5 rounded-full">0</span>
-                        </button>
-                        <button class="tab-btn" onclick="setTab('all')" id="tabAll">📋 Все</button>
-                        <button class="tab-btn" onclick="setTab('pending')" id="tabPending">
-                            ⏳ Ждут <span id="pendingCount" class="ml-1 bg-amber-500 text-white text-[10px] px-2 py-0.5 rounded-full">0</span>
-                        </button>
-                        <button class="tab-btn" onclick="setView('calendar')" id="tabCalendar">📅</button>
-                        <button class="tab-btn" onclick="toggleSelectMode()" id="tabSelect">☑️</button>
-                    </div>
-
-                    <!-- Filter -->
-                    <div class="glass rounded-xl mb-3 no-print overflow-hidden">
-                        <div class="filter-toggle flex items-center justify-between p-3 cursor-pointer" onclick="toggleFilter()">
-                            <div class="flex items-center gap-2">
-                                <span class="text-base">🔍</span>
-                                <span id="filterLabel" class="text-sm font-bold text-slate-500">Фильтры</span>
-                            </div>
-                            <span class="filter-arrow text-slate-400 text-sm transition-transform">▼</span>
-                        </div>
-                        <div class="filter-content" id="filterContent">
-                            <div class="px-3 pb-3 space-y-2">
-                                <input type="text" id="search" placeholder="Поиск по ФИО, предмету..." oninput="render()"
-                                    class="w-full bg-slate-50 border-0 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-purple-500 outline-none">
-                                <div class="flex gap-2">
-                                    <select id="filterClass" onchange="render()" class="flex-1 bg-slate-50 rounded-lg px-3 py-2.5 text-sm">
-                                        <option value="">Все классы</option>
-                                    </select>
-                                    <select id="filterTeacher" onchange="render()" class="flex-1 bg-slate-50 rounded-lg px-3 py-2.5 text-sm">
-                                        <option value="">Все учителя</option>
-                                    </select>
-                                </div>
-                                <div class="flex gap-2">
-                                    <input type="date" id="filterDateFrom" onchange="render()" class="flex-1 bg-slate-50 rounded-lg px-3 py-2.5 text-sm">
-                                    <span class="flex items-center text-slate-400">—</span>
-                                    <input type="date" id="filterDateTo" onchange="render()" class="flex-1 bg-slate-50 rounded-lg px-3 py-2.5 text-sm">
-                                    <button onclick="clearFilter()" class="bg-slate-200 px-4 rounded-lg text-sm font-bold text-slate-500">✕</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Journal Cards -->
-                    <div id="mobileBody" class="space-y-2 lg:cards-grid"></div>
-
-                    <!-- Empty State -->
-                    <div id="emptyState" class="hidden text-center py-16">
-                        <div class="text-6xl mb-4">📋</div>
-                        <div class="text-white/70 font-bold uppercase text-base mb-2">Нет записей</div>
-                        <div class="text-white/50 text-sm">Нажмите + чтобы добавить замену</div>
-                    </div>
-                </div>
-
-                <!-- View: Calendar -->
-                <div id="viewCalendar" class="hidden">
-                    <div class="glass rounded-2xl p-4 lg:p-6">
-                        <div class="flex justify-between items-center mb-4">
-                            <button onclick="prevMonth()" class="p-2 hover:bg-slate-100 rounded-lg text-xl">←</button>
-                            <h2 class="text-xl font-black text-slate-700" id="calendarTitle">Декабрь 2024</h2>
-                            <button onclick="nextMonth()" class="p-2 hover:bg-slate-100 rounded-lg text-xl">→</button>
-                        </div>
-                        <div class="calendar-grid mb-2">
-                            <div class="calendar-header-day">Пн</div>
-                            <div class="calendar-header-day">Вт</div>
-                            <div class="calendar-header-day">Ср</div>
-                            <div class="calendar-header-day">Чт</div>
-                            <div class="calendar-header-day">Пт</div>
-                            <div class="calendar-header-day">Сб</div>
-                            <div class="calendar-header-day">Вс</div>
-                        </div>
-                        <div class="calendar-grid" id="calendarGrid"></div>
-                    </div>
-
-                    <div class="mt-4">
-                        <h3 class="text-white font-bold mb-3" id="calendarDayTitle">Выберите день</h3>
-                        <div id="calendarDayItems" class="space-y-2"></div>
+                    <div class="flex gap-2">
+                        <input type="date" id="filterDateFrom" onchange="render()" class="flex-1 bg-slate-50 rounded-lg px-2 py-2 text-xs">
+                        <span class="flex items-center text-slate-400 text-xs">—</span>
+                        <input type="date" id="filterDateTo" onchange="render()" class="flex-1 bg-slate-50 rounded-lg px-2 py-2 text-xs">
+                        <button onclick="clearFilter()" class="bg-slate-200 px-3 rounded-lg text-xs font-bold text-slate-500">✕</button>
                     </div>
                 </div>
             </div>
-        </main>
+        </div>
+
+        <!-- Journal -->
+        <div id="mobileBody" class="space-y-2"></div>
+        
+        <!-- Empty State -->
+        <div id="emptyState" class="hidden text-center py-12">
+            <div class="text-5xl mb-3">📋</div>
+            <div class="text-white/70 font-bold uppercase text-sm mb-1">Нет записей</div>
+            <div class="text-white/50 text-xs">Нажмите + чтобы добавить замену</div>
+        </div>
     </div>
 
     <!-- FAB -->
@@ -1002,7 +697,7 @@
     <!-- Floating Selection Bar -->
     <div class="floating-bar no-print" id="floatingBar">
         <div class="text-white">
-            <span class="text-xl font-black" id="selectedCount">0</span>
+            <span class="text-lg font-black" id="selectedCount">0</span>
             <span class="text-sm opacity-70">выбрано</span>
         </div>
         <div class="flex gap-2">
@@ -1014,13 +709,13 @@
 
     <!-- Modal Overlay -->
     <div id="modalOverlay" class="modal-overlay no-print" onclick="closeWizard()"></div>
-
+    
     <!-- Wizard Modal -->
     <div id="modalSheet" class="modal-sheet no-print" onclick="event.stopPropagation()">
         <div class="modal-handle"></div>
-
+        
         <!-- Progress Bar -->
-        <div class="px-6 pt-2 pb-4">
+        <div class="px-6 pt-2 pb-3">
             <div class="flex items-center justify-center" id="progressBar">
                 <div class="progress-dot active" data-step="1"></div>
                 <div class="progress-line"><div class="progress-line-fill" id="progress1"></div></div>
@@ -1035,25 +730,24 @@
                 <div class="progress-dot" data-step="6"></div>
             </div>
         </div>
-
-        <div class="px-6 pb-8 overflow-y-auto" style="max-height: calc(85vh - 100px);">
-
+        
+        <div class="px-6 pb-8 overflow-y-auto" style="max-height: calc(90vh - 80px);">
+            
             <!-- Step 1: Date & Lesson -->
             <div class="wizard-step active" data-step="1">
-                <div class="text-center mb-5">
-                    <div class="text-4xl mb-2">📅</div>
-                    <h3 class="text-xl font-black text-slate-800">Когда замена?</h3>
+                <div class="text-center mb-4">
+                    <div class="text-3xl mb-1">📅</div>
+                    <h3 class="text-lg font-black text-slate-800">Когда замена?</h3>
                 </div>
-
-                <div class="mb-5">
-                    <input type="date" id="wDate" class="big-input">
+                
+                <div class="mb-4">
+                    <input type="date" id="wDate" class="big-input text-lg">
                 </div>
-
-                <div class="text-center mb-3">
-                    <span class="text-sm font-bold text-slate-400 uppercase">Номер урока</span>
+                
+                <div class="text-center mb-2">
+                    <span class="text-xs font-bold text-slate-400 uppercase">Номер урока</span>
                 </div>
-
-                <!-- FIXED: Changed from div to button elements -->
+                
                 <div class="flex justify-center gap-2 mb-6" id="lessonSelector">
                     <button type="button" class="lesson-btn active" onclick="selectLesson(1)">1</button>
                     <button type="button" class="lesson-btn" onclick="selectLesson(2)">2</button>
@@ -1063,112 +757,113 @@
                     <button type="button" class="lesson-btn" onclick="selectLesson(6)">6</button>
                     <button type="button" class="lesson-btn" onclick="selectLesson(7)">7</button>
                 </div>
-
-                <button type="button" onclick="nextStep()" class="nav-btn w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg">
+                
+                <button onclick="nextStep()" class="nav-btn w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg">
                     Далее →
                 </button>
             </div>
-
+            
             <!-- Step 2: Class -->
             <div class="wizard-step" data-step="2">
-                <div class="text-center mb-4">
-                    <div class="text-4xl mb-2">🏫</div>
-                    <h3 class="text-xl font-black text-slate-800">Какой класс?</h3>
+                <div class="text-center mb-3">
+                    <div class="text-3xl mb-1">🏫</div>
+                    <h3 class="text-lg font-black text-slate-800">Какой класс?</h3>
                 </div>
-
-                <div class="mb-4">
+                
+                <div class="mb-3">
                     <input type="text" id="wClass" placeholder="5А" class="big-input uppercase" autocomplete="off">
                 </div>
-
-                <div class="max-h-[140px] overflow-y-auto mb-5 -mx-2 px-2">
+                
+                <div class="max-h-[120px] overflow-y-auto mb-4 -mx-2 px-2">
                     <div class="flex flex-wrap justify-center gap-2" id="quickClasses"></div>
                 </div>
-
+                
                 <div class="flex gap-3">
-                    <button type="button" onclick="prevStep()" class="nav-btn flex-1 bg-slate-200 text-slate-600">←</button>
-                    <button type="button" onclick="nextStep()" class="nav-btn flex-[2] bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg">Далее →</button>
+                    <button onclick="prevStep()" class="nav-btn flex-1 bg-slate-200 text-slate-600">←</button>
+                    <button onclick="nextStep()" class="nav-btn flex-[2] bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg">Далее →</button>
                 </div>
             </div>
-
+            
             <!-- Step 3: Subject -->
             <div class="wizard-step" data-step="3">
-                <div class="text-center mb-4">
-                    <div class="text-4xl mb-2">📖</div>
-                    <h3 class="text-xl font-black text-slate-800">Какой предмет?</h3>
-                    <p class="text-sm text-slate-400" id="subjectHint"></p>
+                <div class="text-center mb-3">
+                    <div class="text-3xl mb-1">📖</div>
+                    <h3 class="text-lg font-black text-slate-800">Какой предмет?</h3>
+                    <p class="text-xs text-slate-400" id="subjectHint"></p>
                 </div>
-
-                <div class="mb-4">
-                    <input type="text" id="wSubject" placeholder="Математика" class="big-input" autocomplete="off">
+                
+                <div class="mb-3">
+                    <input type="text" id="wSubject" placeholder="Математика" class="big-input text-lg" autocomplete="off">
                 </div>
-
-                <div class="max-h-[140px] overflow-y-auto mb-5 -mx-2 px-2">
+                
+                <div class="max-h-[120px] overflow-y-auto mb-4 -mx-2 px-2">
                     <div class="flex flex-wrap justify-center gap-2" id="quickSubjects"></div>
                 </div>
-
+                
                 <div class="flex gap-3">
-                    <button type="button" onclick="prevStep()" class="nav-btn flex-1 bg-slate-200 text-slate-600">←</button>
-                    <button type="button" onclick="nextStep()" class="nav-btn flex-[2] bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg">Далее →</button>
+                    <button onclick="prevStep()" class="nav-btn flex-1 bg-slate-200 text-slate-600">←</button>
+                    <button onclick="nextStep()" class="nav-btn flex-[2] bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg">Далее →</button>
                 </div>
             </div>
-
+            
             <!-- Step 4: Who is absent -->
             <div class="wizard-step" data-step="4">
-                <div class="text-center mb-4">
-                    <div class="text-4xl mb-2">😷</div>
-                    <h3 class="text-xl font-black text-slate-800">Кто отсутствует?</h3>
+                <div class="text-center mb-3">
+                    <div class="text-3xl mb-1">😷</div>
+                    <h3 class="text-lg font-black text-slate-800">Кто отсутствует?</h3>
                 </div>
-
-                <div class="mb-4">
-                    <input type="text" id="wWho" placeholder="Иванова А.П." class="big-input" autocomplete="off">
+                
+                <div class="mb-3">
+                    <input type="text" id="wWho" placeholder="Иванова А.П." class="big-input text-lg" autocomplete="off">
                 </div>
-
-                <div class="max-h-[160px] overflow-y-auto mb-5 -mx-2 px-2">
+                
+                <div class="max-h-[140px] overflow-y-auto mb-4 -mx-2 px-2">
                     <div class="flex flex-wrap justify-center gap-2" id="quickTeachersWho"></div>
                 </div>
-
+                
                 <div class="flex gap-3">
-                    <button type="button" onclick="prevStep()" class="nav-btn flex-1 bg-slate-200 text-slate-600">←</button>
-                    <button type="button" onclick="nextStep()" class="nav-btn flex-[2] bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg">Далее →</button>
+                    <button onclick="prevStep()" class="nav-btn flex-1 bg-slate-200 text-slate-600">←</button>
+                    <button onclick="nextStep()" class="nav-btn flex-[2] bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg">Далее →</button>
                 </div>
             </div>
-
+            
             <!-- Step 5: Who replaces -->
             <div class="wizard-step" data-step="5">
-                <div class="text-center mb-4">
-                    <div class="text-4xl mb-2">🦸</div>
-                    <h3 class="text-xl font-black text-slate-800">Кто заменяет?</h3>
+                <div class="text-center mb-3">
+                    <div class="text-3xl mb-1">🦸</div>
+                    <h3 class="text-lg font-black text-slate-800">Кто заменяет?</h3>
                 </div>
-
-                <div class="mb-4">
-                    <input type="text" id="wBy" placeholder="Петрова М.И." class="big-input" autocomplete="off">
+                
+                <div class="mb-3">
+                    <input type="text" id="wBy" placeholder="Петрова М.И." class="big-input text-lg" autocomplete="off">
                 </div>
-
-                <div class="max-h-[160px] overflow-y-auto mb-5 -mx-2 px-2">
+                
+                <div class="max-h-[140px] overflow-y-auto mb-4 -mx-2 px-2">
                     <div class="flex flex-wrap justify-center gap-2" id="quickTeachersBy"></div>
                 </div>
-
+                
                 <div class="flex gap-3">
-                    <button type="button" onclick="prevStep()" class="nav-btn flex-1 bg-slate-200 text-slate-600">←</button>
-                    <button type="button" onclick="nextStep()" class="nav-btn flex-[2] bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg">Далее →</button>
+                    <button onclick="prevStep()" class="nav-btn flex-1 bg-slate-200 text-slate-600">←</button>
+                    <button onclick="nextStep()" class="nav-btn flex-[2] bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg">Далее →</button>
                 </div>
             </div>
-
+            
             <!-- Step 6: Type & Summary -->
             <div class="wizard-step" data-step="6">
                 <!-- Summary card -->
-                <div class="bg-gradient-to-br from-slate-50 to-slate-100 rounded-2xl p-4 mb-5 border border-slate-200">
-                    <div class="text-xs font-bold text-slate-400 uppercase mb-3 text-center">📋 Данные замены</div>
-                    <div id="summaryContent" class="space-y-2"></div>
+                <div class="bg-gradient-to-br from-slate-50 to-slate-100 rounded-2xl p-3 mb-4 border border-slate-200">
+                    <div class="text-[9px] font-bold text-slate-400 uppercase mb-2 text-center">📋 Данные замены</div>
+                    <div id="summaryContent" class="space-y-1"></div>
                 </div>
-
-                <!-- Type selection -->
-                <div class="text-center mb-4">
-                    <div class="text-lg font-black text-slate-700 mb-1">👆 Выберите тип оплаты</div>
-                    <div class="text-sm text-slate-400" id="typeRequiredHint">Нажмите на карточку</div>
+                
+                <!-- Type selection - большой и понятный выбор -->
+                <div class="text-center mb-3">
+                    <div class="text-base font-black text-slate-700 mb-1">👆 Выберите тип оплаты</div>
+                    <div class="text-xs text-slate-400" id="typeRequiredHint">Нажмите на карточку</div>
                 </div>
-
-                <div class="flex gap-3 mb-6">
+                
+                <div class="flex gap-3 mb-5">
+                    <!-- 100% Окно -->
                     <button type="button" class="type-select-card type-select-window" onclick="selectType('100')" id="typeCardWindow">
                         <div class="type-select-icon">🪟</div>
                         <div class="type-select-percent">100%</div>
@@ -1176,7 +871,8 @@
                         <div class="type-select-desc">Замена в своё окно</div>
                         <div class="type-select-check">✓</div>
                     </button>
-
+                    
+                    <!-- 50% Урок -->
                     <button type="button" class="type-select-card type-select-lesson" onclick="selectType('50')" id="typeCardLesson">
                         <div class="type-select-icon">📚</div>
                         <div class="type-select-percent">50%</div>
@@ -1185,34 +881,36 @@
                         <div class="type-select-check">✓</div>
                     </button>
                 </div>
-
+                
                 <div class="flex gap-3">
-                    <button type="button" onclick="prevStep()" class="nav-btn flex-1 bg-slate-200 text-slate-600">←</button>
-                    <button type="button" onclick="saveRecord()" id="saveBtn" class="nav-btn flex-[2] bg-slate-300 text-slate-400 cursor-not-allowed" disabled>✓ Добавить</button>
+                    <button onclick="prevStep()" class="nav-btn flex-1 bg-slate-200 text-slate-600">←</button>
+                    <button onclick="saveRecord()" id="saveBtn" class="nav-btn flex-[2] bg-slate-300 text-slate-400 cursor-not-allowed" disabled>✓ Добавить</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Reference Modal -->
+    <!-- Reference Modal (Справочник) -->
     <div id="refOverlay" class="modal-overlay no-print" onclick="closeReference()"></div>
     <div id="refSheet" class="modal-sheet wide no-print" onclick="event.stopPropagation()">
         <div class="modal-handle"></div>
-        <div class="px-6 py-5">
-            <div class="flex justify-between items-center mb-5">
-                <h3 class="text-xl font-black uppercase tracking-tight">📚 Справочник</h3>
-                <button onclick="closeReference()" class="w-10 h-10 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-2xl hover:bg-slate-200">×</button>
+        <div class="px-6 py-4">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-black uppercase tracking-tight">📚 Справочник</h3>
+                <button onclick="closeReference()" class="w-10 h-10 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-2xl">×</button>
             </div>
-
-            <div class="flex gap-2 mb-5 overflow-x-auto pb-1">
-                <button class="ref-tab active" onclick="setRefTab('teachers')" id="refTabTeachers">👩‍🏫 Учителя</button>
-                <button class="ref-tab" onclick="setRefTab('subjects')" id="refTabSubjects">📖 Предметы</button>
-                <button class="ref-tab" onclick="setRefTab('classes')" id="refTabClasses">🏫 Классы</button>
-                <button class="ref-tab" onclick="setRefTab('bindings')" id="refTabBindings">🔗 Привязки</button>
-                <button class="ref-tab" onclick="setRefTab('bulk')" id="refTabBulk">📥 Импорт</button>
+            
+            <!-- Reference Tabs -->
+            <div class="flex gap-2 mb-4 overflow-x-auto pb-1">
+                <div class="ref-tab active" onclick="setRefTab('teachers')" id="refTabTeachers">👩‍🏫 Учителя</div>
+                <div class="ref-tab" onclick="setRefTab('subjects')" id="refTabSubjects">📖 Предметы</div>
+                <div class="ref-tab" onclick="setRefTab('classes')" id="refTabClasses">🏫 Классы</div>
+                <div class="ref-tab" onclick="setRefTab('bindings')" id="refTabBindings">🔗 Привязки</div>
             </div>
-
-            <div class="space-y-4 max-h-[55vh] overflow-y-auto" id="refContent"></div>
+            
+            <div class="space-y-4 max-h-[55vh] overflow-y-auto" id="refContent">
+                <!-- Заполняется динамически -->
+            </div>
         </div>
     </div>
 
@@ -1220,23 +918,23 @@
     <div id="reportOverlay" class="modal-overlay no-print" onclick="closeReport()"></div>
     <div id="reportSheet" class="modal-sheet no-print" onclick="event.stopPropagation()">
         <div class="modal-handle"></div>
-        <div class="px-6 py-5">
-            <div class="flex justify-between items-center mb-5">
-                <h3 class="text-xl font-black uppercase tracking-tight">📊 Отчёт</h3>
-                <button onclick="closeReport()" class="w-10 h-10 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-2xl hover:bg-slate-200">×</button>
+        <div class="px-6 py-4">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-black uppercase tracking-tight">📊 Отчёт</h3>
+                <button onclick="closeReport()" class="w-10 h-10 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-2xl">×</button>
             </div>
-
-            <div class="flex gap-2 mb-4">
-                <input type="date" id="reportDateFrom" class="flex-1 bg-slate-100 p-3 rounded-xl text-base">
+            
+            <div class="flex gap-2 mb-3">
+                <input type="date" id="reportDateFrom" class="flex-1 bg-slate-100 p-3 rounded-xl text-sm">
                 <span class="flex items-center text-slate-400">—</span>
-                <input type="date" id="reportDateTo" class="flex-1 bg-slate-100 p-3 rounded-xl text-base">
+                <input type="date" id="reportDateTo" class="flex-1 bg-slate-100 p-3 rounded-xl text-sm">
             </div>
-
-            <div class="flex gap-2 mb-5">
-                <button onclick="generateReport()" class="flex-1 bg-emerald-600 text-white font-bold py-3 rounded-xl hover:bg-emerald-700">📊 Сформировать</button>
-                <button onclick="exportCSV()" class="flex-1 bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700">📥 Excel</button>
+            
+            <div class="flex gap-2 mb-4">
+                <button onclick="generateReport()" class="flex-1 bg-emerald-600 text-white font-bold py-3 rounded-xl">📊 Сформировать</button>
+                <button onclick="exportCSV()" class="flex-1 bg-blue-600 text-white font-bold py-3 rounded-xl">📥 Excel</button>
             </div>
-
+            
             <div id="reportContent" class="space-y-3 max-h-[45vh] overflow-y-auto"></div>
         </div>
     </div>
@@ -1245,10 +943,10 @@
     <div id="statsOverlay" class="modal-overlay no-print" onclick="closeStats()"></div>
     <div id="statsSheet" class="modal-sheet no-print" onclick="event.stopPropagation()">
         <div class="modal-handle"></div>
-        <div class="px-6 py-5">
-            <div class="flex justify-between items-center mb-5">
-                <h3 class="text-xl font-black uppercase tracking-tight">📈 Статистика</h3>
-                <button onclick="closeStats()" class="w-10 h-10 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-2xl hover:bg-slate-200">×</button>
+        <div class="px-6 py-4">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-black uppercase tracking-tight">📈 Статистика</h3>
+                <button onclick="closeStats()" class="w-10 h-10 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-2xl">×</button>
             </div>
             <div class="space-y-3 max-h-[60vh] overflow-y-auto" id="statsContent"></div>
         </div>
@@ -1258,45 +956,25 @@
     <div id="settingsOverlay" class="modal-overlay no-print" onclick="closeSettings()"></div>
     <div id="settingsSheet" class="modal-sheet no-print" onclick="event.stopPropagation()">
         <div class="modal-handle"></div>
-        <div class="px-6 py-5">
-            <div class="flex justify-between items-center mb-5">
-                <h3 class="text-xl font-black uppercase tracking-tight">⚙️ Настройки</h3>
-                <button onclick="closeSettings()" class="w-10 h-10 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-2xl hover:bg-slate-200">×</button>
+        <div class="px-6 py-4">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-black uppercase tracking-tight">⚙️ Настройки</h3>
+                <button onclick="closeSettings()" class="w-10 h-10 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-2xl">×</button>
             </div>
-
-            <div class="space-y-4">
+            
+            <div class="space-y-3">
                 <div class="flex gap-2">
-                    <button onclick="exportJSON()" class="flex-1 bg-slate-100 text-slate-600 font-bold py-3 rounded-xl hover:bg-slate-200">📤 Экспорт JSON</button>
-                    <button onclick="document.getElementById('importInput').click()" class="flex-1 bg-slate-100 text-slate-600 font-bold py-3 rounded-xl hover:bg-slate-200">📥 Импорт</button>
+                    <button onclick="exportJSON()" class="flex-1 bg-slate-100 text-slate-600 font-bold py-3 rounded-xl">📤 Экспорт JSON</button>
+                    <button onclick="document.getElementById('importInput').click()" class="flex-1 bg-slate-100 text-slate-600 font-bold py-3 rounded-xl">📥 Импорт</button>
                 </div>
                 <input type="file" id="importInput" accept=".json" class="hidden" onchange="importJSON(event)">
-
-                <div class="border-t pt-4">
-                    <div class="text-sm font-bold text-slate-500 mb-2">🔔 Уведомления</div>
-                    <button onclick="requestNotificationPermission()" class="w-full bg-purple-100 text-purple-700 font-bold py-3 rounded-xl hover:bg-purple-200">
-                        Включить уведомления
-                    </button>
-                </div>
-
-                <button onclick="clearAllData()" class="w-full bg-red-50 text-red-600 font-bold py-3 rounded-xl hover:bg-red-100">🗑️ Очистить все данные</button>
-
-                <div class="text-center text-sm text-slate-400 pt-4 border-t">
-                    Завуч.PRO v7.0 • 2024
+                
+                <button onclick="clearAllData()" class="w-full bg-red-50 text-red-600 font-bold py-3 rounded-xl">🗑️ Очистить все данные</button>
+                
+                <div class="text-center text-xs text-slate-400 pt-4 border-t">
+                    Завуч.PRO v6.3 • 2024
                 </div>
             </div>
-        </div>
-    </div>
-
-    <!-- Notifications Modal -->
-    <div id="notifOverlay" class="modal-overlay no-print" onclick="closeNotifications()"></div>
-    <div id="notifSheet" class="modal-sheet no-print" onclick="event.stopPropagation()">
-        <div class="modal-handle"></div>
-        <div class="px-6 py-5">
-            <div class="flex justify-between items-center mb-5">
-                <h3 class="text-xl font-black uppercase tracking-tight">🔔 Уведомления</h3>
-                <button onclick="closeNotifications()" class="w-10 h-10 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-2xl hover:bg-slate-200">×</button>
-            </div>
-            <div id="notifContent" class="space-y-3 max-h-[60vh] overflow-y-auto"></div>
         </div>
     </div>
 
@@ -1309,20 +987,17 @@
             teachers: [],
             subjects: [],
             classes: [],
-            bindings: {}
+            bindings: {} // { "5А": ["Математика", "Русский"], "5Б": [...] }
         };
-
+        
         let currentStep = 1;
         let currentTab = 'today';
-        let currentView = 'journal';
         let selectedLesson = 1;
-        let selectedType = null;
+        let selectedType = '100';
         let currentSwipeEl = null;
         let selectMode = false;
         let selectedIds = new Set();
         let currentRefTab = 'teachers';
-        let calendarDate = new Date();
-        let selectedCalendarDate = null;
 
         const save = () => {
             localStorage.setItem('v6_data', JSON.stringify(reps));
@@ -1330,7 +1005,7 @@
         };
 
         const getToday = () => new Date().toISOString().slice(0, 10);
-
+        
         const formatDate = (dateStr) => {
             const d = new Date(dateStr);
             const dayNames = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
@@ -1340,29 +1015,6 @@
                 month: monthNames[d.getMonth()],
                 weekday: dayNames[d.getDay()]
             };
-        };
-
-        const formatDateFull = (dateStr) => {
-            const d = new Date(dateStr);
-            const dayNames = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
-            const monthNames = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
-            return `${d.getDate()} ${monthNames[d.getMonth()]}, ${dayNames[d.getDay()]}`;
-        };
-
-        // ===== VIEWS =====
-        const setView = (view) => {
-            currentView = view;
-            document.getElementById('viewJournal').classList.toggle('hidden', view !== 'journal');
-            document.getElementById('viewCalendar').classList.toggle('hidden', view !== 'calendar');
-
-            // Update sidebar nav
-            document.querySelectorAll('.sidebar-nav-btn').forEach(btn => btn.classList.remove('active'));
-            if (view === 'journal') {
-                document.getElementById('navJournal')?.classList.add('active');
-            } else if (view === 'calendar') {
-                document.getElementById('navCalendar')?.classList.add('active');
-                renderCalendar();
-            }
         };
 
         // ===== TABS =====
@@ -1380,13 +1032,13 @@
             document.getElementById('filterContent').classList.toggle('open');
         };
 
-        const clearFilter = () => {
-            document.getElementById('search').value = '';
+        const clearFilter = () => { 
+            document.getElementById('search').value = ''; 
             document.getElementById('filterClass').value = '';
             document.getElementById('filterTeacher').value = '';
             document.getElementById('filterDateFrom').value = '';
             document.getElementById('filterDateTo').value = '';
-            render();
+            render(); 
         };
 
         // ===== SELECT MODE =====
@@ -1395,8 +1047,7 @@
             selectedIds.clear();
             document.getElementById('mobileBody').classList.toggle('select-mode', selectMode);
             document.getElementById('floatingBar').classList.toggle('show', selectMode);
-            const fab = document.getElementById('mainFab');
-            if (fab) fab.style.display = selectMode ? 'none' : 'flex';
+            document.getElementById('mainFab').style.display = selectMode ? 'none' : 'flex';
             document.getElementById('tabSelect').classList.toggle('active', selectMode);
             updateSelectedCount();
         };
@@ -1406,8 +1057,7 @@
             selectedIds.clear();
             document.getElementById('mobileBody').classList.remove('select-mode');
             document.getElementById('floatingBar').classList.remove('show');
-            const fab = document.getElementById('mainFab');
-            if (fab) fab.style.display = 'flex';
+            document.getElementById('mainFab').style.display = 'flex';
             document.getElementById('tabSelect').classList.remove('active');
             render();
         };
@@ -1443,14 +1093,13 @@
         };
 
         const markSelectedComplete = () => {
-            const count = selectedIds.size;
             selectedIds.forEach(id => {
                 const r = reps.find(r => r.id === id);
                 if (r) r.completed = true;
             });
             save();
             cancelSelection();
-            showToast(`✓ Отмечено: ${count}`);
+            showToast(`✓ Отмечено: ${selectedIds.size}`);
         };
 
         // ===== RENDER =====
@@ -1462,204 +1111,116 @@
             const dateFrom = document.getElementById('filterDateFrom').value;
             const dateTo = document.getElementById('filterDateTo').value;
             const today = getToday();
-
+            
             let filtered = [...reps];
-
+            
             if (currentTab === 'today') {
                 filtered = filtered.filter(r => r.date === today);
             } else if (currentTab === 'pending') {
                 filtered = filtered.filter(r => !r.completed && r.date <= today);
             }
-
+            
             if (search) {
-                filtered = filtered.filter(r =>
-                    r.by.toLowerCase().includes(search) ||
-                    r.who.toLowerCase().includes(search) ||
+                filtered = filtered.filter(r => 
+                    r.by.toLowerCase().includes(search) || 
+                    r.who.toLowerCase().includes(search) || 
                     r.subject.toLowerCase().includes(search) ||
                     (r.class && r.class.toLowerCase().includes(search))
                 );
             }
-
+            
             if (filterClass) filtered = filtered.filter(r => r.class === filterClass);
             if (filterTeacher) filtered = filtered.filter(r => r.by === filterTeacher || r.who === filterTeacher);
             if (dateFrom) filtered = filtered.filter(r => r.date >= dateFrom);
             if (dateTo) filtered = filtered.filter(r => r.date <= dateTo);
-
+            
             filtered.sort((a, b) => {
                 if (a.date !== b.date) return new Date(b.date) - new Date(a.date);
                 return (a.lesson || 1) - (b.lesson || 1);
             });
-
+            
             if (filtered.length === 0) {
                 container.innerHTML = '';
                 document.getElementById('emptyState').classList.remove('hidden');
             } else {
                 document.getElementById('emptyState').classList.add('hidden');
-                container.innerHTML = filtered.map(r => renderCard(r)).join('');
+                container.innerHTML = filtered.map(r => {
+                    const d = formatDate(r.date);
+                    const is100 = r.type === '100';
+                    const isCompleted = r.completed;
+                    
+                    return `
+                    <div class="swipe-container record-card shadow-lg ${isCompleted ? 'completed-card' : ''}" data-id="${r.id}">
+                        <div class="swipe-actions">
+                            <div class="swipe-action bg-emerald-500" onclick="toggleComplete(${r.id})">
+                                <span class="text-lg">${isCompleted ? '↩️' : '✓'}</span>
+                                <span>${isCompleted ? 'ОТМЕНА' : 'ГОТОВО'}</span>
+                            </div>
+                            <div class="swipe-action bg-red-500" onclick="del(${r.id})">
+                                <span class="text-lg">🗑️</span>
+                                <span>УДАЛИТЬ</span>
+                            </div>
+                        </div>
+                        <div class="swipe-item p-3" 
+                             onclick="toggleCardSelection(${r.id})"
+                             ontouchstart="handleTouchStart(event)"
+                             ontouchmove="handleTouchMove(event)"
+                             ontouchend="handleTouchEnd(event)">
+                            
+                            <div class="flex gap-3 items-center">
+                                <!-- Checkbox for select mode -->
+                                <div class="select-checkbox" data-id="${r.id}"></div>
+                                
+                                <!-- Date -->
+                                <div class="flex flex-col items-center min-w-[50px]">
+                                    <div class="bg-gradient-to-br from-slate-100 to-slate-50 px-2.5 py-1.5 rounded-xl text-center border border-slate-200">
+                                        <div class="text-xl font-black text-slate-700 leading-none">${d.day}</div>
+                                        <div class="text-[8px] font-bold text-slate-400 uppercase">${d.month}</div>
+                                        <div class="text-[7px] font-medium text-slate-300">${d.weekday}</div>
+                                    </div>
+                                    <div class="mt-1 bg-purple-100 text-purple-700 text-[9px] font-black px-2 py-0.5 rounded-md">
+                                        ${r.lesson || 1} ур.
+                                    </div>
+                                </div>
+                                
+                                <!-- Info -->
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center gap-2 mb-1">
+                                        <span class="bg-indigo-100 text-indigo-700 text-[10px] font-bold px-1.5 py-0.5 rounded">${r.class || '—'}</span>
+                                        <span class="text-xs font-bold text-slate-600 truncate">${r.subject}</span>
+                                    </div>
+                                    
+                                    <div class="flex items-center gap-1.5 mb-0.5">
+                                        <span class="text-sm">🦸</span>
+                                        <span class="font-bold text-slate-800 text-sm truncate">${r.by}</span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="text-sm">😷</span>
+                                        <span class="text-xs text-slate-500 truncate">за ${r.who}</span>
+                                    </div>
+                                </div>
+                                
+                                <!-- Type Badge -->
+                                <div class="${is100 ? 'badge-100' : 'badge-50'} px-3 py-2 rounded-xl text-center flex-shrink-0">
+                                    <div class="text-xl font-black">${r.type}%</div>
+                                    <div class="text-[8px] font-bold uppercase opacity-90">${is100 ? '🪟ОКНО' : '📚УРОК'}</div>
+                                </div>
+                            </div>
+                            
+                            ${isCompleted ? '<div class="absolute top-1.5 right-1.5 text-emerald-500 text-lg">✓</div>' : ''}
+                        </div>
+                    </div>
+                    `;
+                }).join('');
             }
-
+            
             updateStats();
             updateFilters();
-            updateNotificationBadge();
-        };
-
-        const renderCard = (r) => {
-            const d = formatDate(r.date);
-            const is100 = r.type === '100';
-            const isCompleted = r.completed;
-
-            return `
-            <div class="swipe-container record-card shadow-lg ${isCompleted ? 'completed-card' : ''}" data-id="${r.id}">
-                <div class="swipe-actions">
-                    <div class="swipe-action bg-emerald-500" onclick="toggleComplete(${r.id})">
-                        <span class="text-lg">${isCompleted ? '↩️' : '✓'}</span>
-                        <span>${isCompleted ? 'ОТМЕНА' : 'ГОТОВО'}</span>
-                    </div>
-                    <div class="swipe-action bg-red-500" onclick="del(${r.id})">
-                        <span class="text-lg">🗑️</span>
-                        <span>УДАЛИТЬ</span>
-                    </div>
-                </div>
-                <div class="swipe-item p-4"
-                     onclick="toggleCardSelection(${r.id})"
-                     ontouchstart="handleTouchStart(event)"
-                     ontouchmove="handleTouchMove(event)"
-                     ontouchend="handleTouchEnd(event)">
-
-                    <div class="flex gap-4 items-center">
-                        <div class="select-checkbox" data-id="${r.id}"></div>
-
-                        <div class="flex flex-col items-center min-w-[55px]">
-                            <div class="bg-gradient-to-br from-slate-100 to-slate-50 px-3 py-2 rounded-xl text-center border border-slate-200">
-                                <div class="text-2xl font-black text-slate-700 leading-none">${d.day}</div>
-                                <div class="text-[10px] font-bold text-slate-400 uppercase">${d.month}</div>
-                                <div class="text-[9px] font-medium text-slate-300">${d.weekday}</div>
-                            </div>
-                            <div class="mt-1.5 bg-purple-100 text-purple-700 text-xs font-black px-2.5 py-1 rounded-lg">
-                                ${r.lesson || 1} ур.
-                            </div>
-                        </div>
-
-                        <div class="flex-1 min-w-0">
-                            <div class="flex items-center gap-2 mb-1.5">
-                                <span class="bg-indigo-100 text-indigo-700 text-xs font-bold px-2 py-0.5 rounded">${r.class || '—'}</span>
-                                <span class="text-sm font-bold text-slate-600 truncate">${r.subject}</span>
-                            </div>
-
-                            <div class="flex items-center gap-2 mb-1">
-                                <span class="text-base">🦸</span>
-                                <span class="font-bold text-slate-800 text-base truncate">${r.by}</span>
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <span class="text-base">😷</span>
-                                <span class="text-sm text-slate-500 truncate">за ${r.who}</span>
-                            </div>
-                        </div>
-
-                        <div class="flex flex-col items-end gap-2">
-                            <div class="${is100 ? 'badge-100' : 'badge-50'} px-3 py-2 rounded-xl text-center flex-shrink-0">
-                                <div class="text-xl font-black">${r.type}%</div>
-                                <div class="text-[9px] font-bold uppercase opacity-90">${is100 ? '🪟ОКНО' : '📚УРОК'}</div>
-                            </div>
-
-                            <div class="desktop-actions">
-                                <button onclick="event.stopPropagation(); toggleComplete(${r.id})" class="action-btn action-btn-success">
-                                    ${isCompleted ? '↩️' : '✓'}
-                                </button>
-                                <button onclick="event.stopPropagation(); del(${r.id})" class="action-btn action-btn-danger">
-                                    🗑️
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    ${isCompleted ? '<div class="absolute top-2 right-2 text-emerald-500 text-xl">✓</div>' : ''}
-                </div>
-            </div>
-            `;
-        };
-
-        // ===== CALENDAR =====
-        const renderCalendar = () => {
-            const year = calendarDate.getFullYear();
-            const month = calendarDate.getMonth();
-            const monthNames = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
-
-            document.getElementById('calendarTitle').textContent = `${monthNames[month]} ${year}`;
-
-            const firstDay = new Date(year, month, 1);
-            const lastDay = new Date(year, month + 1, 0);
-            const startDay = (firstDay.getDay() + 6) % 7;
-            const daysInMonth = lastDay.getDate();
-
-            const today = getToday();
-            const datesWithItems = new Set(reps.map(r => r.date));
-
-            let html = '';
-
-            // Previous month days
-            const prevMonth = new Date(year, month, 0);
-            const prevDays = prevMonth.getDate();
-            for (let i = startDay - 1; i >= 0; i--) {
-                const day = prevDays - i;
-                html += `<div class="calendar-day other-month">${day}</div>`;
-            }
-
-            // Current month days
-            for (let day = 1; day <= daysInMonth; day++) {
-                const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                const isToday = dateStr === today;
-                const hasItems = datesWithItems.has(dateStr);
-                const isSelected = dateStr === selectedCalendarDate;
-
-                html += `<div class="calendar-day ${isToday ? 'today' : ''} ${hasItems ? 'has-items' : ''} ${isSelected ? 'ring-2 ring-purple-500' : ''}" onclick="selectCalendarDay('${dateStr}')">${day}</div>`;
-            }
-
-            // Next month days
-            const totalCells = startDay + daysInMonth;
-            const remaining = 7 - (totalCells % 7);
-            if (remaining < 7) {
-                for (let day = 1; day <= remaining; day++) {
-                    html += `<div class="calendar-day other-month">${day}</div>`;
-                }
-            }
-
-            document.getElementById('calendarGrid').innerHTML = html;
-        };
-
-        const prevMonth = () => {
-            calendarDate.setMonth(calendarDate.getMonth() - 1);
-            renderCalendar();
-        };
-
-        const nextMonth = () => {
-            calendarDate.setMonth(calendarDate.getMonth() + 1);
-            renderCalendar();
-        };
-
-        const selectCalendarDay = (dateStr) => {
-            selectedCalendarDate = dateStr;
-            renderCalendar();
-
-            const dayReps = reps.filter(r => r.date === dateStr).sort((a, b) => (a.lesson || 1) - (b.lesson || 1));
-
-            document.getElementById('calendarDayTitle').innerHTML = `<span class="text-white/70">${formatDateFull(dateStr)}</span> <span class="bg-white/20 px-2 py-1 rounded-lg text-sm ml-2">${dayReps.length} замен</span>`;
-
-            if (dayReps.length === 0) {
-                document.getElementById('calendarDayItems').innerHTML = `
-                    <div class="glass rounded-xl p-6 text-center">
-                        <div class="text-3xl mb-2">📋</div>
-                        <div class="text-slate-500 font-medium">Нет замен на этот день</div>
-                    </div>
-                `;
-            } else {
-                document.getElementById('calendarDayItems').innerHTML = dayReps.map(r => renderCard(r)).join('');
-            }
         };
 
         // ===== SWIPE =====
         let startX = 0, startY = 0, isSwiping = false;
-
+        
         const handleTouchStart = (e) => {
             if (selectMode) return;
             if (currentSwipeEl && currentSwipeEl !== e.currentTarget) {
@@ -1671,23 +1232,23 @@
             e.currentTarget.classList.add('swiping');
             currentSwipeEl = e.currentTarget;
         };
-
+        
         const handleTouchMove = (e) => {
             if (selectMode || !currentSwipeEl) return;
             const deltaX = e.touches[0].clientX - startX;
             const deltaY = e.touches[0].clientY - startY;
-
+            
             if (!isSwiping && Math.abs(deltaX) > 10) {
                 isSwiping = Math.abs(deltaX) > Math.abs(deltaY);
             }
-
+            
             if (isSwiping) {
                 e.preventDefault();
                 const moveX = Math.max(-160, Math.min(0, deltaX));
                 currentSwipeEl.style.transform = `translateX(${moveX}px)`;
             }
         };
-
+        
         const handleTouchEnd = (e) => {
             if (selectMode || !currentSwipeEl) return;
             currentSwipeEl.classList.remove('swiping');
@@ -1703,7 +1264,7 @@
                 save(); render(); showToast('🗑️ Удалено');
             }
         };
-
+        
         const toggleComplete = id => {
             const r = reps.find(r => r.id === id);
             if (r) {
@@ -1716,28 +1277,32 @@
         // ===== WIZARD =====
         const selectLesson = (n) => {
             selectedLesson = n;
-            document.querySelectorAll('.lesson-btn').forEach((btn, i) => {
+            document.querySelectorAll('#lessonSelector .lesson-btn').forEach((btn, i) => {
                 btn.classList.toggle('active', i + 1 === n);
             });
         };
-
+        
         const selectType = (type) => {
             selectedType = type;
-
+            
+            // Убираем active с обеих карточек
             document.getElementById('typeCardWindow').classList.remove('active');
             document.getElementById('typeCardLesson').classList.remove('active');
-
+            
+            // Добавляем active к выбранной
             if (type === '100') {
                 document.getElementById('typeCardWindow').classList.add('active');
             } else {
                 document.getElementById('typeCardLesson').classList.add('active');
             }
-
+            
+            // Активируем кнопку сохранения
             const saveBtn = document.getElementById('saveBtn');
             saveBtn.disabled = false;
             saveBtn.classList.remove('bg-slate-300', 'text-slate-400', 'cursor-not-allowed');
             saveBtn.classList.add('bg-gradient-to-r', 'from-emerald-500', 'to-green-600', 'text-white', 'shadow-lg');
-
+            
+            // Обновляем подсказку
             const hint = document.getElementById('typeRequiredHint');
             if (type === '100') {
                 hint.innerHTML = '<span class="text-blue-600 font-bold">✓ 100% — оплата за окно</span>';
@@ -1755,65 +1320,73 @@
         const openWizard = () => {
             currentStep = 1;
             selectedLesson = 1;
-            selectedType = null;
+            selectedType = null; // Тип не выбран по умолчанию
             document.getElementById('wDate').valueAsDate = new Date();
             document.getElementById('wClass').value = '';
             document.getElementById('wSubject').value = '';
             document.getElementById('wWho').value = '';
             document.getElementById('wBy').value = '';
             selectLesson(1);
-
+            
+            // Сбрасываем выбор типа карточек
             document.getElementById('typeCardWindow').classList.remove('active');
             document.getElementById('typeCardLesson').classList.remove('active');
-
+            
+            // Сбрасываем кнопку сохранения в неактивное состояние
             const saveBtn = document.getElementById('saveBtn');
             saveBtn.disabled = true;
             saveBtn.classList.add('bg-slate-300', 'text-slate-400', 'cursor-not-allowed');
             saveBtn.classList.remove('bg-gradient-to-r', 'from-emerald-500', 'to-green-600', 'text-white', 'shadow-lg');
-
+            
+            // Показываем подсказку
             document.getElementById('typeRequiredHint').textContent = 'Нажмите на карточку';
-
+            
             updateWizardStep();
             updateQuickButtons();
-
+            
             document.getElementById('modalOverlay').classList.add('active');
             document.getElementById('modalSheet').classList.add('active');
             document.body.style.overflow = 'hidden';
         };
-
+        
         const closeWizard = () => {
             document.getElementById('modalOverlay').classList.remove('active');
             document.getElementById('modalSheet').classList.remove('active');
             document.body.style.overflow = '';
         };
-
+        
         const updateWizardStep = (direction = 'next') => {
             document.querySelectorAll('.wizard-step').forEach(step => {
                 step.classList.remove('active', 'back');
             });
-
+            
             const currentStepEl = document.querySelector(`.wizard-step[data-step="${currentStep}"]`);
             currentStepEl.classList.add('active');
             if (direction === 'back') currentStepEl.classList.add('back');
-
+            
             document.querySelectorAll('.progress-dot').forEach((dot, i) => {
                 const stepNum = i + 1;
                 dot.classList.remove('active', 'done');
                 if (stepNum === currentStep) dot.classList.add('active');
                 else if (stepNum < currentStep) dot.classList.add('done');
             });
-
+            
             for (let i = 1; i < currentStep; i++) {
                 document.getElementById(`progress${i}`).style.width = '100%';
             }
             for (let i = currentStep; i <= 5; i++) {
                 document.getElementById(`progress${i}`).style.width = '0%';
             }
-
-            if (currentStep === 3) updateSubjectsForClass();
-            if (currentStep === 6) updateSummary();
+            
+            if (currentStep === 3) {
+                updateSubjectsForClass();
+            }
+            
+            if (currentStep === 6) {
+                updateSummary();
+            }
         };
-
+        
         const nextStep = () => {
             if (currentStep === 1 && !document.getElementById('wDate').value) {
                 showToast('⚠️ Выберите дату'); return;
@@ -1830,14 +1403,14 @@
             if (currentStep === 5 && !document.getElementById('wBy').value.trim()) {
                 showToast('⚠️ Укажите кто заменяет'); return;
             }
-
+            
             if (currentStep < 6) {
                 currentStep++;
                 updateWizardStep('next');
                 updateQuickButtons();
             }
         };
-
+        
         const prevStep = () => {
             if (currentStep > 1) {
                 currentStep--;
@@ -1845,65 +1418,66 @@
                 updateQuickButtons();
             }
         };
-
+        
         const updateSubjectsForClass = () => {
             const cls = document.getElementById('wClass').value.trim().toUpperCase();
             const hint = document.getElementById('subjectHint');
             const container = document.getElementById('quickSubjects');
-
+            
             if (master.bindings[cls] && master.bindings[cls].length > 0) {
                 hint.textContent = `Предметы для ${cls}`;
-                container.innerHTML = master.bindings[cls].sort().map(s =>
-                    `<button type="button" class="class-btn" onclick="document.getElementById('wSubject').value='${s}'">${s}</button>`
+                container.innerHTML = master.bindings[cls].sort().map(s => 
+                    `<button type="button" class="class-btn text-sm" onclick="document.getElementById('wSubject').value='${s}'">${s}</button>`
                 ).join('');
             } else {
                 hint.textContent = '';
-                container.innerHTML = master.subjects.sort().map(s =>
-                    `<button type="button" class="class-btn" onclick="document.getElementById('wSubject').value='${s}'">${s}</button>`
+                container.innerHTML = master.subjects.sort().map(s => 
+                    `<button type="button" class="class-btn text-sm" onclick="document.getElementById('wSubject').value='${s}'">${s}</button>`
                 ).join('');
             }
         };
-
+        
         const updateSummary = () => {
             const d = formatDate(document.getElementById('wDate').value);
             document.getElementById('summaryContent').innerHTML = `
-                <div class="grid grid-cols-3 gap-3 text-center mb-3">
-                    <div class="bg-white rounded-xl p-2">
-                        <div class="text-xl font-black text-slate-700">${d.day} ${d.month}</div>
-                        <div class="text-xs text-slate-400">${d.weekday}</div>
+                <div class="grid grid-cols-3 gap-2 text-center mb-2">
+                    <div class="bg-white rounded-lg p-1.5">
+                        <div class="text-lg font-black text-slate-700">${d.day} ${d.month}</div>
+                        <div class="text-[8px] text-slate-400">${d.weekday}</div>
                     </div>
-                    <div class="bg-purple-50 rounded-xl p-2">
-                        <div class="text-xl font-black text-purple-600">${selectedLesson} ур.</div>
-                        <div class="text-xs text-purple-400">урок</div>
+                    <div class="bg-purple-50 rounded-lg p-1.5">
+                        <div class="text-lg font-black text-purple-600">${selectedLesson} ур.</div>
+                        <div class="text-[8px] text-purple-400">урок</div>
                     </div>
-                    <div class="bg-indigo-50 rounded-xl p-2">
-                        <div class="text-xl font-black text-indigo-600">${document.getElementById('wClass').value.toUpperCase()}</div>
-                        <div class="text-xs text-indigo-400">класс</div>
+                    <div class="bg-indigo-50 rounded-lg p-1.5">
+                        <div class="text-lg font-black text-indigo-600">${document.getElementById('wClass').value.toUpperCase()}</div>
+                        <div class="text-[8px] text-indigo-400">класс</div>
                     </div>
                 </div>
-                <div class="bg-white rounded-xl p-3 space-y-2">
+                <div class="bg-white rounded-lg p-2 space-y-1">
                     <div class="flex items-center gap-2">
-                        <span>📖</span>
-                        <span class="font-bold text-slate-700">${document.getElementById('wSubject').value}</span>
+                        <span class="text-xs">📖</span>
+                        <span class="font-bold text-slate-700 text-sm">${document.getElementById('wSubject').value}</span>
                     </div>
                     <div class="flex items-center gap-2">
-                        <span>😷</span>
-                        <span class="text-red-500">за <b>${document.getElementById('wWho').value}</b></span>
+                        <span class="text-xs">😷</span>
+                        <span class="text-red-500 text-sm">за <b>${document.getElementById('wWho').value}</b></span>
                     </div>
                     <div class="flex items-center gap-2">
-                        <span>🦸</span>
-                        <span class="text-emerald-600 font-bold">${document.getElementById('wBy').value}</span>
+                        <span class="text-xs">🦸</span>
+                        <span class="text-emerald-600 text-sm font-bold">${document.getElementById('wBy').value}</span>
                     </div>
                 </div>
             `;
         };
-
+        
         const saveRecord = () => {
+            // Проверяем что тип выбран
             if (!selectedType) {
                 showToast('⚠️ Выберите тип оплаты!');
                 return;
             }
-
+            
             const data = {
                 id: Date.now(),
                 date: document.getElementById('wDate').value,
@@ -1915,37 +1489,41 @@
                 by: document.getElementById('wBy').value.trim(),
                 completed: false
             };
-
+            
             reps.push(data);
-
+            
+            // Auto-add to master
             if(!master.teachers.includes(data.who)) master.teachers.push(data.who);
             if(!master.teachers.includes(data.by)) master.teachers.push(data.by);
             if(!master.subjects.includes(data.subject)) master.subjects.push(data.subject);
             if(data.class && !master.classes.includes(data.class)) master.classes.push(data.class);
-
+            
             save(); render(); closeWizard();
             showToast('✅ Замена добавлена!');
         };
-
+        
         const updateQuickButtons = () => {
+            // Classes
             const classesContainer = document.getElementById('quickClasses');
             if (classesContainer) {
-                classesContainer.innerHTML = master.classes.sort().map(c =>
+                classesContainer.innerHTML = master.classes.sort().map(c => 
                     `<button type="button" class="class-btn" onclick="document.getElementById('wClass').value='${c}'">${c}</button>`
                 ).join('');
             }
-
+            
+            // Teachers Who - показываем всех с возможностью скролла
             const teachersWhoContainer = document.getElementById('quickTeachersWho');
             if (teachersWhoContainer) {
-                teachersWhoContainer.innerHTML = master.teachers.sort().map(t =>
-                    `<button type="button" class="class-btn text-sm" onclick="document.getElementById('wWho').value='${t}'">${t}</button>`
+                teachersWhoContainer.innerHTML = master.teachers.sort().map(t => 
+                    `<button type="button" class="class-btn text-xs" onclick="document.getElementById('wWho').value='${t}'">${t}</button>`
                 ).join('');
             }
-
+            
+            // Teachers By - показываем всех с возможностью скролла
             const teachersByContainer = document.getElementById('quickTeachersBy');
             if (teachersByContainer) {
-                teachersByContainer.innerHTML = master.teachers.sort().map(t =>
-                    `<button type="button" class="class-btn text-sm" onclick="document.getElementById('wBy').value='${t}'">${t}</button>`
+                teachersByContainer.innerHTML = master.teachers.sort().map(t => 
+                    `<button type="button" class="class-btn text-xs" onclick="document.getElementById('wBy').value='${t}'">${t}</button>`
                 ).join('');
             }
         };
@@ -1966,89 +1544,89 @@
             const teacherSelect = document.getElementById('filterTeacher');
             const currentClass = classSelect.value;
             const currentTeacher = teacherSelect.value;
-
+            
             const classes = [...new Set(reps.map(r => r.class).filter(Boolean))].sort();
             const teachers = [...new Set([...reps.map(r => r.by), ...reps.map(r => r.who)])].sort();
-
-            classSelect.innerHTML = '<option value="">Все классы</option>' + classes.map(c =>
+            
+            classSelect.innerHTML = '<option value="">Все классы</option>' + classes.map(c => 
                 `<option value="${c}" ${c === currentClass ? 'selected' : ''}>${c}</option>`
             ).join('');
-
-            teacherSelect.innerHTML = '<option value="">Все учителя</option>' + teachers.map(t =>
+            
+            teacherSelect.innerHTML = '<option value="">Все учителя</option>' + teachers.map(t => 
                 `<option value="${t}" ${t === currentTeacher ? 'selected' : ''}>${t}</option>`
             ).join('');
         };
 
-        // ===== REFERENCE =====
+        // ===== REFERENCE (СПРАВОЧНИК) =====
         const openReference = () => {
             document.getElementById('refOverlay').classList.add('active');
             document.getElementById('refSheet').classList.add('active');
             document.body.style.overflow = 'hidden';
             renderReference();
         };
-
+        
         const closeReference = () => {
             document.getElementById('refOverlay').classList.remove('active');
             document.getElementById('refSheet').classList.remove('active');
             document.body.style.overflow = '';
         };
-
+        
         const setRefTab = (tab) => {
             currentRefTab = tab;
             document.querySelectorAll('.ref-tab').forEach(t => t.classList.remove('active'));
             document.getElementById('refTab' + tab.charAt(0).toUpperCase() + tab.slice(1)).classList.add('active');
             renderReference();
         };
-
+        
         const renderReference = () => {
             const container = document.getElementById('refContent');
-
+            
             if (currentRefTab === 'teachers') {
                 container.innerHTML = `
-                    <div class="flex gap-2 mb-4">
-                        <input type="text" id="newTeacher" placeholder="ФИО учителя" class="flex-1 bg-slate-100 px-4 py-3 rounded-xl text-base">
-                        <button onclick="addTeacher()" class="bg-purple-600 text-white px-5 rounded-xl font-bold hover:bg-purple-700">+</button>
+                    <div class="flex gap-2 mb-3">
+                        <input type="text" id="newTeacher" placeholder="ФИО учителя" class="flex-1 bg-slate-100 px-4 py-3 rounded-xl">
+                        <button onclick="addTeacher()" class="bg-purple-600 text-white px-4 rounded-xl font-bold">+</button>
                     </div>
-                    <div class="text-sm text-slate-400 mb-3">Всего: ${master.teachers.length}</div>
+                    <div class="text-xs text-slate-400 mb-2">Всего: ${master.teachers.length}</div>
                     <div id="teachersList">
                         ${master.teachers.sort().map(t => `
                             <div class="ref-item">
                                 <span class="font-medium">${t}</span>
-                                <button onclick="removeTeacher('${t.replace(/'/g, "\\'")}')" class="text-red-400 text-xl hover:text-red-600">×</button>
+                                <button onclick="removeTeacher('${t}')" class="text-red-400 text-lg">×</button>
                             </div>
                         `).join('')}
                     </div>
                 `;
             } else if (currentRefTab === 'subjects') {
                 container.innerHTML = `
-                    <div class="flex gap-2 mb-4">
-                        <input type="text" id="newSubject" placeholder="Название предмета" class="flex-1 bg-slate-100 px-4 py-3 rounded-xl text-base">
-                        <button onclick="addSubject()" class="bg-purple-600 text-white px-5 rounded-xl font-bold hover:bg-purple-700">+</button>
+                    <div class="flex gap-2 mb-3">
+                        <input type="text" id="newSubject" placeholder="Название предмета" class="flex-1 bg-slate-100 px-4 py-3 rounded-xl">
+                        <button onclick="addSubject()" class="bg-purple-600 text-white px-4 rounded-xl font-bold">+</button>
                     </div>
-                    <div class="text-sm text-slate-400 mb-3">Всего: ${master.subjects.length}</div>
+                    <div class="text-xs text-slate-400 mb-2">Всего: ${master.subjects.length}</div>
                     <div id="subjectsList">
                         ${master.subjects.sort().map(s => `
                             <div class="ref-item">
                                 <span class="font-medium">${s}</span>
-                                <button onclick="removeSubject('${s.replace(/'/g, "\\'")}')" class="text-red-400 text-xl hover:text-red-600">×</button>
+                                <button onclick="removeSubject('${s}')" class="text-red-400 text-lg">×</button>
                             </div>
                         `).join('')}
                     </div>
                 `;
             } else if (currentRefTab === 'classes') {
                 container.innerHTML = `
-                    <div class="flex gap-2 mb-4">
-                        <input type="text" id="newClass" placeholder="Например: 5А" class="flex-1 bg-slate-100 px-4 py-3 rounded-xl uppercase text-base">
-                        <button onclick="addClass()" class="bg-purple-600 text-white px-5 rounded-xl font-bold hover:bg-purple-700">+</button>
+                    <div class="flex gap-2 mb-3">
+                        <input type="text" id="newClass" placeholder="Например: 5А" class="flex-1 bg-slate-100 px-4 py-3 rounded-xl uppercase">
+                        <button onclick="addClass()" class="bg-purple-600 text-white px-4 rounded-xl font-bold">+</button>
                     </div>
-                    <div class="text-sm text-slate-400 mb-3">Всего: ${master.classes.length}</div>
+                    <div class="text-xs text-slate-400 mb-2">Всего: ${master.classes.length}</div>
                     <div id="classesList">
                         ${master.classes.sort().map(c => `
                             <div class="ref-item">
                                 <span class="font-medium">${c}</span>
-                                <div class="flex items-center gap-3">
-                                    <span class="text-sm text-slate-400">${(master.bindings[c] || []).length} предм.</span>
-                                    <button onclick="removeClass('${c}')" class="text-red-400 text-xl hover:text-red-600">×</button>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs text-slate-400">${(master.bindings[c] || []).length} предм.</span>
+                                    <button onclick="removeClass('${c}')" class="text-red-400 text-lg">×</button>
                                 </div>
                             </div>
                         `).join('')}
@@ -2056,120 +1634,48 @@
                 `;
             } else if (currentRefTab === 'bindings') {
                 container.innerHTML = `
-                    <div class="mb-4">
-                        <label class="text-sm font-bold text-slate-500 uppercase mb-2 block">Выберите класс:</label>
-                        <select id="bindingClass" onchange="renderBindingSubjects()" class="w-full bg-slate-100 px-4 py-3 rounded-xl text-base">
+                    <div class="mb-3">
+                        <label class="text-xs font-bold text-slate-500 uppercase mb-1 block">Выберите класс:</label>
+                        <select id="bindingClass" onchange="renderBindingSubjects()" class="w-full bg-slate-100 px-4 py-3 rounded-xl">
                             <option value="">— Выберите класс —</option>
                             ${master.classes.sort().map(c => `<option value="${c}">${c}</option>`).join('')}
                         </select>
                     </div>
                     <div id="bindingSubjects"></div>
                 `;
-            } else if (currentRefTab === 'bulk') {
-                container.innerHTML = `
-                    <div class="space-y-4">
-                        <div>
-                            <label class="text-sm font-bold text-slate-500 uppercase mb-2 block">📥 Массовый импорт учителей</label>
-                            <textarea id="bulkTeachers" class="bulk-textarea" placeholder="Введите ФИО учителей, каждый с новой строки:&#10;Иванова А.П.&#10;Петров С.М.&#10;Сидорова Н.В."></textarea>
-                            <button onclick="bulkImportTeachers()" class="mt-2 w-full bg-purple-600 text-white font-bold py-3 rounded-xl hover:bg-purple-700">Импортировать учителей</button>
-                        </div>
-
-                        <div>
-                            <label class="text-sm font-bold text-slate-500 uppercase mb-2 block">📥 Массовый импорт предметов</label>
-                            <textarea id="bulkSubjects" class="bulk-textarea" placeholder="Введите предметы, каждый с новой строки:&#10;Математика&#10;Русский язык&#10;Физика"></textarea>
-                            <button onclick="bulkImportSubjects()" class="mt-2 w-full bg-purple-600 text-white font-bold py-3 rounded-xl hover:bg-purple-700">Импортировать предметы</button>
-                        </div>
-
-                        <div>
-                            <label class="text-sm font-bold text-slate-500 uppercase mb-2 block">📥 Массовый импорт классов</label>
-                            <textarea id="bulkClasses" class="bulk-textarea" placeholder="Введите классы, каждый с новой строки:&#10;5А&#10;5Б&#10;6А"></textarea>
-                            <button onclick="bulkImportClasses()" class="mt-2 w-full bg-purple-600 text-white font-bold py-3 rounded-xl hover:bg-purple-700">Импортировать классы</button>
-                        </div>
-                    </div>
-                `;
             }
         };
-
+        
         const renderBindingSubjects = () => {
             const cls = document.getElementById('bindingClass').value;
             const container = document.getElementById('bindingSubjects');
-
+            
             if (!cls) {
-                container.innerHTML = '<div class="text-center text-slate-400 py-10">Выберите класс</div>';
+                container.innerHTML = '<div class="text-center text-slate-400 py-8">Выберите класс</div>';
                 return;
             }
-
+            
             const bound = master.bindings[cls] || [];
-
+            
             container.innerHTML = `
-                <div class="text-sm font-bold text-slate-500 uppercase mb-3">Предметы для ${cls}:</div>
-                <div class="flex flex-wrap gap-2 mb-5">
+                <div class="text-xs font-bold text-slate-500 uppercase mb-2">Предметы для ${cls}:</div>
+                <div class="flex flex-wrap gap-2 mb-4">
                     ${bound.map(s => `
                         <div class="chip bg-purple-100 text-purple-700">
                             ${s}
-                            <span class="chip-remove" onclick="unbindSubject('${cls}', '${s.replace(/'/g, "\\'")}')">×</span>
+                            <span class="chip-remove" onclick="unbindSubject('${cls}', '${s}')">×</span>
                         </div>
-                    `).join('') || '<span class="text-slate-400">Нет привязанных предметов</span>'}
+                    `).join('') || '<span class="text-slate-400 text-sm">Нет привязанных предметов</span>'}
                 </div>
-                <div class="text-sm font-bold text-slate-500 uppercase mb-3">Добавить предмет:</div>
+                <div class="text-xs font-bold text-slate-500 uppercase mb-2">Добавить предмет:</div>
                 <div class="flex flex-wrap gap-2">
                     ${master.subjects.filter(s => !bound.includes(s)).map(s => `
-                        <button onclick="bindSubject('${cls}', '${s.replace(/'/g, "\\'")}')" class="chip bg-slate-200 hover:bg-purple-200 transition cursor-pointer">${s}</button>
-                    `).join('') || '<span class="text-slate-400">Все предметы привязаны</span>'}
+                        <button onclick="bindSubject('${cls}', '${s}')" class="chip bg-slate-200 hover:bg-purple-200 transition cursor-pointer">${s}</button>
+                    `).join('') || '<span class="text-slate-400 text-sm">Все предметы привязаны</span>'}
                 </div>
             `;
         };
-
-        // Bulk import functions
-        const bulkImportTeachers = () => {
-            const text = document.getElementById('bulkTeachers').value;
-            const items = text.split('\n').map(s => s.trim()).filter(s => s.length > 0);
-            let added = 0;
-            items.forEach(item => {
-                if (!master.teachers.includes(item)) {
-                    master.teachers.push(item);
-                    added++;
-                }
-            });
-            save();
-            document.getElementById('bulkTeachers').value = '';
-            showToast(`✓ Добавлено учителей: ${added}`);
-            renderReference();
-        };
-
-        const bulkImportSubjects = () => {
-            const text = document.getElementById('bulkSubjects').value;
-            const items = text.split('\n').map(s => s.trim()).filter(s => s.length > 0);
-            let added = 0;
-            items.forEach(item => {
-                if (!master.subjects.includes(item)) {
-                    master.subjects.push(item);
-                    added++;
-                }
-            });
-            save();
-            document.getElementById('bulkSubjects').value = '';
-            showToast(`✓ Добавлено предметов: ${added}`);
-            renderReference();
-        };
-
-        const bulkImportClasses = () => {
-            const text = document.getElementById('bulkClasses').value;
-            const items = text.split('\n').map(s => s.trim().toUpperCase()).filter(s => s.length > 0);
-            let added = 0;
-            items.forEach(item => {
-                if (!master.classes.includes(item)) {
-                    master.classes.push(item);
-                    if (!master.bindings[item]) master.bindings[item] = [];
-                    added++;
-                }
-            });
-            save();
-            document.getElementById('bulkClasses').value = '';
-            showToast(`✓ Добавлено классов: ${added}`);
-            renderReference();
-        };
-
+        
         const addTeacher = () => {
             const input = document.getElementById('newTeacher');
             const val = input.value.trim();
@@ -2181,13 +1687,13 @@
                 showToast('✓ Добавлено');
             }
         };
-
+        
         const removeTeacher = (t) => {
             master.teachers = master.teachers.filter(x => x !== t);
             save();
             renderReference();
         };
-
+        
         const addSubject = () => {
             const input = document.getElementById('newSubject');
             const val = input.value.trim();
@@ -2199,16 +1705,17 @@
                 showToast('✓ Добавлено');
             }
         };
-
+        
         const removeSubject = (s) => {
             master.subjects = master.subjects.filter(x => x !== s);
+            // Удаляем из привязок
             Object.keys(master.bindings).forEach(cls => {
                 master.bindings[cls] = master.bindings[cls].filter(x => x !== s);
             });
             save();
             renderReference();
         };
-
+        
         const addClass = () => {
             const input = document.getElementById('newClass');
             const val = input.value.trim().toUpperCase();
@@ -2221,14 +1728,14 @@
                 showToast('✓ Добавлено');
             }
         };
-
+        
         const removeClass = (c) => {
             master.classes = master.classes.filter(x => x !== c);
             delete master.bindings[c];
             save();
             renderReference();
         };
-
+        
         const bindSubject = (cls, subj) => {
             if (!master.bindings[cls]) master.bindings[cls] = [];
             if (!master.bindings[cls].includes(subj)) {
@@ -2237,7 +1744,7 @@
                 renderBindingSubjects();
             }
         };
-
+        
         const unbindSubject = (cls, subj) => {
             if (master.bindings[cls]) {
                 master.bindings[cls] = master.bindings[cls].filter(s => s !== subj);
@@ -2252,28 +1759,28 @@
             const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
             document.getElementById('reportDateFrom').value = firstDay.toISOString().slice(0,10);
             document.getElementById('reportDateTo').value = now.toISOString().slice(0,10);
-
+            
             document.getElementById('reportOverlay').classList.add('active');
             document.getElementById('reportSheet').classList.add('active');
             document.body.style.overflow = 'hidden';
         };
-
+        
         const closeReport = () => {
             document.getElementById('reportOverlay').classList.remove('active');
             document.getElementById('reportSheet').classList.remove('active');
             document.body.style.overflow = '';
         };
-
+        
         const generateReport = () => {
             const from = document.getElementById('reportDateFrom').value;
             const to = document.getElementById('reportDateTo').value;
-
+            
             const filtered = reps.filter(r => {
                 if (from && r.date < from) return false;
                 if (to && r.date > to) return false;
                 return true;
             });
-
+            
             const byTeacher = {};
             filtered.forEach(r => {
                 if (!byTeacher[r.by]) byTeacher[r.by] = { count100: 0, count50: 0, total: 0 };
@@ -2281,58 +1788,58 @@
                 else byTeacher[r.by].count50++;
                 byTeacher[r.by].total++;
             });
-
+            
             const sorted = Object.entries(byTeacher).sort((a,b) => b[1].total - a[1].total);
-
+            
             document.getElementById('reportContent').innerHTML = `
-                <div class="bg-gradient-to-r from-purple-100 to-indigo-100 p-5 rounded-xl mb-5">
-                    <div class="text-center mb-3">
-                        <div class="text-3xl font-black text-slate-700">${filtered.length}</div>
-                        <div class="text-sm text-slate-500 uppercase font-bold">Замен за период</div>
+                <div class="bg-gradient-to-r from-purple-100 to-indigo-100 p-4 rounded-xl mb-4">
+                    <div class="text-center mb-2">
+                        <div class="text-2xl font-black text-slate-700">${filtered.length}</div>
+                        <div class="text-xs text-slate-500 uppercase font-bold">Замен за период</div>
                     </div>
-                    <div class="flex justify-center gap-8">
+                    <div class="flex justify-center gap-6">
                         <div class="text-center">
-                            <div class="text-xl font-black text-blue-600">${filtered.filter(r=>r.type==='100').length}</div>
-                            <div class="text-xs text-blue-500 uppercase font-bold">🪟 100%</div>
+                            <div class="text-lg font-black text-blue-600">${filtered.filter(r=>r.type==='100').length}</div>
+                            <div class="text-[9px] text-blue-500 uppercase font-bold">🪟 100%</div>
                         </div>
                         <div class="text-center">
-                            <div class="text-xl font-black text-amber-600">${filtered.filter(r=>r.type==='50').length}</div>
-                            <div class="text-xs text-amber-500 uppercase font-bold">📚 50%</div>
+                            <div class="text-lg font-black text-amber-600">${filtered.filter(r=>r.type==='50').length}</div>
+                            <div class="text-[9px] text-amber-500 uppercase font-bold">📚 50%</div>
                         </div>
                     </div>
                 </div>
-
-                <div class="text-sm font-bold text-slate-400 uppercase mb-3">По учителям:</div>
+                
+                <div class="text-xs font-bold text-slate-400 uppercase mb-2">По учителям:</div>
                 ${sorted.map(([name, data]) => `
-                    <div class="bg-white border border-slate-100 p-4 rounded-xl mb-2 shadow-sm">
+                    <div class="bg-white border border-slate-100 p-3 rounded-xl mb-2 shadow-sm">
                         <div class="flex justify-between items-center">
                             <div class="font-bold text-slate-700">${name}</div>
-                            <div class="text-xl font-black text-slate-600">${data.total}</div>
+                            <div class="text-lg font-black text-slate-600">${data.total}</div>
                         </div>
-                        <div class="flex gap-4 mt-2">
-                            <span class="text-sm text-blue-600 font-medium">🪟 ${data.count100}</span>
-                            <span class="text-sm text-amber-600 font-medium">📚 ${data.count50}</span>
+                        <div class="flex gap-3 mt-1">
+                            <span class="text-xs text-blue-600 font-medium">🪟 ${data.count100}</span>
+                            <span class="text-xs text-amber-600 font-medium">📚 ${data.count50}</span>
                         </div>
                     </div>
                 `).join('')}
             `;
         };
-
+        
         const exportCSV = () => {
             const from = document.getElementById('reportDateFrom').value;
             const to = document.getElementById('reportDateTo').value;
-
+            
             const filtered = reps.filter(r => {
                 if (from && r.date < from) return false;
                 if (to && r.date > to) return false;
                 return true;
             }).sort((a,b) => new Date(a.date) - new Date(b.date));
-
+            
             const headers = ['Дата', 'Урок', 'Класс', 'Предмет', 'Отсутствует', 'Заменяет', 'Тип %', 'Выполнено'];
             const rows = filtered.map(r => [
                 r.date, r.lesson || 1, r.class || '', r.subject, r.who, r.by, r.type, r.completed ? 'Да' : 'Нет'
             ]);
-
+            
             const csv = [headers, ...rows].map(row => row.map(cell => `"${cell}"`).join(';')).join('\n');
             const blob = new Blob(['\ufeff' + csv], {type: 'text/csv;charset=utf-8'});
             const a = document.createElement('a');
@@ -2349,26 +1856,26 @@
                 if (!byAbsent[r.who]) byAbsent[r.who] = 0;
                 byAbsent[r.who]++;
             });
-
+            
             const sorted = Object.entries(byAbsent).sort((a,b) => b[1] - a[1]);
-
+            
             document.getElementById('statsContent').innerHTML = `
-                <div class="text-sm font-bold text-slate-400 uppercase mb-3">🏥 Кто чаще отсутствует:</div>
+                <div class="text-xs font-bold text-slate-400 uppercase mb-2">🏥 Кто чаще отсутствует:</div>
                 ${sorted.slice(0, 10).map(([name, count]) => `
-                    <div class="bg-white border border-slate-100 p-4 rounded-xl shadow-sm">
+                    <div class="bg-white border border-slate-100 p-3 rounded-xl shadow-sm">
                         <div class="flex justify-between items-center">
                             <div class="font-bold text-slate-700">${name}</div>
-                            <div class="text-xl font-black text-red-500">${count}</div>
+                            <div class="text-lg font-black text-red-500">${count}</div>
                         </div>
                     </div>
                 `).join('')}
             `;
-
+            
             document.getElementById('statsOverlay').classList.add('active');
             document.getElementById('statsSheet').classList.add('active');
             document.body.style.overflow = 'hidden';
         };
-
+        
         const closeStats = () => {
             document.getElementById('statsOverlay').classList.remove('active');
             document.getElementById('statsSheet').classList.remove('active');
@@ -2381,7 +1888,7 @@
             document.getElementById('settingsSheet').classList.add('active');
             document.body.style.overflow = 'hidden';
         };
-
+        
         const closeSettings = () => {
             document.getElementById('settingsOverlay').classList.remove('active');
             document.getElementById('settingsSheet').classList.remove('active');
@@ -2389,19 +1896,19 @@
         };
 
         function exportJSON() {
-            const data = { reps, master, exportDate: new Date().toISOString(), version: '7.0' };
+            const data = { reps, master, exportDate: new Date().toISOString(), version: '6.0' };
             const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
-            const a = document.createElement('a');
+            const a = document.createElement('a'); 
             a.href = URL.createObjectURL(blob);
-            a.download = `zavuch_backup_${getToday()}.json`;
+            a.download = `zavuch_backup_${getToday()}.json`; 
             a.click();
             showToast('📦 Бэкап создан');
         }
-
+        
         function importJSON(event) {
             const file = event.target.files[0];
             if (!file) return;
-
+            
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
@@ -2421,7 +1928,7 @@
             reader.readAsText(file);
             event.target.value = '';
         }
-
+        
         function clearAllData() {
             if (confirm('⚠️ Удалить ВСЕ данные?')) {
                 if (confirm('Точно удалить? Это необратимо!')) {
@@ -2434,116 +1941,11 @@
             }
         }
 
-        // ===== NOTIFICATIONS =====
-        const getPendingCount = () => {
-            const today = getToday();
-            return reps.filter(r => !r.completed && r.date <= today).length;
-        };
-
-        const updateNotificationBadge = () => {
-            const count = getPendingCount();
-            const badgeDesktop = document.getElementById('notifBadgeDesktop');
-            const badgeMobile = document.getElementById('notifBadgeMobile');
-
-            if (count > 0) {
-                badgeDesktop?.classList.remove('hidden');
-                badgeMobile?.classList.remove('hidden');
-                if (badgeDesktop) badgeDesktop.textContent = count;
-                if (badgeMobile) badgeMobile.textContent = count;
-            } else {
-                badgeDesktop?.classList.add('hidden');
-                badgeMobile?.classList.add('hidden');
-            }
-        };
-
-        const checkNotifications = () => {
-            const today = getToday();
-            const pending = reps.filter(r => !r.completed && r.date <= today);
-
-            document.getElementById('notifContent').innerHTML = pending.length === 0 ? `
-                <div class="text-center py-10">
-                    <div class="text-4xl mb-3">✅</div>
-                    <div class="text-slate-500 font-medium">Все замены отмечены!</div>
-                </div>
-            ` : `
-                <div class="bg-amber-50 border border-amber-200 p-4 rounded-xl mb-4">
-                    <div class="text-amber-800 font-bold">⚠️ Ожидают отметки: ${pending.length}</div>
-                    <div class="text-amber-600 text-sm mt-1">Не забудьте отметить замены как выполненные</div>
-                </div>
-                ${pending.map(r => `
-                    <div class="bg-white border border-slate-100 p-3 rounded-xl flex justify-between items-center">
-                        <div>
-                            <div class="font-bold text-slate-700">${r.by}</div>
-                            <div class="text-sm text-slate-500">${r.class} • ${r.subject} • ${formatDate(r.date).day} ${formatDate(r.date).month}</div>
-                        </div>
-                        <button onclick="toggleComplete(${r.id}); checkNotifications();" class="bg-emerald-500 text-white px-3 py-2 rounded-lg text-sm font-bold">✓</button>
-                    </div>
-                `).join('')}
-            `;
-
-            document.getElementById('notifOverlay').classList.add('active');
-            document.getElementById('notifSheet').classList.add('active');
-            document.body.style.overflow = 'hidden';
-        };
-
-        const closeNotifications = () => {
-            document.getElementById('notifOverlay').classList.remove('active');
-            document.getElementById('notifSheet').classList.remove('active');
-            document.body.style.overflow = '';
-        };
-
-        const requestNotificationPermission = async () => {
-            if ('Notification' in window) {
-                const permission = await Notification.requestPermission();
-                if (permission === 'granted') {
-                    showToast('✅ Уведомления включены');
-                    scheduleNotifications();
-                } else {
-                    showToast('❌ Уведомления отклонены');
-                }
-            } else {
-                showToast('❌ Браузер не поддерживает уведомления');
-            }
-        };
-
-        const scheduleNotifications = () => {
-            const pending = getPendingCount();
-            if (pending > 0 && Notification.permission === 'granted') {
-                new Notification('Завуч.PRO', {
-                    body: `У вас ${pending} замен ожидают отметки`,
-                    icon: '📋'
-                });
-            }
-        };
-
-        // Check notifications on page load
-        setTimeout(() => {
-            if (Notification.permission === 'granted') {
-                scheduleNotifications();
-            }
-        }, 3000);
-
         // Close swipes on tap outside
         document.addEventListener('touchstart', (e) => {
             if (!e.target.closest('.swipe-container') && currentSwipeEl) {
                 currentSwipeEl.style.transform = 'translateX(0)';
                 currentSwipeEl = null;
-            }
-        });
-
-        // Keyboard shortcuts
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                closeWizard();
-                closeReference();
-                closeReport();
-                closeStats();
-                closeSettings();
-                closeNotifications();
-            }
-            if (e.key === 'n' && e.ctrlKey) {
-                e.preventDefault();
-                openWizard();
             }
         });
 
