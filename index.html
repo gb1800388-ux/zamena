@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Завуч.PRO v6.3</title>
+    <title>Завуч.PRO v6.4</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
@@ -931,31 +931,171 @@
         .filter-content.open {
             max-height: 200px;
         }
+
+        /* Day Navigator */
+        .day-nav {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            user-select: none;
+        }
+
+        .day-nav-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.15);
+            color: white;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .day-nav-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.1);
+        }
+
+        .day-nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .day-display {
+            min-width: 180px;
+            text-align: center;
+            padding: 0.75rem 1.5rem;
+            background: rgba(255,255,255,0.95);
+            border-radius: 1.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .day-display:hover {
+            transform: scale(1.02);
+        }
+
+        .day-display .day-date {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: #1e293b;
+            line-height: 1.2;
+        }
+
+        .day-display .day-name {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: #64748b;
+        }
+
+        .day-display.today {
+            background: linear-gradient(135deg, #a855f7 0%, #6366f1 100%);
+        }
+
+        .day-display.today .day-date,
+        .day-display.today .day-name {
+            color: white;
+        }
+
+        /* Desktop card actions */
+        .card-actions {
+            display: none;
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            gap: 0.25rem;
+        }
+
+        @media (min-width: 768px) {
+            .record-card:hover .card-actions {
+                display: flex;
+            }
+
+            .card-action-btn {
+                width: 32px;
+                height: 32px;
+                border-radius: 8px;
+                border: none;
+                cursor: pointer;
+                font-size: 14px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.2s;
+            }
+
+            .card-action-btn.complete {
+                background: #10b981;
+                color: white;
+            }
+
+            .card-action-btn.delete {
+                background: #ef4444;
+                color: white;
+            }
+
+            .card-action-btn:hover {
+                transform: scale(1.1);
+            }
+        }
+
+        /* Logo */
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
     </style>
 </head>
 <body class="safe-top">
 
     <div class="max-w-2xl mx-auto px-4 py-4 pb-32">
         
-        <!-- Compact Header -->
-        <header class="flex justify-between items-center mb-3 no-print">
+        <!-- Header with Logo -->
+        <header class="flex justify-between items-center mb-4 no-print">
             <div class="flex items-center gap-3">
-                <h1 class="text-xl font-black tracking-tight text-white drop-shadow-lg">ЗАВУЧ<span class="text-yellow-300">.PRO</span></h1>
-                <span class="text-[9px] text-white/50 font-medium">v6.3</span>
+                <div class="logo-icon">📋</div>
+                <div>
+                    <h1 class="text-xl font-black tracking-tight text-white drop-shadow-lg leading-none">ЗАВУЧ<span class="text-yellow-300">.PRO</span></h1>
+                    <span class="text-[9px] text-white/50 font-medium">Журнал замен v6.4</span>
+                </div>
             </div>
             <div class="flex gap-1.5">
-                <button onclick="openReference()" class="glass-dark text-white text-xs font-bold px-2.5 py-1.5 rounded-lg">📚</button>
-                <button onclick="openStats()" class="glass-dark text-white text-xs font-bold px-2.5 py-1.5 rounded-lg">📈</button>
-                <button onclick="openReport()" class="glass-dark text-white text-xs font-bold px-2.5 py-1.5 rounded-lg">📊</button>
-                <button onclick="openSettings()" class="glass-dark text-white text-xs font-bold px-2.5 py-1.5 rounded-lg">⚙️</button>
+                <button onclick="openReference()" class="glass-dark text-white text-xs font-bold px-2.5 py-1.5 rounded-lg" title="Справочники">📚</button>
+                <button onclick="openStats()" class="glass-dark text-white text-xs font-bold px-2.5 py-1.5 rounded-lg" title="Статистика">📈</button>
+                <button onclick="openReport()" class="glass-dark text-white text-xs font-bold px-2.5 py-1.5 rounded-lg" title="Отчёты">📊</button>
+                <button onclick="openSettings()" class="glass-dark text-white text-xs font-bold px-2.5 py-1.5 rounded-lg" title="Настройки">⚙️</button>
             </div>
         </header>
 
-        <!-- Quick Stats Row -->
+        <!-- Day Navigator -->
+        <div class="day-nav mb-4 no-print">
+            <button class="day-nav-btn" onclick="navigateDay(-1)" title="Предыдущий день">←</button>
+            <div class="day-display" id="dayDisplay" onclick="goToToday()">
+                <div class="day-date" id="dayDate">--</div>
+                <div class="day-name" id="dayName">--</div>
+            </div>
+            <button class="day-nav-btn" onclick="navigateDay(1)" id="nextDayBtn" title="Следующий день">→</button>
+        </div>
+
+        <!-- Stats for selected day -->
         <div class="flex gap-2 mb-3 no-print">
             <div class="glass flex-1 p-2 rounded-xl text-center">
-                <div id="statTotal" class="text-lg font-black text-slate-700">0</div>
-                <div class="text-[7px] font-bold text-slate-400 uppercase">Всего</div>
+                <div id="statDayTotal" class="text-lg font-black text-slate-700">0</div>
+                <div class="text-[7px] font-bold text-slate-400 uppercase">За день</div>
             </div>
             <div class="glass flex-1 p-2 rounded-xl text-center border-2 border-blue-300">
                 <div id="stat100" class="text-lg font-black text-blue-600">0</div>
@@ -971,10 +1111,10 @@
             </div>
         </div>
 
-        <!-- Tabs -->
+        <!-- View mode tabs (simplified) -->
         <div class="glass p-1 rounded-xl flex gap-1 mb-2 no-print">
-            <button class="tab-btn active" onclick="setTab('today')" id="tabToday">
-                📅 Сегодня <span id="todayCount" class="ml-1 bg-purple-600 text-white text-[9px] px-1.5 py-0.5 rounded-full">0</span>
+            <button class="tab-btn active" onclick="setTab('day')" id="tabDay">
+                📅 День <span id="dayCount" class="ml-1 bg-purple-600 text-white text-[9px] px-1.5 py-0.5 rounded-full">0</span>
             </button>
             <button class="tab-btn" onclick="setTab('all')" id="tabAll">📋 Все</button>
             <button class="tab-btn" onclick="setTab('pending')" id="tabPending">
@@ -1446,6 +1586,7 @@
             <div class="flex gap-2 mb-4">
                 <button onclick="generateReport()" class="flex-1 bg-emerald-600 text-white font-bold py-3 rounded-xl">📊 Сформировать</button>
                 <button onclick="exportCSV()" class="flex-1 bg-blue-600 text-white font-bold py-3 rounded-xl">📥 Excel</button>
+                <button onclick="exportPDF()" class="flex-1 bg-purple-600 text-white font-bold py-3 rounded-xl">📄 PDF</button>
             </div>
             
             <div id="reportContent" class="space-y-3 max-h-[45vh] overflow-y-auto"></div>
@@ -1485,7 +1626,7 @@
                 <button onclick="clearAllData()" class="w-full bg-red-50 text-red-600 font-bold py-3 rounded-xl">🗑️ Очистить все данные</button>
                 
                 <div class="text-center text-xs text-slate-400 pt-4 border-t">
-                    Завуч.PRO v6.3 • 2024
+                    Завуч.PRO v6.4 • 2024
                 </div>
             </div>
         </div>
@@ -1508,7 +1649,7 @@
         if (!master.schedule) master.schedule = {};
 
         let currentStep = 1;
-        let currentTab = 'today';
+        let currentTab = 'day';
         let selectedLesson = 1;
         let selectedType = '100';
         let currentSwipeEl = null;
@@ -1517,6 +1658,7 @@
         let currentRefTab = 'teachers';
         let wizardMode = 'manual'; // 'manual' or 'schedule'
         let selectedScheduleItem = null;
+        let selectedDate = null; // For day navigation, will be set in init
 
         const save = () => {
             localStorage.setItem('v6_data', JSON.stringify(reps));
@@ -1540,6 +1682,51 @@
                 month: monthNames[d.getMonth()],
                 weekday: dayNames[d.getDay()]
             };
+        };
+
+        // ===== DAY NAVIGATION =====
+        const navigateDay = (offset) => {
+            const d = new Date(selectedDate);
+            d.setDate(d.getDate() + offset);
+            selectedDate = d.toISOString().slice(0, 10);
+            updateDayDisplay();
+            if (currentTab === 'day') render();
+        };
+
+        const goToToday = () => {
+            selectedDate = getToday();
+            updateDayDisplay();
+            if (currentTab === 'day') render();
+        };
+
+        const updateDayDisplay = () => {
+            const today = getToday();
+            const isToday = selectedDate === today;
+            const dayDisplay = document.getElementById('dayDisplay');
+            const dayDate = document.getElementById('dayDate');
+            const dayName = document.getElementById('dayName');
+
+            const d = formatDate(selectedDate);
+            const fullDate = new Date(selectedDate);
+            const dayOfWeek = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
+
+            // Calculate relative day name
+            let dayLabel = dayOfWeek[fullDate.getDay()];
+            const diffDays = Math.round((fullDate - new Date(today)) / (1000 * 60 * 60 * 24));
+            if (diffDays === 0) dayLabel = 'Сегодня';
+            else if (diffDays === -1) dayLabel = 'Вчера';
+            else if (diffDays === -2) dayLabel = 'Позавчера';
+            else if (diffDays === 1) dayLabel = 'Завтра';
+
+            dayDate.textContent = `${d.day} ${d.month}`;
+            dayName.textContent = dayLabel;
+            dayDisplay.classList.toggle('today', isToday);
+
+            // Disable "next" button for future dates (can't go past today)
+            const nextBtn = document.getElementById('nextDayBtn');
+            if (nextBtn) {
+                nextBtn.disabled = selectedDate >= today;
+            }
         };
 
         // ===== TABS =====
@@ -1639,8 +1826,8 @@
             
             let filtered = [...reps];
             
-            if (currentTab === 'today') {
-                filtered = filtered.filter(r => r.date === today);
+            if (currentTab === 'day') {
+                filtered = filtered.filter(r => r.date === selectedDate);
             } else if (currentTab === 'pending') {
                 filtered = filtered.filter(r => !r.completed && r.date <= today);
             }
@@ -1733,7 +1920,17 @@
                                 </div>
                             </div>
                             
-                            ${isCompleted ? '<div class="absolute top-1.5 right-1.5 text-emerald-500 text-lg">✓</div>' : ''}
+                            ${isCompleted ? '<div class="absolute top-1.5 left-1.5 text-emerald-500 text-lg">✓</div>' : ''}
+
+                            <!-- Desktop action buttons -->
+                            <div class="card-actions">
+                                <button class="card-action-btn complete" onclick="event.stopPropagation(); toggleComplete(${r.id})" title="${isCompleted ? 'Отменить' : 'Готово'}">
+                                    ${isCompleted ? '↩️' : '✓'}
+                                </button>
+                                <button class="card-action-btn delete" onclick="event.stopPropagation(); del(${r.id})" title="Удалить">
+                                    🗑️
+                                </button>
+                            </div>
                         </div>
                     </div>
                     `;
@@ -1929,7 +2126,32 @@
             }
             return duplicates;
         };
-        
+
+        // Check if lesson exists in schedule
+        const checkScheduleExists = (date, className, lessons) => {
+            // If no schedule loaded, skip validation
+            if (Object.keys(master.schedule).length === 0) {
+                return { valid: true, invalid: [] };
+            }
+
+            const dayNames = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+            const d = new Date(date);
+            const dayName = dayNames[d.getDay()];
+
+            const daySchedule = master.schedule[dayName] || {};
+            const classLessons = daySchedule[className.toUpperCase()] || [];
+            const scheduleLessonNumbers = classLessons.map(l => l.lesson);
+
+            const lessonsArray = Array.isArray(lessons) ? lessons : [lessons];
+            const invalid = lessonsArray.filter(l => !scheduleLessonNumbers.includes(l));
+
+            return {
+                valid: invalid.length === 0,
+                invalid: invalid,
+                maxLesson: Math.max(0, ...scheduleLessonNumbers)
+            };
+        };
+
         const selectType = (type) => {
             selectedType = type;
             
@@ -2581,6 +2803,16 @@
                 return;
             }
 
+            // Check if lesson exists in schedule
+            const scheduleCheck = checkScheduleExists(date, className, selectedLessons);
+            if (!scheduleCheck.valid) {
+                const invalidStr = scheduleCheck.invalid.join(', ');
+                const maxInfo = scheduleCheck.maxLesson > 0 ? ` (макс. ${scheduleCheck.maxLesson} ур.)` : '';
+                if (!confirm(`⚠️ Урок ${invalidStr} не найден в расписании для ${className}${maxInfo}.\n\nВсё равно добавить замену?`)) {
+                    return;
+                }
+            }
+
             // Create record for each selected lesson
             let count = 0;
             for (const lesson of selectedLessons) {
@@ -2639,11 +2871,16 @@
         // ===== STATS & FILTERS =====
         const updateStats = () => {
             const today = getToday();
-            document.getElementById('statTotal').textContent = reps.length;
-            document.getElementById('stat100').textContent = reps.filter(r => r.type === '100').length;
-            document.getElementById('stat50').textContent = reps.filter(r => r.type === '50').length;
-            document.getElementById('statCompleted').textContent = reps.filter(r => r.completed).length;
-            document.getElementById('todayCount').textContent = reps.filter(r => r.date === today).length;
+            const dayReps = reps.filter(r => r.date === selectedDate);
+
+            // Day-specific stats
+            document.getElementById('statDayTotal').textContent = dayReps.length;
+            document.getElementById('stat100').textContent = dayReps.filter(r => r.type === '100').length;
+            document.getElementById('stat50').textContent = dayReps.filter(r => r.type === '50').length;
+            document.getElementById('statCompleted').textContent = dayReps.filter(r => r.completed).length;
+
+            // Tab counts
+            document.getElementById('dayCount').textContent = dayReps.length;
             document.getElementById('pendingCount').textContent = reps.filter(r => !r.completed && r.date <= today).length;
         };
 
@@ -3269,6 +3506,144 @@
             showToast('📥 Excel файл создан');
         };
 
+        const exportPDF = () => {
+            const from = document.getElementById('reportDateFrom').value;
+            const to = document.getElementById('reportDateTo').value;
+
+            if (!from || !to) {
+                showToast('⚠️ Выберите период');
+                return;
+            }
+
+            const filtered = reps.filter(r => {
+                if (from && r.date < from) return false;
+                if (to && r.date > to) return false;
+                return true;
+            }).sort((a,b) => new Date(a.date) - new Date(b.date));
+
+            if (filtered.length === 0) {
+                showToast('⚠️ Нет данных за период');
+                return;
+            }
+
+            // Group by teacher (who replaces)
+            const byTeacher = {};
+            filtered.forEach(r => {
+                if (!byTeacher[r.by]) {
+                    byTeacher[r.by] = { lessons100: 0, lessons50: 0, records: [] };
+                }
+                if (r.type === '100') {
+                    byTeacher[r.by].lessons100++;
+                } else {
+                    byTeacher[r.by].lessons50++;
+                }
+                byTeacher[r.by].records.push(r);
+            });
+
+            const fromDate = formatDate(from);
+            const toDate = formatDate(to);
+
+            // Create print window
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Отчёт о заменах ${fromDate.day} ${fromDate.month} - ${toDate.day} ${toDate.month}</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; padding: 20px; color: #333; }
+                        h1 { text-align: center; font-size: 18px; margin-bottom: 5px; }
+                        .period { text-align: center; color: #666; margin-bottom: 20px; font-size: 14px; }
+                        table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 12px; }
+                        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+                        th { background: #f0f0f0; font-weight: bold; }
+                        .teacher-header { background: #e8e8ff; font-weight: bold; }
+                        .summary { margin-top: 30px; page-break-before: always; }
+                        .summary h2 { font-size: 16px; margin-bottom: 10px; }
+                        .summary table { font-size: 13px; }
+                        .total-row { font-weight: bold; background: #f5f5f5; }
+                        .type-100 { color: #2563eb; }
+                        .type-50 { color: #d97706; }
+                        .footer { margin-top: 40px; text-align: right; font-size: 11px; color: #999; }
+                        @media print {
+                            body { padding: 10px; }
+                            .no-print { display: none; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <h1>📋 ВЕДОМОСТЬ ЗАМЕЩЁННЫХ УРОКОВ</h1>
+                    <div class="period">за период с ${fromDate.day} ${fromDate.month} по ${toDate.day} ${toDate.month}</div>
+
+                    <table>
+                        <tr>
+                            <th>Дата</th>
+                            <th>Урок</th>
+                            <th>Класс</th>
+                            <th>Предмет</th>
+                            <th>Отсутствует</th>
+                            <th>Заменяет</th>
+                            <th>Тип</th>
+                        </tr>
+                        ${filtered.map(r => {
+                            const d = formatDate(r.date);
+                            return `
+                            <tr>
+                                <td>${d.day} ${d.month} (${d.weekday})</td>
+                                <td>${r.lesson || 1}</td>
+                                <td>${r.class || '—'}</td>
+                                <td>${r.subject || '—'}</td>
+                                <td>${r.who || '—'}</td>
+                                <td>${r.by || '—'}</td>
+                                <td class="${r.type === '100' ? 'type-100' : 'type-50'}">${r.type}%</td>
+                            </tr>
+                            `;
+                        }).join('')}
+                    </table>
+
+                    <div class="summary">
+                        <h2>📊 СВОДКА ПО УЧИТЕЛЯМ (для бухгалтерии)</h2>
+                        <table>
+                            <tr>
+                                <th>ФИО учителя</th>
+                                <th class="type-100">🪟 Окна (100%)</th>
+                                <th class="type-50">📚 Уроки (50%)</th>
+                                <th>Всего замен</th>
+                            </tr>
+                            ${Object.entries(byTeacher).sort((a,b) => a[0].localeCompare(b[0])).map(([name, data]) => `
+                            <tr>
+                                <td>${name}</td>
+                                <td class="type-100">${data.lessons100}</td>
+                                <td class="type-50">${data.lessons50}</td>
+                                <td><strong>${data.lessons100 + data.lessons50}</strong></td>
+                            </tr>
+                            `).join('')}
+                            <tr class="total-row">
+                                <td>ИТОГО:</td>
+                                <td class="type-100">${Object.values(byTeacher).reduce((a, d) => a + d.lessons100, 0)}</td>
+                                <td class="type-50">${Object.values(byTeacher).reduce((a, d) => a + d.lessons50, 0)}</td>
+                                <td><strong>${filtered.length}</strong></td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="footer">
+                        Сформировано: ${new Date().toLocaleString('ru-RU')} • Завуч.PRO v6.4
+                    </div>
+
+                    <div class="no-print" style="text-align: center; margin-top: 30px;">
+                        <button onclick="window.print()" style="padding: 15px 30px; font-size: 16px; background: #7c3aed; color: white; border: none; border-radius: 10px; cursor: pointer;">
+                            🖨️ Печать / Сохранить PDF
+                        </button>
+                    </div>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+            showToast('📄 Отчёт открыт для печати');
+        };
+
         // ===== STATS =====
         const openStats = () => {
             const byAbsent = {};
@@ -3378,6 +3753,8 @@
         });
 
         // Init
+        selectedDate = getToday();
+        updateDayDisplay();
         render();
     </script>
 </body>
