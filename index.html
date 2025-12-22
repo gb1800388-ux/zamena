@@ -8,9 +8,20 @@
     <title>Завуч.PRO v6.3</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
-        * { 
-            -webkit-tap-highlight-color: transparent; 
+        * {
+            -webkit-tap-highlight-color: transparent;
             -webkit-touch-callout: none;
+        }
+
+        /* Allow interactions on desktop */
+        @media (min-width: 768px) {
+            input, button, select, [onclick] {
+                -webkit-touch-callout: default;
+                cursor: pointer;
+            }
+            input[type="text"], input[type="date"] {
+                cursor: text;
+            }
         }
         
         body { 
@@ -99,9 +110,9 @@
             visibility: hidden;
             transition: all 0.3s ease;
         }
-        
+
         .modal-overlay.active { opacity: 1; visibility: visible; }
-        
+
         .modal-sheet {
             position: fixed;
             bottom: 0;
@@ -111,12 +122,24 @@
             border-radius: 2.5rem 2.5rem 0 0;
             z-index: 101;
             transform: translateY(100%);
-            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.3s ease;
             max-height: 92vh;
             overflow: hidden;
+            isolation: isolate;
         }
-        
-        .modal-sheet.active { transform: translateY(0); }
+
+        .modal-sheet.active {
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        /* Ensure modal content is interactive */
+        .modal-sheet.active input,
+        .modal-sheet.active button,
+        .modal-sheet.active select {
+            position: relative;
+            z-index: 1;
+        }
         
         .modal-handle {
             width: 40px;
@@ -546,6 +569,11 @@
 
         /* ===== DESKTOP STYLES (768px+) ===== */
         @media (min-width: 768px) {
+            /* Modal overlay - don't block clicks on desktop modal */
+            .modal-overlay.active {
+                pointer-events: auto;
+            }
+
             /* Modal positioning fix for desktop */
             .modal-sheet {
                 left: 50%;
@@ -558,12 +586,14 @@
                 max-width: 550px;
                 border-radius: 2.5rem;
                 max-height: 85vh;
-                pointer-events: auto;
+                pointer-events: none;
+                z-index: 200;
             }
 
             .modal-sheet.active {
                 transform: translate(-50%, -50%) scale(1);
                 opacity: 1;
+                pointer-events: auto !important;
             }
 
             .modal-sheet.wide {
@@ -572,13 +602,10 @@
 
             .modal-handle { display: none; }
 
-            /* Ensure modal overlay allows clicks to pass through to modal */
-            .modal-overlay {
-                pointer-events: auto;
-            }
-
-            .modal-overlay.active ~ .modal-sheet {
-                pointer-events: auto;
+            /* Force all interactive elements inside active modal to receive clicks */
+            .modal-sheet.active,
+            .modal-sheet.active * {
+                pointer-events: auto !important;
             }
         }
 
