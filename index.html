@@ -7,6 +7,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Завуч.PRO v6.3</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         * {
             -webkit-tap-highlight-color: transparent;
@@ -2512,12 +2513,12 @@
 
                     <div class="space-y-2 mb-4">
                         <button onclick="document.getElementById('scheduleFileInput').click()" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl">
-                            📥 Загрузить расписание (CSV)
+                            📥 Загрузить расписание (Excel/CSV)
                         </button>
-                        <input type="file" id="scheduleFileInput" accept=".csv" class="hidden" onchange="importScheduleCSV(event)">
+                        <input type="file" id="scheduleFileInput" accept=".csv,.xlsx,.xls" class="hidden" onchange="importScheduleFile(event)">
 
                         <button onclick="showScheduleFormat()" class="w-full bg-slate-100 text-slate-600 font-bold py-3 rounded-xl">
-                            ❓ Формат CSV файла
+                            ❓ Поддерживаемые форматы
                         </button>
 
                         <button onclick="clearSchedule()" class="w-full bg-red-50 text-red-600 font-bold py-3 rounded-xl">
@@ -2546,18 +2547,158 @@
         // ===== SCHEDULE IMPORT/EXPORT =====
         const showScheduleFormat = () => {
             alert(
-                'Формат CSV файла для расписания:\n\n' +
-                'День;Класс;Урок;Время;Предмет;Учитель\n\n' +
-                'Пример:\n' +
-                'Пн;5А;1;8:00;Математика;Иванова А.П.\n' +
-                'Пн;5А;2;8:50;Русский язык;Петрова М.И.\n' +
-                'Вт;5А;1;8:00;Физика;Сидоров К.В.\n\n' +
-                'Дни недели: Пн, Вт, Ср, Чт, Пт, Сб'
+                'Поддерживаемые форматы:\n\n' +
+                '1. Excel из электронного журнала (.xlsx)\n' +
+                '   Выгрузка расписания педагогов с горизонтальным форматом\n\n' +
+                '2. CSV файл:\n' +
+                '   День;Класс;Урок;Время;Предмет;Учитель\n' +
+                '   Пн;5А;1;8:00;Математика;Иванова А.П.\n' +
+                '   Пн;5А;2;8:50;Русский язык;Петрова М.И.'
             );
         };
 
-        const importScheduleCSV = (event) => {
+        // Dispatcher function for file import
+        const importScheduleFile = (event) => {
             const file = event.target.files[0];
+            if (!file) return;
+
+            const fileName = file.name.toLowerCase();
+            if (fileName.endsWith('.xlsx') || fileName.endsWith('.xls')) {
+                importScheduleExcel(file);
+            } else {
+                importScheduleCSVFile(file);
+            }
+            event.target.value = '';
+        };
+
+        // Import Excel from electronic journal (horizontal format with teacher sections)
+        const importScheduleExcel = (file) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const json = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' });
+
+                    const newSchedule = {};
+                    let currentTeacher = '';
+                    let dayColumns = {}; // Maps day name to column indices
+                    let count = 0;
+
+                    // Day name normalization
+                    const dayMap = {
+                        'понедельник': 'Пн', 'пн': 'Пн',
+                        'вторник': 'Вт', 'вт': 'Вт',
+                        'среда': 'Ср', 'ср': 'Ср',
+                        'четверг': 'Чт', 'чт': 'Чт',
+                        'пятница': 'Пт', 'пт': 'Пт',
+                        'суббота': 'Сб', 'сб': 'Сб',
+                        'воскресенье': 'Вс', 'вс': 'Вс'
+                    };
+
+                    for (let rowIdx = 0; rowIdx < json.length; rowIdx++) {
+                        const row = json[rowIdx];
+                        if (!row || row.length === 0) continue;
+
+                        const firstCell = String(row[0] || '').trim();
+
+                        // Check for teacher header (e.g., "Педагог: Иванова А.П.")
+                        if (firstCell.toLowerCase().startsWith('педагог')) {
+                            currentTeacher = firstCell.replace(/^педагог[:\s]*/i, '').trim();
+                            if (currentTeacher && !master.teachers.includes(currentTeacher)) {
+                                master.teachers.push(currentTeacher);
+                            }
+                            dayColumns = {}; // Reset for new teacher section
+                            continue;
+                        }
+
+                        // Check for day header row - scan for day names in cells
+                        let foundDays = false;
+                        for (let colIdx = 0; colIdx < row.length; colIdx++) {
+                            const cellVal = String(row[colIdx] || '').trim().toLowerCase();
+                            if (dayMap[cellVal]) {
+                                dayColumns[dayMap[cellVal]] = colIdx;
+                                foundDays = true;
+                            }
+                        }
+                        if (foundDays) continue;
+
+                        // Skip header row with "№ урока", "Начало урока" etc.
+                        if (firstCell.toLowerCase().includes('урок') ||
+                            firstCell.toLowerCase().includes('начало') ||
+                            firstCell === '№') {
+                            continue;
+                        }
+
+                        // Process lesson data row
+                        if (!currentTeacher) continue;
+
+                        // For each day found in header
+                        for (const [dayName, startCol] of Object.entries(dayColumns)) {
+                            // Expected columns: № урока | Начало урока | Предмет Класс | Кабинет
+                            // So each day spans 4 columns starting from startCol
+                            const lessonNum = parseInt(row[startCol]) || 0;
+                            const timeVal = String(row[startCol + 1] || '').trim();
+                            const subjectClass = String(row[startCol + 2] || '').trim();
+
+                            if (!lessonNum || !subjectClass) continue;
+
+                            // Parse "Математика 5-А 5А" or "Математика 5А" format
+                            // Try to extract subject and class
+                            let subject = subjectClass;
+                            let className = '';
+
+                            // Try to find class pattern like "5А", "5-А", "10-Б", "11А"
+                            const classMatch = subjectClass.match(/(\d{1,2}[-]?[А-Яа-яA-Za-z])/g);
+                            if (classMatch && classMatch.length > 0) {
+                                // Take the last match as class (often repeated)
+                                className = classMatch[classMatch.length - 1].replace('-', '').toUpperCase();
+                                // Remove class references from subject
+                                subject = subjectClass;
+                                classMatch.forEach(cm => {
+                                    subject = subject.replace(cm, '');
+                                });
+                                subject = subject.trim();
+                            }
+
+                            if (!subject || !className) continue;
+
+                            // Normalize class name (ensure uppercase)
+                            className = className.toUpperCase();
+
+                            // Add to schedule
+                            if (!newSchedule[dayName]) newSchedule[dayName] = {};
+                            if (!newSchedule[dayName][className]) newSchedule[dayName][className] = [];
+
+                            newSchedule[dayName][className].push({
+                                lesson: lessonNum,
+                                time: timeVal,
+                                subject: subject,
+                                teacher: currentTeacher
+                            });
+
+                            // Auto-add to master data
+                            if (!master.subjects.includes(subject)) master.subjects.push(subject);
+                            if (!master.classes.includes(className)) master.classes.push(className);
+
+                            count++;
+                        }
+                    }
+
+                    master.schedule = newSchedule;
+                    save();
+                    renderReference();
+                    showToast(`✅ Загружено ${count} уроков из Excel`);
+                } catch (err) {
+                    console.error('Excel import error:', err);
+                    showToast('❌ Ошибка чтения Excel файла');
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        };
+
+        const importScheduleCSVFile = (file) => {
             if (!file) return;
 
             const reader = new FileReader();
@@ -2617,7 +2758,6 @@
                 }
             };
             reader.readAsText(file, 'UTF-8');
-            event.target.value = '';
         };
 
         const clearSchedule = () => {
