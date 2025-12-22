@@ -1151,11 +1151,20 @@
             <div class="wizard-step" data-step="s3">
                 <div class="text-center mb-3">
                     <div class="text-3xl mb-1">📚</div>
-                    <h3 class="text-lg font-black text-slate-800">Выберите урок</h3>
+                    <h3 class="text-lg font-black text-slate-800">Выберите уроки</h3>
                     <p class="text-xs text-slate-400" id="selectedDateHint"></p>
                 </div>
 
-                <div class="max-h-[280px] overflow-y-auto mb-4 space-y-2" id="teacherLessonsList">
+                <!-- Multi-select toggle for schedule mode -->
+                <div class="flex justify-center mb-3">
+                    <button type="button" onclick="toggleScheduleMultiSelect()" id="scheduleMultiSelectBtn"
+                        class="px-4 py-2 rounded-xl text-xs font-bold transition-all border-2 border-slate-200 bg-slate-50 text-slate-500">
+                        📋 Несколько уроков
+                    </button>
+                </div>
+                <div id="scheduleMultiSelectHint" class="hidden text-center text-xs text-indigo-500 mb-3 font-medium"></div>
+
+                <div class="max-h-[220px] overflow-y-auto mb-4 space-y-2" id="teacherLessonsList">
                     <!-- Filled dynamically -->
                 </div>
 
@@ -1167,6 +1176,7 @@
 
                 <div class="flex gap-3">
                     <button onclick="prevScheduleStep()" class="nav-btn flex-1 bg-slate-200 text-slate-600">←</button>
+                    <button onclick="confirmScheduleLessons()" id="scheduleNextBtn" class="nav-btn flex-[2] bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg hidden">Далее →</button>
                 </div>
             </div>
 
@@ -1249,15 +1259,15 @@
                     <button type="button" class="lesson-btn" onclick="selectLesson(7, event)">7</button>
                 </div>
 
-                <!-- Range mode toggle for mobile -->
-                <div class="flex justify-center mb-4">
-                    <button type="button" onclick="toggleRangeMode()" id="rangeModeBtn"
+                <!-- Multi-select mode toggle -->
+                <div class="flex justify-center mb-3">
+                    <button type="button" onclick="toggleMultiSelectMode()" id="multiSelectBtn"
                         class="px-4 py-2 rounded-xl text-xs font-bold transition-all border-2 border-slate-200 bg-slate-50 text-slate-500">
                         📋 Несколько уроков
                     </button>
                 </div>
-                <div id="rangeModeHint" class="hidden text-center text-xs text-indigo-500 mb-4 font-medium">
-                    Выберите первый и последний урок диапазона
+                <div id="multiSelectHint" class="hidden text-center text-xs text-indigo-500 mb-3 font-medium">
+                    Нажимайте на уроки для добавления/удаления
                 </div>
                 
                 <button onclick="nextStep()" class="nav-btn w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg">
@@ -1831,85 +1841,63 @@
 
         // ===== WIZARD =====
         let selectedLessons = [1]; // Array for multiple lesson selection
-        let rangeMode = false; // Mobile-friendly range selection mode
-        let rangeStart = null; // First selected lesson in range mode
+        let multiSelectMode = false; // Multi-select mode for non-consecutive lessons
+        let selectedScheduleLessons = []; // For schedule mode multi-select
 
         const selectLesson = (n, event) => {
-            // Range mode for mobile (toggle button)
-            if (rangeMode) {
-                if (rangeStart === null) {
-                    // First click - set start
-                    rangeStart = n;
-                    selectedLessons = [n];
-                } else {
-                    // Second click - complete the range
-                    const start = Math.min(rangeStart, n);
-                    const end = Math.max(rangeStart, n);
-                    selectedLessons = [];
-                    for (let i = start; i <= end; i++) {
-                        selectedLessons.push(i);
+            // Multi-select mode - toggle individual lessons
+            if (multiSelectMode || (event && event.shiftKey)) {
+                if (selectedLessons.includes(n)) {
+                    // Remove if more than one selected
+                    if (selectedLessons.length > 1) {
+                        selectedLessons = selectedLessons.filter(l => l !== n);
                     }
-                    rangeStart = null; // Reset for next range
-                }
-                updateLessonButtons();
-                updateRangeModeUI();
-                selectedLesson = selectedLessons[0];
-                return;
-            }
-
-            // Shift+click for range selection (desktop)
-            if (event && event.shiftKey && selectedLessons.length > 0) {
-                const start = Math.min(selectedLessons[0], n);
-                const end = Math.max(selectedLessons[0], n);
-                selectedLessons = [];
-                for (let i = start; i <= end; i++) {
-                    selectedLessons.push(i);
+                } else {
+                    // Add to selection
+                    selectedLessons.push(n);
+                    selectedLessons.sort((a, b) => a - b);
                 }
             } else {
-                // Single click - set single lesson
+                // Single select mode
                 selectedLessons = [n];
             }
             selectedLesson = selectedLessons[0];
             updateLessonButtons();
+            updateMultiSelectUI();
         };
 
-        const toggleRangeMode = () => {
-            rangeMode = !rangeMode;
-            rangeStart = null;
-            if (!rangeMode) {
-                // Exiting range mode - keep current selection
-            } else {
-                // Entering range mode - reset to single current lesson
-                selectedLessons = [selectedLessons[0] || 1];
-                updateLessonButtons();
-            }
-            updateRangeModeUI();
+        const toggleMultiSelectMode = () => {
+            multiSelectMode = !multiSelectMode;
+            updateMultiSelectUI();
         };
 
-        const updateRangeModeUI = () => {
-            const btn = document.getElementById('rangeModeBtn');
-            const hint = document.getElementById('rangeModeHint');
+        const updateMultiSelectUI = () => {
+            const btn = document.getElementById('multiSelectBtn');
+            const hint = document.getElementById('multiSelectHint');
+            if (!btn) return;
 
-            if (rangeMode) {
+            if (multiSelectMode) {
                 btn.classList.remove('bg-slate-50', 'text-slate-500', 'border-slate-200');
                 btn.classList.add('bg-indigo-100', 'text-indigo-700', 'border-indigo-400');
+                btn.innerHTML = '✓ Режим выбора';
 
-                if (rangeStart !== null) {
-                    hint.textContent = `Урок ${rangeStart} выбран. Выберите последний урок диапазона`;
-                    hint.classList.remove('hidden');
-                } else if (selectedLessons.length > 1) {
-                    hint.textContent = `Выбраны уроки ${selectedLessons[0]}-${selectedLessons[selectedLessons.length-1]}. Нажмите ещё раз для нового диапазона`;
-                    hint.classList.remove('hidden');
+                if (selectedLessons.length > 1) {
+                    hint.textContent = `Выбрано: ${selectedLessons.join(', ')} уроки`;
                 } else {
-                    hint.textContent = 'Выберите первый урок диапазона';
-                    hint.classList.remove('hidden');
+                    hint.textContent = 'Нажимайте на уроки для добавления/удаления';
                 }
-                btn.innerHTML = '✓ Режим диапазона';
+                hint.classList.remove('hidden');
             } else {
                 btn.classList.add('bg-slate-50', 'text-slate-500', 'border-slate-200');
                 btn.classList.remove('bg-indigo-100', 'text-indigo-700', 'border-indigo-400');
                 btn.innerHTML = '📋 Несколько уроков';
-                hint.classList.add('hidden');
+
+                if (selectedLessons.length > 1) {
+                    hint.textContent = `Выбрано: ${selectedLessons.join(', ')} уроки`;
+                    hint.classList.remove('hidden');
+                } else {
+                    hint.classList.add('hidden');
+                }
             }
         };
 
@@ -1976,8 +1964,8 @@
             wizardMode = 'manual';
             selectedLesson = 1;
             selectedLessons = [1]; // Reset to single lesson
-            rangeMode = false; // Reset range mode
-            rangeStart = null;
+            selectedScheduleLessons = []; // Reset schedule multi-select
+            multiSelectMode = false; // Reset multi-select mode
             selectedType = null;
             selectedScheduleItem = null;
 
@@ -1988,7 +1976,7 @@
             document.getElementById('wWho').value = '';
             document.getElementById('wBy').value = '';
             updateLessonButtons();
-            updateRangeModeUI();
+            updateMultiSelectUI();
 
             // Reset type cards for manual mode
             document.getElementById('typeCardWindow').classList.remove('active');
@@ -2010,6 +1998,10 @@
             scheduleSaveBtn.disabled = true;
             scheduleSaveBtn.classList.add('bg-slate-300', 'text-slate-400', 'cursor-not-allowed');
             scheduleSaveBtn.classList.remove('bg-gradient-to-r', 'from-emerald-500', 'to-green-600', 'text-white', 'shadow-lg');
+
+            // Reset schedule multi-select mode
+            scheduleMultiSelectMode = false;
+            window._selectedScheduleItems = null;
 
             // Check if schedule data is available
             const hasSchedule = Object.keys(master.schedule).length > 0;
@@ -2155,11 +2147,17 @@
             }
         };
 
+        let scheduleMultiSelectMode = false;
+
         const loadTeacherLessonsForDay = () => {
             const date = document.getElementById('scheduleDatePicker').value;
             const dayName = getDayName(date);
             const container = document.getElementById('teacherLessonsList');
             const noLessonsHint = document.getElementById('noLessonsHint');
+
+            // Reset selection when loading new day
+            selectedScheduleLessons = [];
+            updateScheduleMultiSelectUI();
 
             // Find lessons for this teacher on this day
             const lessons = [];
@@ -2182,32 +2180,105 @@
             if (lessons.length === 0) {
                 container.innerHTML = '';
                 noLessonsHint.classList.remove('hidden');
+                document.getElementById('scheduleNextBtn').classList.add('hidden');
                 return;
             }
 
             noLessonsHint.classList.add('hidden');
-            container.innerHTML = lessons.map((l, i) => `
-                <button type="button" onclick="selectScheduleLesson(${i})"
-                    class="schedule-lesson-btn w-full p-3 rounded-xl bg-white border-2 border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 text-left transition-all" data-index="${i}">
-                    <div class="flex items-center gap-3">
-                        <div class="bg-purple-100 text-purple-700 font-black px-3 py-1 rounded-lg text-lg">
-                            ${l.lesson || '?'}
-                        </div>
-                        <div class="flex-1">
-                            <div class="font-bold text-slate-700">${l.subject || 'Предмет'}</div>
-                            <div class="text-xs text-slate-400">${l.class} ${l.time ? '• ' + l.time : ''}</div>
-                        </div>
-                    </div>
-                </button>
-            `).join('');
+            renderScheduleLessonsList(lessons);
 
             // Store lessons for selection
             window._scheduleLessons = lessons;
         };
 
+        const renderScheduleLessonsList = (lessons) => {
+            const container = document.getElementById('teacherLessonsList');
+            container.innerHTML = lessons.map((l, i) => `
+                <button type="button" onclick="selectScheduleLesson(${i})"
+                    class="schedule-lesson-btn w-full p-3 rounded-xl bg-white border-2 transition-all text-left ${selectedScheduleLessons.includes(i) ? 'border-indigo-500 bg-indigo-50' : 'border-slate-200 hover:border-indigo-400 hover:bg-indigo-50'}" data-index="${i}">
+                    <div class="flex items-center gap-3">
+                        <div class="${selectedScheduleLessons.includes(i) ? 'bg-indigo-500 text-white' : 'bg-purple-100 text-purple-700'} font-black px-3 py-1 rounded-lg text-lg">
+                            ${selectedScheduleLessons.includes(i) ? '✓' : (l.lesson || '?')}
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-bold text-slate-700">${l.subject || 'Предмет'}</div>
+                            <div class="text-xs text-slate-400">${l.class} • ${l.lesson} ур. ${l.time ? '• ' + l.time : ''}</div>
+                        </div>
+                    </div>
+                </button>
+            `).join('');
+        };
+
         const selectScheduleLesson = (index) => {
-            const lesson = window._scheduleLessons[index];
-            selectedScheduleItem = lesson;
+            if (scheduleMultiSelectMode) {
+                // Multi-select: toggle
+                if (selectedScheduleLessons.includes(index)) {
+                    selectedScheduleLessons = selectedScheduleLessons.filter(i => i !== index);
+                } else {
+                    selectedScheduleLessons.push(index);
+                }
+                renderScheduleLessonsList(window._scheduleLessons);
+                updateScheduleMultiSelectUI();
+            } else {
+                // Single select: go to next step
+                const lesson = window._scheduleLessons[index];
+                selectedScheduleItem = lesson;
+                selectedScheduleLessons = [index];
+
+                // Update quick teachers for replacement
+                const container = document.getElementById('scheduleQuickTeachers');
+                container.innerHTML = master.teachers.filter(t => t !== scheduleSelectedTeacher).sort().map(t =>
+                    `<button type="button" class="class-btn text-xs" onclick="document.getElementById('scheduleReplacementInput').value='${t}'">${t}</button>`
+                ).join('');
+
+                currentStep = 's4';
+                updateWizardStep('next');
+            }
+        };
+
+        const toggleScheduleMultiSelect = () => {
+            scheduleMultiSelectMode = !scheduleMultiSelectMode;
+            if (!scheduleMultiSelectMode) {
+                selectedScheduleLessons = [];
+                renderScheduleLessonsList(window._scheduleLessons || []);
+            }
+            updateScheduleMultiSelectUI();
+        };
+
+        const updateScheduleMultiSelectUI = () => {
+            const btn = document.getElementById('scheduleMultiSelectBtn');
+            const hint = document.getElementById('scheduleMultiSelectHint');
+            const nextBtn = document.getElementById('scheduleNextBtn');
+            if (!btn) return;
+
+            if (scheduleMultiSelectMode) {
+                btn.classList.remove('bg-slate-50', 'text-slate-500', 'border-slate-200');
+                btn.classList.add('bg-indigo-100', 'text-indigo-700', 'border-indigo-400');
+                btn.innerHTML = '✓ Режим выбора';
+
+                if (selectedScheduleLessons.length > 0) {
+                    const lessons = selectedScheduleLessons.map(i => window._scheduleLessons[i]?.lesson).sort((a,b) => a-b);
+                    hint.textContent = `Выбрано: ${lessons.join(', ')} уроки`;
+                    nextBtn.classList.remove('hidden');
+                } else {
+                    hint.textContent = 'Нажимайте на уроки для добавления/удаления';
+                    nextBtn.classList.add('hidden');
+                }
+                hint.classList.remove('hidden');
+            } else {
+                btn.classList.add('bg-slate-50', 'text-slate-500', 'border-slate-200');
+                btn.classList.remove('bg-indigo-100', 'text-indigo-700', 'border-indigo-400');
+                btn.innerHTML = '📋 Несколько уроков';
+                hint.classList.add('hidden');
+                nextBtn.classList.add('hidden');
+            }
+        };
+
+        const confirmScheduleLessons = () => {
+            if (selectedScheduleLessons.length === 0) return;
+
+            // Store selected lessons for saving later
+            window._selectedScheduleItems = selectedScheduleLessons.map(i => window._scheduleLessons[i]);
 
             // Update quick teachers for replacement
             const container = document.getElementById('scheduleQuickTeachers');
@@ -2242,6 +2313,16 @@
 
             const d = formatDate(scheduleSelectedDate);
             const replacement = document.getElementById('scheduleReplacementInput').value;
+            const items = window._selectedScheduleItems || [selectedScheduleItem];
+
+            // Format lessons display
+            const lessonNums = items.map(i => i.lesson || '?').sort((a,b) => a-b);
+            const lessonDisplay = lessonNums.join(', ');
+            const lessonLabel = items.length > 1 ? 'уроки' : 'урок';
+
+            // Get unique classes and subjects
+            const classes = [...new Set(items.map(i => i.class))].join(', ');
+            const subjects = [...new Set(items.map(i => i.subject))].join(', ');
 
             document.getElementById('scheduleSummaryContent').innerHTML = `
                 <div class="grid grid-cols-3 gap-2 text-center mb-2">
@@ -2250,18 +2331,18 @@
                         <div class="text-[8px] text-slate-400">${d.weekday}</div>
                     </div>
                     <div class="bg-purple-50 rounded-lg p-1.5">
-                        <div class="text-lg font-black text-purple-600">${selectedScheduleItem.lesson || '?'} ур.</div>
-                        <div class="text-[8px] text-purple-400">урок</div>
+                        <div class="text-lg font-black text-purple-600">${lessonDisplay}</div>
+                        <div class="text-[8px] text-purple-400">${lessonLabel}</div>
                     </div>
                     <div class="bg-indigo-50 rounded-lg p-1.5">
-                        <div class="text-lg font-black text-indigo-600">${selectedScheduleItem.class}</div>
+                        <div class="text-lg font-black text-indigo-600">${classes}</div>
                         <div class="text-[8px] text-indigo-400">класс</div>
                     </div>
                 </div>
                 <div class="bg-white rounded-lg p-2 space-y-1">
                     <div class="flex items-center gap-2">
                         <span class="text-xs">📖</span>
-                        <span class="font-bold text-slate-700 text-sm">${selectedScheduleItem.subject}</span>
+                        <span class="font-bold text-slate-700 text-sm">${subjects}</span>
                     </div>
                     <div class="flex items-center gap-2">
                         <span class="text-xs">😷</span>
@@ -2281,40 +2362,56 @@
                 return;
             }
 
-            const lesson = selectedScheduleItem.lesson || 1;
-            const className = selectedScheduleItem.class;
+            const by = document.getElementById('scheduleReplacementInput').value.trim();
+            const items = window._selectedScheduleItems || [selectedScheduleItem];
 
-            // Check for duplicates
-            const duplicates = checkDuplicate(scheduleSelectedDate, className, lesson);
-            if (duplicates.length > 0) {
-                showToast(`⚠️ Урок ${lesson} уже имеет замену!`);
+            // Check for duplicates across all selected items
+            const allDuplicates = [];
+            for (const item of items) {
+                const lesson = item.lesson || 1;
+                const className = item.class;
+                const dups = checkDuplicate(scheduleSelectedDate, className, lesson);
+                if (dups.length > 0) {
+                    allDuplicates.push(lesson);
+                }
+            }
+
+            if (allDuplicates.length > 0) {
+                showToast(`⚠️ Уроки ${allDuplicates.join(', ')} уже имеют замену!`);
                 return;
             }
 
-            const data = {
-                id: Date.now(),
-                date: scheduleSelectedDate,
-                lesson: lesson,
-                type: selectedType,
-                class: className,
-                subject: selectedScheduleItem.subject,
-                who: scheduleSelectedTeacher,
-                by: document.getElementById('scheduleReplacementInput').value.trim(),
-                completed: false
-            };
+            // Save all selected lessons
+            let count = 0;
+            for (const item of items) {
+                const data = {
+                    id: Date.now() + count,
+                    date: scheduleSelectedDate,
+                    lesson: item.lesson || 1,
+                    type: selectedType,
+                    class: item.class,
+                    subject: item.subject,
+                    who: scheduleSelectedTeacher,
+                    by: by,
+                    completed: false
+                };
 
-            reps.push(data);
+                reps.push(data);
 
-            // Auto-add to master
-            if (!master.teachers.includes(data.who)) master.teachers.push(data.who);
-            if (!master.teachers.includes(data.by)) master.teachers.push(data.by);
-            if (!master.subjects.includes(data.subject)) master.subjects.push(data.subject);
-            if (data.class && !master.classes.includes(data.class)) master.classes.push(data.class);
+                // Auto-add to master
+                if (!master.teachers.includes(data.who)) master.teachers.push(data.who);
+                if (!master.teachers.includes(data.by)) master.teachers.push(data.by);
+                if (!master.subjects.includes(data.subject)) master.subjects.push(data.subject);
+                if (data.class && !master.classes.includes(data.class)) master.classes.push(data.class);
+
+                count++;
+            }
 
             save();
             render();
             closeWizard();
-            showToast('✅ Замена добавлена!');
+            const msg = count > 1 ? `✅ Добавлено ${count} замен!` : '✅ Замена добавлена!';
+            showToast(msg);
         };
         
         const closeWizard = () => {
@@ -2418,9 +2515,9 @@
         
         const updateSummary = () => {
             const d = formatDate(document.getElementById('wDate').value);
-            // Format lesson display (e.g., "1-3 ур." or "2 ур.")
+            // Format lesson display (e.g., "1, 3, 7" or "2 ур.")
             const lessonDisplay = selectedLessons.length > 1
-                ? `${selectedLessons[0]}-${selectedLessons[selectedLessons.length - 1]} ур.`
+                ? selectedLessons.join(', ')
                 : `${selectedLessons[0]} ур.`;
             const lessonLabel = selectedLessons.length > 1 ? 'уроки' : 'урок';
 
