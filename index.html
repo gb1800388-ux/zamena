@@ -175,21 +175,26 @@
         
         .wizard-step {
             display: none;
-            animation: fadeSlide 0.4s ease;
+            animation: fadeIn 0.25s ease-out;
+            will-change: opacity;
         }
-        
-        .wizard-step.active { display: block; }
-        
-        @keyframes fadeSlide {
-            from { opacity: 0; transform: translateX(30px); }
-            to { opacity: 1; transform: translateX(0); }
+
+        .wizard-step.active {
+            display: block;
         }
-        
-        .wizard-step.back { animation: fadeSlideBack 0.4s ease; }
-        
-        @keyframes fadeSlideBack {
-            from { opacity: 0; transform: translateX(-30px); }
-            to { opacity: 1; transform: translateX(0); }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .wizard-step.back {
+            animation: fadeIn 0.25s ease-out;
+        }
+
+        /* Fixed height container to prevent jumping */
+        .wizard-content {
+            min-height: 320px;
         }
         
         .progress-dot {
@@ -570,18 +575,26 @@
 
         /* ===== DESKTOP STYLES (768px+) ===== */
         @media (min-width: 768px) {
-            /* Modal overlay - don't block clicks on desktop modal */
+            /* Modal overlay - use flexbox for stable centering */
+            .modal-overlay {
+                display: flex;
+                align-items: flex-start;
+                justify-content: center;
+                padding-top: 8vh;
+            }
+
             .modal-overlay.active {
                 pointer-events: auto;
             }
 
-            /* Modal positioning fix for desktop */
+            /* Modal positioning fix for desktop - no transform centering to prevent jumping */
             .modal-sheet {
-                left: 50%;
+                position: relative;
+                left: auto;
                 right: auto;
                 bottom: auto;
-                top: 50%;
-                transform: translate(-50%, -50%) scale(0.95);
+                top: auto;
+                transform: scale(0.95);
                 opacity: 0;
                 width: 100%;
                 max-width: 550px;
@@ -589,10 +602,11 @@
                 max-height: 85vh;
                 pointer-events: none;
                 z-index: 200;
+                transition: transform 0.2s ease, opacity 0.2s ease;
             }
 
             .modal-sheet.active {
-                transform: translate(-50%, -50%) scale(1);
+                transform: scale(1);
                 opacity: 1;
                 pointer-events: auto !important;
             }
@@ -1059,7 +1073,7 @@
             </div>
         </div>
 
-        <div class="px-6 pb-8 overflow-y-auto" style="max-height: calc(90vh - 80px);">
+        <div class="px-6 pb-8 overflow-y-auto wizard-content" style="max-height: calc(90vh - 80px);">
 
             <!-- Step 0: Mode Selection -->
             <div class="wizard-step active" data-step="0">
@@ -1231,16 +1245,17 @@
                 
                 <div class="text-center mb-2">
                     <span class="text-xs font-bold text-slate-400 uppercase">Номер урока</span>
+                    <div class="text-[10px] text-slate-400 mt-1">Shift+клик для выбора диапазона</div>
                 </div>
-                
+
                 <div class="flex justify-center gap-2 mb-6" id="lessonSelector">
-                    <button type="button" class="lesson-btn active" onclick="selectLesson(1)">1</button>
-                    <button type="button" class="lesson-btn" onclick="selectLesson(2)">2</button>
-                    <button type="button" class="lesson-btn" onclick="selectLesson(3)">3</button>
-                    <button type="button" class="lesson-btn" onclick="selectLesson(4)">4</button>
-                    <button type="button" class="lesson-btn" onclick="selectLesson(5)">5</button>
-                    <button type="button" class="lesson-btn" onclick="selectLesson(6)">6</button>
-                    <button type="button" class="lesson-btn" onclick="selectLesson(7)">7</button>
+                    <button type="button" class="lesson-btn active" onclick="selectLesson(1, event)">1</button>
+                    <button type="button" class="lesson-btn" onclick="selectLesson(2, event)">2</button>
+                    <button type="button" class="lesson-btn" onclick="selectLesson(3, event)">3</button>
+                    <button type="button" class="lesson-btn" onclick="selectLesson(4, event)">4</button>
+                    <button type="button" class="lesson-btn" onclick="selectLesson(5, event)">5</button>
+                    <button type="button" class="lesson-btn" onclick="selectLesson(6, event)">6</button>
+                    <button type="button" class="lesson-btn" onclick="selectLesson(7, event)">7</button>
                 </div>
                 
                 <button onclick="nextStep()" class="nav-btn w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg">
@@ -1813,11 +1828,73 @@
         };
 
         // ===== WIZARD =====
-        const selectLesson = (n) => {
-            selectedLesson = n;
+        let selectedLessons = [1]; // Array for multiple lesson selection
+
+        const selectLesson = (n, event) => {
+            // Shift+click for range selection
+            if (event && event.shiftKey && selectedLessons.length > 0) {
+                const start = Math.min(selectedLessons[0], n);
+                const end = Math.max(selectedLessons[0], n);
+                selectedLessons = [];
+                for (let i = start; i <= end; i++) {
+                    selectedLessons.push(i);
+                }
+            } else {
+                // Single click - toggle or set single lesson
+                if (selectedLessons.includes(n) && selectedLessons.length > 1) {
+                    selectedLessons = selectedLessons.filter(l => l !== n);
+                } else if (selectedLessons.includes(n)) {
+                    // Already selected single - keep it
+                } else {
+                    selectedLessons = [n];
+                }
+            }
+            selectedLesson = selectedLessons[0]; // For backward compatibility
+            updateLessonButtons();
+        };
+
+        const toggleLessonRange = (n) => {
+            // Toggle lesson in/out of selection (for consecutive range)
+            if (selectedLessons.includes(n)) {
+                if (selectedLessons.length > 1) {
+                    selectedLessons = selectedLessons.filter(l => l !== n);
+                }
+            } else {
+                selectedLessons.push(n);
+                selectedLessons.sort((a, b) => a - b);
+                // Fill gaps to make consecutive
+                const min = selectedLessons[0];
+                const max = selectedLessons[selectedLessons.length - 1];
+                selectedLessons = [];
+                for (let i = min; i <= max; i++) {
+                    selectedLessons.push(i);
+                }
+            }
+            selectedLesson = selectedLessons[0];
+            updateLessonButtons();
+        };
+
+        const updateLessonButtons = () => {
             document.querySelectorAll('#lessonSelector .lesson-btn').forEach((btn, i) => {
-                btn.classList.toggle('active', i + 1 === n);
+                btn.classList.toggle('active', selectedLessons.includes(i + 1));
             });
+        };
+
+        // Check for duplicate substitution
+        const checkDuplicate = (date, className, lessons) => {
+            const lessonsArray = Array.isArray(lessons) ? lessons : [lessons];
+            const duplicates = [];
+            for (const lesson of lessonsArray) {
+                const exists = reps.find(r =>
+                    r.date === date &&
+                    r.class.toUpperCase() === className.toUpperCase() &&
+                    r.lesson === lesson
+                );
+                if (exists) {
+                    duplicates.push(lesson);
+                }
+            }
+            return duplicates;
         };
         
         const selectType = (type) => {
@@ -1859,6 +1936,7 @@
             currentStep = 0; // Start with mode selection
             wizardMode = 'manual';
             selectedLesson = 1;
+            selectedLessons = [1]; // Reset to single lesson
             selectedType = null;
             selectedScheduleItem = null;
 
@@ -1868,7 +1946,7 @@
             document.getElementById('wSubject').value = '';
             document.getElementById('wWho').value = '';
             document.getElementById('wBy').value = '';
-            selectLesson(1);
+            updateLessonButtons();
 
             // Reset type cards for manual mode
             document.getElementById('typeCardWindow').classList.remove('active');
@@ -2161,12 +2239,22 @@
                 return;
             }
 
+            const lesson = selectedScheduleItem.lesson || 1;
+            const className = selectedScheduleItem.class;
+
+            // Check for duplicates
+            const duplicates = checkDuplicate(scheduleSelectedDate, className, lesson);
+            if (duplicates.length > 0) {
+                showToast(`⚠️ Урок ${lesson} уже имеет замену!`);
+                return;
+            }
+
             const data = {
                 id: Date.now(),
                 date: scheduleSelectedDate,
-                lesson: selectedScheduleItem.lesson || 1,
+                lesson: lesson,
                 type: selectedType,
-                class: selectedScheduleItem.class,
+                class: className,
                 subject: selectedScheduleItem.subject,
                 who: scheduleSelectedTeacher,
                 by: document.getElementById('scheduleReplacementInput').value.trim(),
@@ -2288,6 +2376,12 @@
         
         const updateSummary = () => {
             const d = formatDate(document.getElementById('wDate').value);
+            // Format lesson display (e.g., "1-3 ур." or "2 ур.")
+            const lessonDisplay = selectedLessons.length > 1
+                ? `${selectedLessons[0]}-${selectedLessons[selectedLessons.length - 1]} ур.`
+                : `${selectedLessons[0]} ур.`;
+            const lessonLabel = selectedLessons.length > 1 ? 'уроки' : 'урок';
+
             document.getElementById('summaryContent').innerHTML = `
                 <div class="grid grid-cols-3 gap-2 text-center mb-2">
                     <div class="bg-white rounded-lg p-1.5">
@@ -2295,8 +2389,8 @@
                         <div class="text-[8px] text-slate-400">${d.weekday}</div>
                     </div>
                     <div class="bg-purple-50 rounded-lg p-1.5">
-                        <div class="text-lg font-black text-purple-600">${selectedLesson} ур.</div>
-                        <div class="text-[8px] text-purple-400">урок</div>
+                        <div class="text-lg font-black text-purple-600">${lessonDisplay}</div>
+                        <div class="text-[8px] text-purple-400">${lessonLabel}</div>
                     </div>
                     <div class="bg-indigo-50 rounded-lg p-1.5">
                         <div class="text-lg font-black text-indigo-600">${document.getElementById('wClass').value.toUpperCase()}</div>
@@ -2326,29 +2420,48 @@
                 showToast('⚠️ Выберите тип оплаты!');
                 return;
             }
-            
-            const data = {
-                id: Date.now(),
-                date: document.getElementById('wDate').value,
-                lesson: selectedLesson,
-                type: selectedType,
-                class: document.getElementById('wClass').value.trim().toUpperCase(),
-                subject: document.getElementById('wSubject').value.trim(),
-                who: document.getElementById('wWho').value.trim(),
-                by: document.getElementById('wBy').value.trim(),
-                completed: false
-            };
-            
-            reps.push(data);
-            
+
+            const date = document.getElementById('wDate').value;
+            const className = document.getElementById('wClass').value.trim().toUpperCase();
+            const subject = document.getElementById('wSubject').value.trim();
+            const who = document.getElementById('wWho').value.trim();
+            const by = document.getElementById('wBy').value.trim();
+
+            // Check for duplicates
+            const duplicates = checkDuplicate(date, className, selectedLessons);
+            if (duplicates.length > 0) {
+                const lessonsStr = duplicates.join(', ');
+                showToast(`⚠️ Урок ${lessonsStr} уже имеет замену!`);
+                return;
+            }
+
+            // Create record for each selected lesson
+            let count = 0;
+            for (const lesson of selectedLessons) {
+                const data = {
+                    id: Date.now() + count,
+                    date: date,
+                    lesson: lesson,
+                    type: selectedType,
+                    class: className,
+                    subject: subject,
+                    who: who,
+                    by: by,
+                    completed: false
+                };
+                reps.push(data);
+                count++;
+            }
+
             // Auto-add to master
-            if(!master.teachers.includes(data.who)) master.teachers.push(data.who);
-            if(!master.teachers.includes(data.by)) master.teachers.push(data.by);
-            if(!master.subjects.includes(data.subject)) master.subjects.push(data.subject);
-            if(data.class && !master.classes.includes(data.class)) master.classes.push(data.class);
-            
+            if (!master.teachers.includes(who)) master.teachers.push(who);
+            if (!master.teachers.includes(by)) master.teachers.push(by);
+            if (!master.subjects.includes(subject)) master.subjects.push(subject);
+            if (className && !master.classes.includes(className)) master.classes.push(className);
+
             save(); render(); closeWizard();
-            showToast('✅ Замена добавлена!');
+            const msg = count > 1 ? `✅ Добавлено ${count} замен!` : '✅ Замена добавлена!';
+            showToast(msg);
         };
         
         const updateQuickButtons = () => {
