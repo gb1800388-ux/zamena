@@ -2196,29 +2196,36 @@
             document.querySelectorAll('.wizard-step').forEach(step => {
                 step.classList.remove('active', 'back');
             });
-            
+
             const currentStepEl = document.querySelector(`.wizard-step[data-step="${currentStep}"]`);
-            currentStepEl.classList.add('active');
-            if (direction === 'back') currentStepEl.classList.add('back');
-            
-            document.querySelectorAll('.progress-dot').forEach((dot, i) => {
-                const stepNum = i + 1;
-                dot.classList.remove('active', 'done');
-                if (stepNum === currentStep) dot.classList.add('active');
-                else if (stepNum < currentStep) dot.classList.add('done');
-            });
-            
-            for (let i = 1; i < currentStep; i++) {
-                document.getElementById(`progress${i}`).style.width = '100%';
+            if (currentStepEl) {
+                currentStepEl.classList.add('active');
+                if (direction === 'back') currentStepEl.classList.add('back');
             }
-            for (let i = currentStep; i <= 5; i++) {
-                document.getElementById(`progress${i}`).style.width = '0%';
+
+            // Only update progress bar for numeric manual mode steps (1-6)
+            if (typeof currentStep === 'number' && currentStep >= 1) {
+                document.querySelectorAll('.progress-dot').forEach((dot, i) => {
+                    const stepNum = i + 1;
+                    dot.classList.remove('active', 'done');
+                    if (stepNum === currentStep) dot.classList.add('active');
+                    else if (stepNum < currentStep) dot.classList.add('done');
+                });
+
+                for (let i = 1; i < currentStep; i++) {
+                    const el = document.getElementById(`progress${i}`);
+                    if (el) el.style.width = '100%';
+                }
+                for (let i = currentStep; i <= 5; i++) {
+                    const el = document.getElementById(`progress${i}`);
+                    if (el) el.style.width = '0%';
+                }
             }
-            
+
             if (currentStep === 3) {
                 updateSubjectsForClass();
             }
-            
+
             if (currentStep === 6) {
                 updateSummary();
             }
