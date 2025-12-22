@@ -544,29 +544,329 @@
         
         .chip-remove:hover { opacity: 1; }
 
+        /* ===== DESKTOP STYLES (768px+) ===== */
         @media (min-width: 768px) {
+            /* Modal positioning fix for desktop */
             .modal-sheet {
                 left: 50%;
                 right: auto;
-                bottom: 50%;
-                transform: translate(-50%, 50%) scale(0.95);
+                bottom: auto;
+                top: 50%;
+                transform: translate(-50%, -50%) scale(0.95);
                 opacity: 0;
                 width: 100%;
-                max-width: 500px;
+                max-width: 550px;
                 border-radius: 2.5rem;
                 max-height: 85vh;
+                pointer-events: auto;
             }
-            
+
             .modal-sheet.active {
-                transform: translate(-50%, 50%) scale(1);
+                transform: translate(-50%, -50%) scale(1);
                 opacity: 1;
             }
-            
+
             .modal-sheet.wide {
-                max-width: 700px;
+                max-width: 750px;
             }
-            
+
             .modal-handle { display: none; }
+
+            /* Ensure modal overlay allows clicks to pass through to modal */
+            .modal-overlay {
+                pointer-events: auto;
+            }
+
+            .modal-overlay.active ~ .modal-sheet {
+                pointer-events: auto;
+            }
+        }
+
+        /* ===== LARGE DESKTOP STYLES (1024px+) ===== */
+        @media (min-width: 1024px) {
+            /* Larger container for desktop */
+            body {
+                font-size: 16px;
+            }
+
+            /* Main container wider */
+            .max-w-2xl {
+                max-width: 900px;
+            }
+
+            /* Header larger */
+            header h1 {
+                font-size: 2rem !important;
+            }
+
+            header .text-\[9px\] {
+                font-size: 12px !important;
+            }
+
+            /* Header buttons larger */
+            header button {
+                padding: 0.75rem 1rem !important;
+                font-size: 1rem !important;
+            }
+
+            /* Stats cards larger */
+            .glass.flex-1.p-2 {
+                padding: 1.25rem !important;
+            }
+
+            .glass.flex-1.p-2 .text-lg {
+                font-size: 2rem !important;
+            }
+
+            .glass.flex-1.p-2 .text-\[7px\] {
+                font-size: 11px !important;
+            }
+
+            /* Tab buttons larger */
+            .tab-btn {
+                padding: 1rem !important;
+                font-size: 0.875rem !important;
+            }
+
+            /* Filter area larger */
+            .filter-toggle {
+                padding: 1rem !important;
+            }
+
+            .filter-toggle .text-sm {
+                font-size: 1.25rem !important;
+            }
+
+            .filter-toggle .text-xs {
+                font-size: 0.95rem !important;
+            }
+
+            #filterContent input,
+            #filterContent select {
+                font-size: 0.95rem !important;
+                padding: 0.875rem !important;
+            }
+
+            /* Record cards larger */
+            .swipe-container {
+                border-radius: 1.75rem;
+                margin-bottom: 1rem;
+            }
+
+            .swipe-item {
+                padding: 1.25rem !important;
+            }
+
+            /* Date block in cards */
+            .swipe-item .min-w-\[50px\] {
+                min-width: 70px !important;
+            }
+
+            .swipe-item .text-xl {
+                font-size: 1.75rem !important;
+            }
+
+            .swipe-item .text-\[8px\] {
+                font-size: 11px !important;
+            }
+
+            .swipe-item .text-\[7px\] {
+                font-size: 10px !important;
+            }
+
+            .swipe-item .text-\[9px\] {
+                font-size: 11px !important;
+            }
+
+            .swipe-item .text-\[10px\] {
+                font-size: 12px !important;
+            }
+
+            .swipe-item .text-xs {
+                font-size: 0.95rem !important;
+            }
+
+            .swipe-item .text-sm {
+                font-size: 1.1rem !important;
+            }
+
+            /* Badge in cards */
+            .badge-100, .badge-50 {
+                padding: 1rem 1.25rem !important;
+                border-radius: 1rem;
+            }
+
+            .badge-100 .text-xl,
+            .badge-50 .text-xl {
+                font-size: 1.75rem !important;
+            }
+
+            .badge-100 .text-\[8px\],
+            .badge-50 .text-\[8px\] {
+                font-size: 10px !important;
+            }
+
+            /* FAB larger on desktop */
+            .fab {
+                width: 90px;
+                height: 90px;
+                font-size: 48px;
+                right: 2.5rem;
+                bottom: calc(2rem + env(safe-area-inset-bottom));
+            }
+
+            /* Empty state larger */
+            #emptyState .text-5xl {
+                font-size: 5rem !important;
+            }
+
+            #emptyState .text-sm {
+                font-size: 1.1rem !important;
+            }
+
+            #emptyState .text-xs {
+                font-size: 1rem !important;
+            }
+
+            /* Floating bar larger */
+            .floating-bar {
+                left: 50%;
+                right: auto;
+                transform: translateX(-50%) translateY(200px);
+                width: auto;
+                min-width: 400px;
+                padding: 1.25rem 2rem;
+            }
+
+            .floating-bar.show {
+                transform: translateX(-50%) translateY(0);
+            }
+
+            /* Modal content larger */
+            .modal-sheet {
+                max-width: 600px;
+                padding: 0.5rem;
+            }
+
+            .modal-sheet.wide {
+                max-width: 800px;
+            }
+
+            .modal-sheet h3 {
+                font-size: 1.5rem !important;
+            }
+
+            .wizard-step h3 {
+                font-size: 1.5rem !important;
+            }
+
+            .wizard-step .text-3xl {
+                font-size: 3rem !important;
+            }
+
+            .big-input {
+                font-size: 1.75rem !important;
+                padding: 1.5rem !important;
+            }
+
+            .lesson-btn {
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem !important;
+            }
+
+            .class-btn {
+                padding: 1rem 1.5rem !important;
+                font-size: 1.1rem !important;
+            }
+
+            .nav-btn {
+                padding: 1.25rem 2.5rem !important;
+                font-size: 1.15rem !important;
+            }
+
+            /* Type selection cards larger */
+            .type-select-card {
+                padding: 1.75rem 1.25rem;
+            }
+
+            .type-select-icon {
+                font-size: 3.5rem !important;
+            }
+
+            .type-select-percent {
+                font-size: 2.75rem !important;
+            }
+
+            .type-select-label {
+                font-size: 1.1rem !important;
+            }
+
+            .type-select-desc {
+                font-size: 0.85rem !important;
+            }
+
+            /* Progress dots larger */
+            .progress-dot {
+                width: 14px;
+                height: 14px;
+            }
+
+            .progress-line {
+                height: 4px;
+            }
+
+            /* Reference modal content */
+            .ref-tab {
+                padding: 1rem 1.25rem !important;
+                font-size: 0.95rem !important;
+            }
+
+            .ref-item {
+                padding: 1rem 1.25rem !important;
+                font-size: 1rem !important;
+            }
+
+            /* Toast larger */
+            .toast {
+                padding: 1.25rem 2.5rem;
+                font-size: 1.1rem;
+            }
+
+            /* Swipe actions visible on hover for desktop */
+            .swipe-container:hover .swipe-actions {
+                opacity: 1;
+            }
+
+            .swipe-actions {
+                opacity: 0;
+                transition: opacity 0.2s ease;
+            }
+
+            .swipe-action {
+                width: 100px;
+                font-size: 0.75rem;
+                cursor: pointer;
+            }
+
+            .swipe-action:hover {
+                filter: brightness(1.1);
+            }
+        }
+
+        /* ===== EXTRA LARGE DESKTOP (1280px+) ===== */
+        @media (min-width: 1280px) {
+            .max-w-2xl {
+                max-width: 1000px;
+            }
+
+            .modal-sheet {
+                max-width: 650px;
+            }
+
+            .modal-sheet.wide {
+                max-width: 900px;
+            }
         }
 
         @media print {
@@ -1161,11 +1461,12 @@
                                 <span>УДАЛИТЬ</span>
                             </div>
                         </div>
-                        <div class="swipe-item p-3" 
+                        <div class="swipe-item p-3"
                              onclick="toggleCardSelection(${r.id})"
                              ontouchstart="handleTouchStart(event)"
                              ontouchmove="handleTouchMove(event)"
-                             ontouchend="handleTouchEnd(event)">
+                             ontouchend="handleTouchEnd(event)"
+                             onmousedown="handleMouseDown(event)">
                             
                             <div class="flex gap-3 items-center">
                                 <!-- Checkbox for select mode -->
@@ -1218,9 +1519,9 @@
             updateFilters();
         };
 
-        // ===== SWIPE =====
-        let startX = 0, startY = 0, isSwiping = false;
-        
+        // ===== SWIPE (Touch + Mouse for Desktop) =====
+        let startX = 0, startY = 0, isSwiping = false, isMouseDown = false;
+
         const handleTouchStart = (e) => {
             if (selectMode) return;
             if (currentSwipeEl && currentSwipeEl !== e.currentTarget) {
@@ -1232,23 +1533,23 @@
             e.currentTarget.classList.add('swiping');
             currentSwipeEl = e.currentTarget;
         };
-        
+
         const handleTouchMove = (e) => {
             if (selectMode || !currentSwipeEl) return;
             const deltaX = e.touches[0].clientX - startX;
             const deltaY = e.touches[0].clientY - startY;
-            
+
             if (!isSwiping && Math.abs(deltaX) > 10) {
                 isSwiping = Math.abs(deltaX) > Math.abs(deltaY);
             }
-            
+
             if (isSwiping) {
                 e.preventDefault();
                 const moveX = Math.max(-160, Math.min(0, deltaX));
                 currentSwipeEl.style.transform = `translateX(${moveX}px)`;
             }
         };
-        
+
         const handleTouchEnd = (e) => {
             if (selectMode || !currentSwipeEl) return;
             currentSwipeEl.classList.remove('swiping');
@@ -1257,6 +1558,51 @@
             if (currentX >= -60) currentSwipeEl = null;
             isSwiping = false;
         };
+
+        // Desktop mouse support for swipe
+        const handleMouseDown = (e) => {
+            if (selectMode) return;
+            if (currentSwipeEl && currentSwipeEl !== e.currentTarget) {
+                currentSwipeEl.style.transform = 'translateX(0)';
+            }
+            startX = e.clientX;
+            startY = e.clientY;
+            isSwiping = false;
+            isMouseDown = true;
+            e.currentTarget.classList.add('swiping');
+            currentSwipeEl = e.currentTarget;
+            e.preventDefault();
+        };
+
+        const handleMouseMove = (e) => {
+            if (selectMode || !currentSwipeEl || !isMouseDown) return;
+            const deltaX = e.clientX - startX;
+            const deltaY = e.clientY - startY;
+
+            if (!isSwiping && Math.abs(deltaX) > 10) {
+                isSwiping = Math.abs(deltaX) > Math.abs(deltaY);
+            }
+
+            if (isSwiping) {
+                e.preventDefault();
+                const moveX = Math.max(-160, Math.min(0, deltaX));
+                currentSwipeEl.style.transform = `translateX(${moveX}px)`;
+            }
+        };
+
+        const handleMouseUp = (e) => {
+            if (selectMode || !currentSwipeEl || !isMouseDown) return;
+            isMouseDown = false;
+            currentSwipeEl.classList.remove('swiping');
+            const currentX = parseInt(currentSwipeEl.style.transform.replace(/[^-\d]/g, '')) || 0;
+            currentSwipeEl.style.transform = currentX < -60 ? 'translateX(-160px)' : 'translateX(0)';
+            if (currentX >= -60) currentSwipeEl = null;
+            isSwiping = false;
+        };
+
+        // Global mouse move and up handlers for desktop
+        document.addEventListener('mousemove', handleMouseMove);
+        document.addEventListener('mouseup', handleMouseUp);
 
         const del = id => {
             if(confirm('Удалить запись?')) {
@@ -1941,9 +2287,17 @@
             }
         }
 
-        // Close swipes on tap outside
+        // Close swipes on tap/click outside
         document.addEventListener('touchstart', (e) => {
             if (!e.target.closest('.swipe-container') && currentSwipeEl) {
+                currentSwipeEl.style.transform = 'translateX(0)';
+                currentSwipeEl = null;
+            }
+        });
+
+        // Desktop: close swipes on click outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.swipe-container') && !e.target.closest('.swipe-action') && currentSwipeEl) {
                 currentSwipeEl.style.transform = 'translateX(0)';
                 currentSwipeEl = null;
             }
