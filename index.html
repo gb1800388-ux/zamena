@@ -575,26 +575,18 @@
 
         /* ===== DESKTOP STYLES (768px+) ===== */
         @media (min-width: 768px) {
-            /* Modal overlay - use flexbox for stable centering */
-            .modal-overlay {
-                display: flex;
-                align-items: flex-start;
-                justify-content: center;
-                padding-top: 8vh;
-            }
-
             .modal-overlay.active {
                 pointer-events: auto;
             }
 
-            /* Modal positioning fix for desktop - no transform centering to prevent jumping */
+            /* Modal centered on desktop */
             .modal-sheet {
-                position: relative;
-                left: auto;
+                position: fixed;
+                left: 50%;
                 right: auto;
                 bottom: auto;
-                top: auto;
-                transform: scale(0.95);
+                top: 10vh;
+                transform: translateX(-50%) scale(0.95);
                 opacity: 0;
                 width: 100%;
                 max-width: 550px;
@@ -606,7 +598,7 @@
             }
 
             .modal-sheet.active {
-                transform: scale(1);
+                transform: translateX(-50%) scale(1);
                 opacity: 1;
                 pointer-events: auto !important;
             }
@@ -1245,10 +1237,9 @@
                 
                 <div class="text-center mb-2">
                     <span class="text-xs font-bold text-slate-400 uppercase">Номер урока</span>
-                    <div class="text-[10px] text-slate-400 mt-1">Shift+клик для выбора диапазона</div>
                 </div>
 
-                <div class="flex justify-center gap-2 mb-6" id="lessonSelector">
+                <div class="flex justify-center gap-2 mb-3" id="lessonSelector">
                     <button type="button" class="lesson-btn active" onclick="selectLesson(1, event)">1</button>
                     <button type="button" class="lesson-btn" onclick="selectLesson(2, event)">2</button>
                     <button type="button" class="lesson-btn" onclick="selectLesson(3, event)">3</button>
@@ -1256,6 +1247,17 @@
                     <button type="button" class="lesson-btn" onclick="selectLesson(5, event)">5</button>
                     <button type="button" class="lesson-btn" onclick="selectLesson(6, event)">6</button>
                     <button type="button" class="lesson-btn" onclick="selectLesson(7, event)">7</button>
+                </div>
+
+                <!-- Range mode toggle for mobile -->
+                <div class="flex justify-center mb-4">
+                    <button type="button" onclick="toggleRangeMode()" id="rangeModeBtn"
+                        class="px-4 py-2 rounded-xl text-xs font-bold transition-all border-2 border-slate-200 bg-slate-50 text-slate-500">
+                        📋 Несколько уроков
+                    </button>
+                </div>
+                <div id="rangeModeHint" class="hidden text-center text-xs text-indigo-500 mb-4 font-medium">
+                    Выберите первый и последний урок диапазона
                 </div>
                 
                 <button onclick="nextStep()" class="nav-btn w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg">
@@ -1829,9 +1831,33 @@
 
         // ===== WIZARD =====
         let selectedLessons = [1]; // Array for multiple lesson selection
+        let rangeMode = false; // Mobile-friendly range selection mode
+        let rangeStart = null; // First selected lesson in range mode
 
         const selectLesson = (n, event) => {
-            // Shift+click for range selection
+            // Range mode for mobile (toggle button)
+            if (rangeMode) {
+                if (rangeStart === null) {
+                    // First click - set start
+                    rangeStart = n;
+                    selectedLessons = [n];
+                } else {
+                    // Second click - complete the range
+                    const start = Math.min(rangeStart, n);
+                    const end = Math.max(rangeStart, n);
+                    selectedLessons = [];
+                    for (let i = start; i <= end; i++) {
+                        selectedLessons.push(i);
+                    }
+                    rangeStart = null; // Reset for next range
+                }
+                updateLessonButtons();
+                updateRangeModeUI();
+                selectedLesson = selectedLessons[0];
+                return;
+            }
+
+            // Shift+click for range selection (desktop)
             if (event && event.shiftKey && selectedLessons.length > 0) {
                 const start = Math.min(selectedLessons[0], n);
                 const end = Math.max(selectedLessons[0], n);
@@ -1840,38 +1866,51 @@
                     selectedLessons.push(i);
                 }
             } else {
-                // Single click - toggle or set single lesson
-                if (selectedLessons.includes(n) && selectedLessons.length > 1) {
-                    selectedLessons = selectedLessons.filter(l => l !== n);
-                } else if (selectedLessons.includes(n)) {
-                    // Already selected single - keep it
-                } else {
-                    selectedLessons = [n];
-                }
-            }
-            selectedLesson = selectedLessons[0]; // For backward compatibility
-            updateLessonButtons();
-        };
-
-        const toggleLessonRange = (n) => {
-            // Toggle lesson in/out of selection (for consecutive range)
-            if (selectedLessons.includes(n)) {
-                if (selectedLessons.length > 1) {
-                    selectedLessons = selectedLessons.filter(l => l !== n);
-                }
-            } else {
-                selectedLessons.push(n);
-                selectedLessons.sort((a, b) => a - b);
-                // Fill gaps to make consecutive
-                const min = selectedLessons[0];
-                const max = selectedLessons[selectedLessons.length - 1];
-                selectedLessons = [];
-                for (let i = min; i <= max; i++) {
-                    selectedLessons.push(i);
-                }
+                // Single click - set single lesson
+                selectedLessons = [n];
             }
             selectedLesson = selectedLessons[0];
             updateLessonButtons();
+        };
+
+        const toggleRangeMode = () => {
+            rangeMode = !rangeMode;
+            rangeStart = null;
+            if (!rangeMode) {
+                // Exiting range mode - keep current selection
+            } else {
+                // Entering range mode - reset to single current lesson
+                selectedLessons = [selectedLessons[0] || 1];
+                updateLessonButtons();
+            }
+            updateRangeModeUI();
+        };
+
+        const updateRangeModeUI = () => {
+            const btn = document.getElementById('rangeModeBtn');
+            const hint = document.getElementById('rangeModeHint');
+
+            if (rangeMode) {
+                btn.classList.remove('bg-slate-50', 'text-slate-500', 'border-slate-200');
+                btn.classList.add('bg-indigo-100', 'text-indigo-700', 'border-indigo-400');
+
+                if (rangeStart !== null) {
+                    hint.textContent = `Урок ${rangeStart} выбран. Выберите последний урок диапазона`;
+                    hint.classList.remove('hidden');
+                } else if (selectedLessons.length > 1) {
+                    hint.textContent = `Выбраны уроки ${selectedLessons[0]}-${selectedLessons[selectedLessons.length-1]}. Нажмите ещё раз для нового диапазона`;
+                    hint.classList.remove('hidden');
+                } else {
+                    hint.textContent = 'Выберите первый урок диапазона';
+                    hint.classList.remove('hidden');
+                }
+                btn.innerHTML = '✓ Режим диапазона';
+            } else {
+                btn.classList.add('bg-slate-50', 'text-slate-500', 'border-slate-200');
+                btn.classList.remove('bg-indigo-100', 'text-indigo-700', 'border-indigo-400');
+                btn.innerHTML = '📋 Несколько уроков';
+                hint.classList.add('hidden');
+            }
         };
 
         const updateLessonButtons = () => {
@@ -1937,6 +1976,8 @@
             wizardMode = 'manual';
             selectedLesson = 1;
             selectedLessons = [1]; // Reset to single lesson
+            rangeMode = false; // Reset range mode
+            rangeStart = null;
             selectedType = null;
             selectedScheduleItem = null;
 
@@ -1947,6 +1988,7 @@
             document.getElementById('wWho').value = '';
             document.getElementById('wBy').value = '';
             updateLessonButtons();
+            updateRangeModeUI();
 
             // Reset type cards for manual mode
             document.getElementById('typeCardWindow').classList.remove('active');
