@@ -1526,7 +1526,13 @@
         const getToday = () => new Date().toISOString().slice(0, 10);
         
         const formatDate = (dateStr) => {
+            if (!dateStr) {
+                return { day: '?', month: '?', weekday: '?' };
+            }
             const d = new Date(dateStr);
+            if (isNaN(d.getTime())) {
+                return { day: '?', month: '?', weekday: '?' };
+            }
             const dayNames = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
             const monthNames = ['янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
             return {
@@ -1707,16 +1713,16 @@
                                 <div class="flex-1 min-w-0">
                                     <div class="flex items-center gap-2 mb-1">
                                         <span class="bg-indigo-100 text-indigo-700 text-[10px] font-bold px-1.5 py-0.5 rounded">${r.class || '—'}</span>
-                                        <span class="text-xs font-bold text-slate-600 truncate">${r.subject}</span>
+                                        <span class="text-xs font-bold text-slate-600 truncate">${r.subject || '—'}</span>
                                     </div>
-                                    
+
                                     <div class="flex items-center gap-1.5 mb-0.5">
                                         <span class="text-sm">🦸</span>
-                                        <span class="font-bold text-slate-800 text-sm truncate">${r.by}</span>
+                                        <span class="font-bold text-slate-800 text-sm truncate">${r.by || '—'}</span>
                                     </div>
                                     <div class="flex items-center gap-1.5">
                                         <span class="text-sm">😷</span>
-                                        <span class="text-xs text-slate-500 truncate">за ${r.who}</span>
+                                        <span class="text-xs text-slate-500 truncate">за ${r.who || '—'}</span>
                                     </div>
                                 </div>
                                 
@@ -2151,6 +2157,7 @@
 
         const loadTeacherLessonsForDay = () => {
             const date = document.getElementById('scheduleDatePicker').value;
+            scheduleSelectedDate = date; // Save the selected date!
             const dayName = getDayName(date);
             const container = document.getElementById('teacherLessonsList');
             const noLessonsHint = document.getElementById('noLessonsHint');
