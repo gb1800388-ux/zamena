@@ -1040,9 +1040,9 @@
     <!-- Wizard Modal -->
     <div id="modalSheet" class="modal-sheet no-print" onclick="event.stopPropagation()">
         <div class="modal-handle"></div>
-        
+
         <!-- Progress Bar -->
-        <div class="px-6 pt-2 pb-3">
+        <div class="px-6 pt-2 pb-3" id="progressContainer">
             <div class="flex items-center justify-center" id="progressBar">
                 <div class="progress-dot active" data-step="1"></div>
                 <div class="progress-line"><div class="progress-line-fill" id="progress1"></div></div>
@@ -1057,11 +1057,168 @@
                 <div class="progress-dot" data-step="6"></div>
             </div>
         </div>
-        
+
         <div class="px-6 pb-8 overflow-y-auto" style="max-height: calc(90vh - 80px);">
-            
-            <!-- Step 1: Date & Lesson -->
-            <div class="wizard-step active" data-step="1">
+
+            <!-- Step 0: Mode Selection -->
+            <div class="wizard-step active" data-step="0">
+                <div class="text-center mb-4">
+                    <div class="text-3xl mb-1">➕</div>
+                    <h3 class="text-lg font-black text-slate-800">Добавить замену</h3>
+                    <p class="text-xs text-slate-400 mt-1">Выберите способ добавления</p>
+                </div>
+
+                <div class="space-y-3 mb-4">
+                    <!-- Schedule Mode -->
+                    <button type="button" onclick="setWizardMode('schedule')" id="modeScheduleBtn"
+                        class="w-full p-4 rounded-2xl border-3 border-slate-200 bg-gradient-to-r from-blue-50 to-indigo-50 text-left transition-all hover:border-indigo-400 hover:shadow-lg">
+                        <div class="flex items-center gap-3">
+                            <div class="text-3xl">📅</div>
+                            <div class="flex-1">
+                                <div class="font-black text-slate-700">Из расписания</div>
+                                <div class="text-xs text-slate-500">Выбрать учителя и урок из загруженного расписания</div>
+                            </div>
+                            <div class="text-slate-300" id="scheduleAvailable"></div>
+                        </div>
+                    </button>
+
+                    <!-- Manual Mode -->
+                    <button type="button" onclick="setWizardMode('manual')" id="modeManualBtn"
+                        class="w-full p-4 rounded-2xl border-3 border-slate-200 bg-gradient-to-r from-amber-50 to-orange-50 text-left transition-all hover:border-amber-400 hover:shadow-lg">
+                        <div class="flex items-center gap-3">
+                            <div class="text-3xl">✏️</div>
+                            <div class="flex-1">
+                                <div class="font-black text-slate-700">Ручной ввод</div>
+                                <div class="text-xs text-slate-500">Заполнить все поля вручную</div>
+                            </div>
+                        </div>
+                    </button>
+                </div>
+
+                <div id="noScheduleHint" class="hidden text-center text-xs text-slate-400 mb-4 p-3 bg-slate-50 rounded-xl">
+                    💡 Загрузите расписание в Справочнике → Расписание для быстрого добавления замен
+                </div>
+            </div>
+
+            <!-- Step S1: Select Teacher (Schedule Mode) -->
+            <div class="wizard-step" data-step="s1">
+                <div class="text-center mb-3">
+                    <div class="text-3xl mb-1">😷</div>
+                    <h3 class="text-lg font-black text-slate-800">Кто отсутствует?</h3>
+                    <p class="text-xs text-slate-400">Выберите учителя из расписания</p>
+                </div>
+
+                <div class="mb-3">
+                    <input type="text" id="scheduleTeacherSearch" placeholder="Поиск учителя..."
+                        class="w-full bg-slate-100 px-4 py-3 rounded-xl text-sm" oninput="filterScheduleTeachers()">
+                </div>
+
+                <div class="max-h-[250px] overflow-y-auto mb-4 space-y-2" id="scheduleTeachersList">
+                    <!-- Filled dynamically -->
+                </div>
+
+                <div class="flex gap-3">
+                    <button onclick="backToModeSelect()" class="nav-btn flex-1 bg-slate-200 text-slate-600">←</button>
+                </div>
+            </div>
+
+            <!-- Step S2: Select Date (Schedule Mode) -->
+            <div class="wizard-step" data-step="s2">
+                <div class="text-center mb-3">
+                    <div class="text-3xl mb-1">📅</div>
+                    <h3 class="text-lg font-black text-slate-800">Выберите дату</h3>
+                    <p class="text-xs text-slate-400" id="selectedTeacherHint"></p>
+                </div>
+
+                <div class="mb-4">
+                    <input type="date" id="scheduleDatePicker" class="big-input text-lg" onchange="loadTeacherLessons()">
+                </div>
+
+                <div class="flex gap-3">
+                    <button onclick="prevScheduleStep()" class="nav-btn flex-1 bg-slate-200 text-slate-600">←</button>
+                    <button onclick="nextScheduleStep()" id="scheduleDateNext" class="nav-btn flex-[2] bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg">Далее →</button>
+                </div>
+            </div>
+
+            <!-- Step S3: Select Lesson (Schedule Mode) -->
+            <div class="wizard-step" data-step="s3">
+                <div class="text-center mb-3">
+                    <div class="text-3xl mb-1">📚</div>
+                    <h3 class="text-lg font-black text-slate-800">Выберите урок</h3>
+                    <p class="text-xs text-slate-400" id="selectedDateHint"></p>
+                </div>
+
+                <div class="max-h-[280px] overflow-y-auto mb-4 space-y-2" id="teacherLessonsList">
+                    <!-- Filled dynamically -->
+                </div>
+
+                <div id="noLessonsHint" class="hidden text-center py-6">
+                    <div class="text-4xl mb-2">🏖️</div>
+                    <div class="text-slate-500 font-bold">Нет уроков в этот день</div>
+                    <div class="text-xs text-slate-400">Выберите другую дату или добавьте расписание</div>
+                </div>
+
+                <div class="flex gap-3">
+                    <button onclick="prevScheduleStep()" class="nav-btn flex-1 bg-slate-200 text-slate-600">←</button>
+                </div>
+            </div>
+
+            <!-- Step S4: Select Replacement (Schedule Mode) -->
+            <div class="wizard-step" data-step="s4">
+                <div class="text-center mb-3">
+                    <div class="text-3xl mb-1">🦸</div>
+                    <h3 class="text-lg font-black text-slate-800">Кто заменяет?</h3>
+                </div>
+
+                <div class="mb-3">
+                    <input type="text" id="scheduleReplacementInput" placeholder="Петрова М.И." class="big-input text-lg" autocomplete="off">
+                </div>
+
+                <div class="max-h-[140px] overflow-y-auto mb-4 -mx-2 px-2">
+                    <div class="flex flex-wrap justify-center gap-2" id="scheduleQuickTeachers"></div>
+                </div>
+
+                <div class="flex gap-3">
+                    <button onclick="prevScheduleStep()" class="nav-btn flex-1 bg-slate-200 text-slate-600">←</button>
+                    <button onclick="nextScheduleStep()" class="nav-btn flex-[2] bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg">Далее →</button>
+                </div>
+            </div>
+
+            <!-- Step S5: Type Selection (Schedule Mode) -->
+            <div class="wizard-step" data-step="s5">
+                <!-- Summary card -->
+                <div class="bg-gradient-to-br from-slate-50 to-slate-100 rounded-2xl p-3 mb-4 border border-slate-200">
+                    <div class="text-[9px] font-bold text-slate-400 uppercase mb-2 text-center">📋 Данные замены</div>
+                    <div id="scheduleSummaryContent" class="space-y-1"></div>
+                </div>
+
+                <div class="text-center mb-3">
+                    <div class="text-base font-black text-slate-700 mb-1">👆 Выберите тип оплаты</div>
+                </div>
+
+                <div class="flex gap-3 mb-5">
+                    <button type="button" class="type-select-card type-select-window" onclick="selectScheduleType('100')" id="scheduleTypeWindow">
+                        <div class="type-select-icon">🪟</div>
+                        <div class="type-select-percent">100%</div>
+                        <div class="type-select-label">ОКНО</div>
+                        <div class="type-select-check">✓</div>
+                    </button>
+                    <button type="button" class="type-select-card type-select-lesson" onclick="selectScheduleType('50')" id="scheduleTypeLesson">
+                        <div class="type-select-icon">📚</div>
+                        <div class="type-select-percent">50%</div>
+                        <div class="type-select-label">УРОК</div>
+                        <div class="type-select-check">✓</div>
+                    </button>
+                </div>
+
+                <div class="flex gap-3">
+                    <button onclick="prevScheduleStep()" class="nav-btn flex-1 bg-slate-200 text-slate-600">←</button>
+                    <button onclick="saveScheduleRecord()" id="scheduleSaveBtn" class="nav-btn flex-[2] bg-slate-300 text-slate-400 cursor-not-allowed" disabled>✓ Добавить</button>
+                </div>
+            </div>
+
+            <!-- Step 1: Date & Lesson (Manual Mode) -->
+            <div class="wizard-step" data-step="1">
                 <div class="text-center mb-4">
                     <div class="text-3xl mb-1">📅</div>
                     <h3 class="text-lg font-black text-slate-800">Когда замена?</h3>
@@ -1233,6 +1390,7 @@
                 <div class="ref-tab" onclick="setRefTab('subjects')" id="refTabSubjects">📖 Предметы</div>
                 <div class="ref-tab" onclick="setRefTab('classes')" id="refTabClasses">🏫 Классы</div>
                 <div class="ref-tab" onclick="setRefTab('bindings')" id="refTabBindings">🔗 Привязки</div>
+                <div class="ref-tab" onclick="setRefTab('schedule')" id="refTabSchedule">📅 Расписание</div>
             </div>
             
             <div class="space-y-4 max-h-[55vh] overflow-y-auto" id="refContent">
@@ -1314,9 +1472,13 @@
             teachers: [],
             subjects: [],
             classes: [],
-            bindings: {} // { "5А": ["Математика", "Русский"], "5Б": [...] }
+            bindings: {}, // { "5А": ["Математика", "Русский"], "5Б": [...] }
+            schedule: {} // { "Пн": { "5А": [{ lesson: 1, subject: "Математика", teacher: "Иванова А.П.", time: "8:00" }] } }
         };
-        
+
+        // Ensure schedule exists in old data
+        if (!master.schedule) master.schedule = {};
+
         let currentStep = 1;
         let currentTab = 'today';
         let selectedLesson = 1;
@@ -1325,6 +1487,8 @@
         let selectMode = false;
         let selectedIds = new Set();
         let currentRefTab = 'teachers';
+        let wizardMode = 'manual'; // 'manual' or 'schedule'
+        let selectedScheduleItem = null;
 
         const save = () => {
             localStorage.setItem('v6_data', JSON.stringify(reps));
@@ -1691,35 +1855,335 @@
         };
 
         const openWizard = () => {
-            currentStep = 1;
+            currentStep = 0; // Start with mode selection
+            wizardMode = 'manual';
             selectedLesson = 1;
-            selectedType = null; // Тип не выбран по умолчанию
+            selectedType = null;
+            selectedScheduleItem = null;
+
+            // Reset manual mode fields
             document.getElementById('wDate').valueAsDate = new Date();
             document.getElementById('wClass').value = '';
             document.getElementById('wSubject').value = '';
             document.getElementById('wWho').value = '';
             document.getElementById('wBy').value = '';
             selectLesson(1);
-            
-            // Сбрасываем выбор типа карточек
+
+            // Reset type cards for manual mode
             document.getElementById('typeCardWindow').classList.remove('active');
             document.getElementById('typeCardLesson').classList.remove('active');
-            
-            // Сбрасываем кнопку сохранения в неактивное состояние
+
             const saveBtn = document.getElementById('saveBtn');
             saveBtn.disabled = true;
             saveBtn.classList.add('bg-slate-300', 'text-slate-400', 'cursor-not-allowed');
             saveBtn.classList.remove('bg-gradient-to-r', 'from-emerald-500', 'to-green-600', 'text-white', 'shadow-lg');
-            
-            // Показываем подсказку
             document.getElementById('typeRequiredHint').textContent = 'Нажмите на карточку';
-            
+
+            // Reset schedule mode fields
+            document.getElementById('scheduleTeacherSearch').value = '';
+            document.getElementById('scheduleDatePicker').valueAsDate = new Date();
+            document.getElementById('scheduleReplacementInput').value = '';
+            document.getElementById('scheduleTypeWindow').classList.remove('active');
+            document.getElementById('scheduleTypeLesson').classList.remove('active');
+            const scheduleSaveBtn = document.getElementById('scheduleSaveBtn');
+            scheduleSaveBtn.disabled = true;
+            scheduleSaveBtn.classList.add('bg-slate-300', 'text-slate-400', 'cursor-not-allowed');
+            scheduleSaveBtn.classList.remove('bg-gradient-to-r', 'from-emerald-500', 'to-green-600', 'text-white', 'shadow-lg');
+
+            // Check if schedule data is available
+            const hasSchedule = Object.keys(master.schedule).length > 0;
+            document.getElementById('scheduleAvailable').textContent = hasSchedule ? '✓' : '';
+            document.getElementById('noScheduleHint').classList.toggle('hidden', hasSchedule);
+
+            // Hide progress bar on step 0
+            document.getElementById('progressContainer').style.display = 'none';
+
             updateWizardStep();
-            updateQuickButtons();
-            
+
             document.getElementById('modalOverlay').classList.add('active');
             document.getElementById('modalSheet').classList.add('active');
             document.body.style.overflow = 'hidden';
+        };
+
+        // ===== WIZARD MODE SELECTION =====
+        const setWizardMode = (mode) => {
+            wizardMode = mode;
+            if (mode === 'schedule') {
+                // Check if schedule exists
+                if (Object.keys(master.schedule).length === 0) {
+                    showToast('⚠️ Сначала загрузите расписание');
+                    return;
+                }
+                currentStep = 's1';
+                loadScheduleTeachers();
+            } else {
+                currentStep = 1;
+                document.getElementById('progressContainer').style.display = 'block';
+                updateQuickButtons();
+            }
+            updateWizardStep('next');
+        };
+
+        const backToModeSelect = () => {
+            currentStep = 0;
+            document.getElementById('progressContainer').style.display = 'none';
+            updateWizardStep('back');
+        };
+
+        // ===== SCHEDULE MODE FUNCTIONS =====
+        let scheduleSelectedTeacher = '';
+        let scheduleSelectedDate = '';
+        let scheduleSteps = ['s1', 's2', 's3', 's4', 's5'];
+
+        const getTeachersFromSchedule = () => {
+            const teachers = new Set();
+            Object.values(master.schedule).forEach(daySchedule => {
+                Object.values(daySchedule).forEach(classLessons => {
+                    classLessons.forEach(lesson => {
+                        if (lesson.teacher) teachers.add(lesson.teacher);
+                    });
+                });
+            });
+            return Array.from(teachers).sort();
+        };
+
+        const loadScheduleTeachers = () => {
+            const teachers = getTeachersFromSchedule();
+            const container = document.getElementById('scheduleTeachersList');
+
+            if (teachers.length === 0) {
+                container.innerHTML = '<div class="text-center py-6 text-slate-400">Нет учителей в расписании</div>';
+                return;
+            }
+
+            container.innerHTML = teachers.map(t => `
+                <button type="button" onclick="selectScheduleTeacher('${t}')"
+                    class="w-full p-3 rounded-xl bg-slate-50 hover:bg-indigo-50 hover:border-indigo-300 border-2 border-transparent text-left transition-all">
+                    <div class="font-bold text-slate-700">${t}</div>
+                </button>
+            `).join('');
+        };
+
+        const filterScheduleTeachers = () => {
+            const search = document.getElementById('scheduleTeacherSearch').value.toLowerCase();
+            const teachers = getTeachersFromSchedule().filter(t => t.toLowerCase().includes(search));
+            const container = document.getElementById('scheduleTeachersList');
+
+            container.innerHTML = teachers.map(t => `
+                <button type="button" onclick="selectScheduleTeacher('${t}')"
+                    class="w-full p-3 rounded-xl bg-slate-50 hover:bg-indigo-50 hover:border-indigo-300 border-2 border-transparent text-left transition-all">
+                    <div class="font-bold text-slate-700">${t}</div>
+                </button>
+            `).join('');
+        };
+
+        const selectScheduleTeacher = (teacher) => {
+            scheduleSelectedTeacher = teacher;
+            document.getElementById('selectedTeacherHint').textContent = `Замена для: ${teacher}`;
+            currentStep = 's2';
+            updateWizardStep('next');
+        };
+
+        const getDayName = (date) => {
+            const days = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+            return days[new Date(date).getDay()];
+        };
+
+        const loadTeacherLessons = () => {
+            const date = document.getElementById('scheduleDatePicker').value;
+            if (!date) return;
+
+            scheduleSelectedDate = date;
+            const dayName = getDayName(date);
+            const d = formatDate(date);
+            document.getElementById('selectedDateHint').textContent = `${scheduleSelectedTeacher} • ${d.day} ${d.month} (${dayName})`;
+        };
+
+        const nextScheduleStep = () => {
+            const idx = scheduleSteps.indexOf(currentStep);
+
+            if (currentStep === 's2') {
+                if (!document.getElementById('scheduleDatePicker').value) {
+                    showToast('⚠️ Выберите дату');
+                    return;
+                }
+                loadTeacherLessonsForDay();
+            }
+
+            if (currentStep === 's4') {
+                if (!document.getElementById('scheduleReplacementInput').value.trim()) {
+                    showToast('⚠️ Укажите кто заменяет');
+                    return;
+                }
+                updateScheduleSummary();
+            }
+
+            if (idx < scheduleSteps.length - 1) {
+                currentStep = scheduleSteps[idx + 1];
+                updateWizardStep('next');
+            }
+        };
+
+        const prevScheduleStep = () => {
+            const idx = scheduleSteps.indexOf(currentStep);
+            if (idx > 0) {
+                currentStep = scheduleSteps[idx - 1];
+                updateWizardStep('back');
+            } else {
+                backToModeSelect();
+            }
+        };
+
+        const loadTeacherLessonsForDay = () => {
+            const date = document.getElementById('scheduleDatePicker').value;
+            const dayName = getDayName(date);
+            const container = document.getElementById('teacherLessonsList');
+            const noLessonsHint = document.getElementById('noLessonsHint');
+
+            // Find lessons for this teacher on this day
+            const lessons = [];
+            const daySchedule = master.schedule[dayName] || {};
+
+            Object.entries(daySchedule).forEach(([className, classLessons]) => {
+                classLessons.forEach(lesson => {
+                    if (lesson.teacher === scheduleSelectedTeacher) {
+                        lessons.push({
+                            ...lesson,
+                            class: className
+                        });
+                    }
+                });
+            });
+
+            // Sort by lesson number
+            lessons.sort((a, b) => (a.lesson || 1) - (b.lesson || 1));
+
+            if (lessons.length === 0) {
+                container.innerHTML = '';
+                noLessonsHint.classList.remove('hidden');
+                return;
+            }
+
+            noLessonsHint.classList.add('hidden');
+            container.innerHTML = lessons.map((l, i) => `
+                <button type="button" onclick="selectScheduleLesson(${i})"
+                    class="schedule-lesson-btn w-full p-3 rounded-xl bg-white border-2 border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 text-left transition-all" data-index="${i}">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-purple-100 text-purple-700 font-black px-3 py-1 rounded-lg text-lg">
+                            ${l.lesson || '?'}
+                        </div>
+                        <div class="flex-1">
+                            <div class="font-bold text-slate-700">${l.subject || 'Предмет'}</div>
+                            <div class="text-xs text-slate-400">${l.class} ${l.time ? '• ' + l.time : ''}</div>
+                        </div>
+                    </div>
+                </button>
+            `).join('');
+
+            // Store lessons for selection
+            window._scheduleLessons = lessons;
+        };
+
+        const selectScheduleLesson = (index) => {
+            const lesson = window._scheduleLessons[index];
+            selectedScheduleItem = lesson;
+
+            // Update quick teachers for replacement
+            const container = document.getElementById('scheduleQuickTeachers');
+            container.innerHTML = master.teachers.filter(t => t !== scheduleSelectedTeacher).sort().map(t =>
+                `<button type="button" class="class-btn text-xs" onclick="document.getElementById('scheduleReplacementInput').value='${t}'">${t}</button>`
+            ).join('');
+
+            currentStep = 's4';
+            updateWizardStep('next');
+        };
+
+        const selectScheduleType = (type) => {
+            selectedType = type;
+
+            document.getElementById('scheduleTypeWindow').classList.remove('active');
+            document.getElementById('scheduleTypeLesson').classList.remove('active');
+
+            if (type === '100') {
+                document.getElementById('scheduleTypeWindow').classList.add('active');
+            } else {
+                document.getElementById('scheduleTypeLesson').classList.add('active');
+            }
+
+            const saveBtn = document.getElementById('scheduleSaveBtn');
+            saveBtn.disabled = false;
+            saveBtn.classList.remove('bg-slate-300', 'text-slate-400', 'cursor-not-allowed');
+            saveBtn.classList.add('bg-gradient-to-r', 'from-emerald-500', 'to-green-600', 'text-white', 'shadow-lg');
+        };
+
+        const updateScheduleSummary = () => {
+            if (!selectedScheduleItem) return;
+
+            const d = formatDate(scheduleSelectedDate);
+            const replacement = document.getElementById('scheduleReplacementInput').value;
+
+            document.getElementById('scheduleSummaryContent').innerHTML = `
+                <div class="grid grid-cols-3 gap-2 text-center mb-2">
+                    <div class="bg-white rounded-lg p-1.5">
+                        <div class="text-lg font-black text-slate-700">${d.day} ${d.month}</div>
+                        <div class="text-[8px] text-slate-400">${d.weekday}</div>
+                    </div>
+                    <div class="bg-purple-50 rounded-lg p-1.5">
+                        <div class="text-lg font-black text-purple-600">${selectedScheduleItem.lesson || '?'} ур.</div>
+                        <div class="text-[8px] text-purple-400">урок</div>
+                    </div>
+                    <div class="bg-indigo-50 rounded-lg p-1.5">
+                        <div class="text-lg font-black text-indigo-600">${selectedScheduleItem.class}</div>
+                        <div class="text-[8px] text-indigo-400">класс</div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg p-2 space-y-1">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs">📖</span>
+                        <span class="font-bold text-slate-700 text-sm">${selectedScheduleItem.subject}</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs">😷</span>
+                        <span class="text-red-500 text-sm">за <b>${scheduleSelectedTeacher}</b></span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs">🦸</span>
+                        <span class="text-emerald-600 text-sm font-bold">${replacement}</span>
+                    </div>
+                </div>
+            `;
+        };
+
+        const saveScheduleRecord = () => {
+            if (!selectedType) {
+                showToast('⚠️ Выберите тип оплаты!');
+                return;
+            }
+
+            const data = {
+                id: Date.now(),
+                date: scheduleSelectedDate,
+                lesson: selectedScheduleItem.lesson || 1,
+                type: selectedType,
+                class: selectedScheduleItem.class,
+                subject: selectedScheduleItem.subject,
+                who: scheduleSelectedTeacher,
+                by: document.getElementById('scheduleReplacementInput').value.trim(),
+                completed: false
+            };
+
+            reps.push(data);
+
+            // Auto-add to master
+            if (!master.teachers.includes(data.who)) master.teachers.push(data.who);
+            if (!master.teachers.includes(data.by)) master.teachers.push(data.by);
+            if (!master.subjects.includes(data.subject)) master.subjects.push(data.subject);
+            if (data.class && !master.classes.includes(data.class)) master.classes.push(data.class);
+
+            save();
+            render();
+            closeWizard();
+            showToast('✅ Замена добавлена!');
         };
         
         const closeWizard = () => {
@@ -1785,6 +2249,10 @@
         };
         
         const prevStep = () => {
+            if (currentStep === 1) {
+                backToModeSelect();
+                return;
+            }
             if (currentStep > 1) {
                 currentStep--;
                 updateWizardStep('back');
@@ -2016,9 +2484,182 @@
                     </div>
                     <div id="bindingSubjects"></div>
                 `;
+            } else if (currentRefTab === 'schedule') {
+                const scheduleCount = Object.keys(master.schedule).reduce((acc, day) => {
+                    return acc + Object.keys(master.schedule[day]).reduce((a, cls) => a + master.schedule[day][cls].length, 0);
+                }, 0);
+
+                container.innerHTML = `
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-xl mb-4">
+                        <div class="text-center mb-2">
+                            <div class="text-2xl font-black text-slate-700">${scheduleCount}</div>
+                            <div class="text-xs text-slate-500">уроков в расписании</div>
+                        </div>
+                        <div class="flex justify-center gap-4 text-xs">
+                            ${['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'].map(d => {
+                                const count = master.schedule[d] ? Object.values(master.schedule[d]).reduce((a, c) => a + c.length, 0) : 0;
+                                return `<div class="text-center"><div class="font-bold ${count > 0 ? 'text-indigo-600' : 'text-slate-300'}">${count}</div><div class="text-slate-400">${d}</div></div>`;
+                            }).join('')}
+                        </div>
+                    </div>
+
+                    <div class="space-y-2 mb-4">
+                        <button onclick="document.getElementById('scheduleFileInput').click()" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl">
+                            📥 Загрузить расписание (CSV)
+                        </button>
+                        <input type="file" id="scheduleFileInput" accept=".csv" class="hidden" onchange="importScheduleCSV(event)">
+
+                        <button onclick="showScheduleFormat()" class="w-full bg-slate-100 text-slate-600 font-bold py-3 rounded-xl">
+                            ❓ Формат CSV файла
+                        </button>
+
+                        <button onclick="clearSchedule()" class="w-full bg-red-50 text-red-600 font-bold py-3 rounded-xl">
+                            🗑️ Очистить расписание
+                        </button>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="text-xs font-bold text-slate-500 uppercase mb-1 block">Просмотр по дням:</label>
+                        <select id="scheduleViewDay" onchange="renderScheduleDay()" class="w-full bg-slate-100 px-4 py-3 rounded-xl">
+                            <option value="">— Выберите день —</option>
+                            <option value="Пн">Понедельник</option>
+                            <option value="Вт">Вторник</option>
+                            <option value="Ср">Среда</option>
+                            <option value="Чт">Четверг</option>
+                            <option value="Пт">Пятница</option>
+                            <option value="Сб">Суббота</option>
+                        </select>
+                    </div>
+
+                    <div id="scheduleViewContent"></div>
+                `;
             }
         };
-        
+
+        // ===== SCHEDULE IMPORT/EXPORT =====
+        const showScheduleFormat = () => {
+            alert(
+                'Формат CSV файла для расписания:\n\n' +
+                'День;Класс;Урок;Время;Предмет;Учитель\n\n' +
+                'Пример:\n' +
+                'Пн;5А;1;8:00;Математика;Иванова А.П.\n' +
+                'Пн;5А;2;8:50;Русский язык;Петрова М.И.\n' +
+                'Вт;5А;1;8:00;Физика;Сидоров К.В.\n\n' +
+                'Дни недели: Пн, Вт, Ср, Чт, Пт, Сб'
+            );
+        };
+
+        const importScheduleCSV = (event) => {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const text = e.target.result;
+                    const lines = text.split('\n').filter(l => l.trim());
+
+                    // Skip header if present
+                    const startIdx = lines[0].toLowerCase().includes('день') ? 1 : 0;
+
+                    const newSchedule = {};
+                    let count = 0;
+
+                    for (let i = startIdx; i < lines.length; i++) {
+                        const parts = lines[i].split(';').map(p => p.trim());
+                        if (parts.length < 5) continue;
+
+                        const [day, className, lessonNum, time, subject, teacher] = parts;
+
+                        // Normalize day name
+                        const dayMap = {
+                            'понедельник': 'Пн', 'пн': 'Пн',
+                            'вторник': 'Вт', 'вт': 'Вт',
+                            'среда': 'Ср', 'ср': 'Ср',
+                            'четверг': 'Чт', 'чт': 'Чт',
+                            'пятница': 'Пт', 'пт': 'Пт',
+                            'суббота': 'Сб', 'сб': 'Сб'
+                        };
+                        const normalizedDay = dayMap[day.toLowerCase()] || day;
+
+                        if (!newSchedule[normalizedDay]) newSchedule[normalizedDay] = {};
+                        if (!newSchedule[normalizedDay][className]) newSchedule[normalizedDay][className] = [];
+
+                        newSchedule[normalizedDay][className].push({
+                            lesson: parseInt(lessonNum) || 1,
+                            time: time || '',
+                            subject: subject || '',
+                            teacher: teacher || ''
+                        });
+
+                        // Auto-add to master data
+                        if (teacher && !master.teachers.includes(teacher)) master.teachers.push(teacher);
+                        if (subject && !master.subjects.includes(subject)) master.subjects.push(subject);
+                        if (className && !master.classes.includes(className)) master.classes.push(className);
+
+                        count++;
+                    }
+
+                    master.schedule = newSchedule;
+                    save();
+                    renderReference();
+                    showToast(`✅ Загружено ${count} уроков`);
+                } catch (err) {
+                    console.error(err);
+                    showToast('❌ Ошибка чтения файла');
+                }
+            };
+            reader.readAsText(file, 'UTF-8');
+            event.target.value = '';
+        };
+
+        const clearSchedule = () => {
+            if (confirm('Удалить всё расписание?')) {
+                master.schedule = {};
+                save();
+                renderReference();
+                showToast('🗑️ Расписание очищено');
+            }
+        };
+
+        const renderScheduleDay = () => {
+            const day = document.getElementById('scheduleViewDay').value;
+            const container = document.getElementById('scheduleViewContent');
+
+            if (!day) {
+                container.innerHTML = '';
+                return;
+            }
+
+            const daySchedule = master.schedule[day] || {};
+            const classes = Object.keys(daySchedule).sort();
+
+            if (classes.length === 0) {
+                container.innerHTML = '<div class="text-center text-slate-400 py-4">Нет уроков в этот день</div>';
+                return;
+            }
+
+            container.innerHTML = classes.map(cls => {
+                const lessons = daySchedule[cls].sort((a, b) => (a.lesson || 1) - (b.lesson || 1));
+                return `
+                    <div class="mb-3">
+                        <div class="text-xs font-bold text-indigo-600 uppercase mb-1">${cls}</div>
+                        <div class="space-y-1">
+                            ${lessons.map(l => `
+                                <div class="bg-slate-50 p-2 rounded-lg flex items-center gap-2">
+                                    <div class="bg-purple-100 text-purple-700 font-bold px-2 py-0.5 rounded text-sm">${l.lesson}</div>
+                                    <div class="flex-1">
+                                        <div class="font-medium text-sm">${l.subject}</div>
+                                        <div class="text-xs text-slate-400">${l.teacher} ${l.time ? '• ' + l.time : ''}</div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        };
+
         const renderBindingSubjects = () => {
             const cls = document.getElementById('bindingClass').value;
             const container = document.getElementById('bindingSubjects');
