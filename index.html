@@ -1004,6 +1004,291 @@
             color: white;
         }
 
+        .day-display.future {
+            background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+        }
+
+        .day-display.future .day-date,
+        .day-display.future .day-name {
+            color: white;
+        }
+
+        /* Warning Modal */
+        .warning-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 300;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .warning-modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .warning-modal {
+            background: white;
+            border-radius: 2rem;
+            padding: 2rem;
+            max-width: 420px;
+            width: 100%;
+            transform: scale(0.9) translateY(20px);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .warning-modal-overlay.active .warning-modal {
+            transform: scale(1) translateY(0);
+        }
+
+        .warning-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.3);
+            animation: warningPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes warningPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 8px 25px rgba(245, 158, 11, 0.3); }
+            50% { transform: scale(1.05); box-shadow: 0 12px 35px rgba(245, 158, 11, 0.5); }
+        }
+
+        .warning-title {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: #b45309;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .warning-message {
+            text-align: center;
+            color: #64748b;
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: #fef3c7;
+            border-radius: 1rem;
+            border: 2px solid #fde68a;
+        }
+
+        .warning-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .warning-btn {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            border-radius: 1rem;
+            font-weight: 800;
+            font-size: 1rem;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .warning-btn-cancel {
+            background: #f1f5f9;
+            color: #64748b;
+        }
+
+        .warning-btn-cancel:hover {
+            background: #e2e8f0;
+        }
+
+        .warning-btn-confirm {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+        }
+
+        .warning-btn-confirm:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5);
+        }
+
+        /* Edit Modal */
+        .edit-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 300;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .edit-modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .edit-modal {
+            background: white;
+            border-radius: 2rem;
+            padding: 2rem;
+            max-width: 450px;
+            width: 100%;
+            transform: scale(0.9) translateY(20px);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .edit-modal-overlay.active .edit-modal {
+            transform: scale(1) translateY(0);
+        }
+
+        .edit-modal-title {
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: #1e293b;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .edit-modal-info {
+            background: #f1f5f9;
+            border-radius: 1rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .edit-modal-row {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .edit-modal-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .edit-modal-label {
+            color: #64748b;
+            min-width: 80px;
+        }
+
+        .edit-modal-value {
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .edit-input-group {
+            margin-bottom: 1rem;
+        }
+
+        .edit-input-label {
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .edit-input {
+            width: 100%;
+            padding: 1rem;
+            border: 3px solid #e2e8f0;
+            border-radius: 1rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .edit-input:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+
+        .edit-quick-btns {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+            max-height: 120px;
+            overflow-y: auto;
+        }
+
+        .edit-quick-btn {
+            padding: 0.5rem 1rem;
+            border-radius: 0.75rem;
+            font-weight: 700;
+            font-size: 0.85rem;
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .edit-quick-btn:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+        }
+
+        .edit-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .edit-btn {
+            flex: 1;
+            padding: 1rem 1.5rem;
+            border-radius: 1rem;
+            font-weight: 800;
+            font-size: 1rem;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .edit-btn-cancel {
+            background: #f1f5f9;
+            color: #64748b;
+        }
+
+        .edit-btn-cancel:hover {
+            background: #e2e8f0;
+        }
+
+        .edit-btn-save {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .edit-btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+
         /* Desktop card actions */
         .card-actions {
             display: none;
@@ -1038,6 +1323,11 @@
 
             .card-action-btn.delete {
                 background: #ef4444;
+                color: white;
+            }
+
+            .card-action-btn.edit {
+                background: #3b82f6;
                 color: white;
             }
 
@@ -1634,6 +1924,53 @@
 
     <div id="toast" class="toast"></div>
 
+    <!-- Warning Modal -->
+    <div id="warningModalOverlay" class="warning-modal-overlay no-print" onclick="closeWarningModal()">
+        <div class="warning-modal" onclick="event.stopPropagation()">
+            <div class="warning-icon">⚠️</div>
+            <div class="warning-title">Внимание!</div>
+            <div class="warning-message" id="warningMessage">Сообщение</div>
+            <div class="warning-buttons">
+                <button class="warning-btn warning-btn-cancel" onclick="closeWarningModal()">Отмена</button>
+                <button class="warning-btn warning-btn-confirm" id="warningConfirmBtn" onclick="confirmWarning()">Добавить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Replacement Modal -->
+    <div id="editModalOverlay" class="edit-modal-overlay no-print" onclick="closeEditModal()">
+        <div class="edit-modal" onclick="event.stopPropagation()">
+            <div class="edit-modal-title">✏️ Изменить заменяющего</div>
+            <div class="edit-modal-info">
+                <div class="edit-modal-row">
+                    <span class="edit-modal-label">📅 Дата:</span>
+                    <span class="edit-modal-value" id="editDate">—</span>
+                </div>
+                <div class="edit-modal-row">
+                    <span class="edit-modal-label">📚 Урок:</span>
+                    <span class="edit-modal-value" id="editLesson">—</span>
+                </div>
+                <div class="edit-modal-row">
+                    <span class="edit-modal-label">🏫 Класс:</span>
+                    <span class="edit-modal-value" id="editClass">—</span>
+                </div>
+                <div class="edit-modal-row">
+                    <span class="edit-modal-label">😷 Болеет:</span>
+                    <span class="edit-modal-value" id="editWho">—</span>
+                </div>
+            </div>
+            <div class="edit-input-group">
+                <label class="edit-input-label">🦸 Заменяющий:</label>
+                <input type="text" id="editByInput" class="edit-input" placeholder="Введите ФИО">
+                <div class="edit-quick-btns" id="editQuickTeachers"></div>
+            </div>
+            <div class="edit-buttons">
+                <button class="edit-btn edit-btn-cancel" onclick="closeEditModal()">Отмена</button>
+                <button class="edit-btn edit-btn-save" onclick="saveEditReplacement()">💾 Сохранить</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // ===== DATA =====
         let reps = JSON.parse(localStorage.getItem('v6_data')) || [];
@@ -1659,6 +1996,8 @@
         let wizardMode = 'manual'; // 'manual' or 'schedule'
         let selectedScheduleItem = null;
         let selectedDate = null; // For day navigation, will be set in init
+        let editingRecordId = null; // For editing replacement
+        let warningCallback = null; // For warning modal callback
 
         const save = () => {
             localStorage.setItem('v6_data', JSON.stringify(reps));
@@ -1702,6 +2041,7 @@
         const updateDayDisplay = () => {
             const today = getToday();
             const isToday = selectedDate === today;
+            const isFuture = selectedDate > today;
             const dayDisplay = document.getElementById('dayDisplay');
             const dayDate = document.getElementById('dayDate');
             const dayName = document.getElementById('dayName');
@@ -1717,16 +2057,13 @@
             else if (diffDays === -1) dayLabel = 'Вчера';
             else if (diffDays === -2) dayLabel = 'Позавчера';
             else if (diffDays === 1) dayLabel = 'Завтра';
+            else if (diffDays === 2) dayLabel = 'Послезавтра';
 
             dayDate.textContent = `${d.day} ${d.month}`;
             dayName.textContent = dayLabel;
-            dayDisplay.classList.toggle('today', isToday);
-
-            // Disable "next" button for future dates (can't go past today)
-            const nextBtn = document.getElementById('nextDayBtn');
-            if (nextBtn) {
-                nextBtn.disabled = selectedDate >= today;
-            }
+            dayDisplay.classList.remove('today', 'future');
+            if (isToday) dayDisplay.classList.add('today');
+            else if (isFuture) dayDisplay.classList.add('future');
         };
 
         // ===== TABS =====
@@ -1864,6 +2201,10 @@
                     return `
                     <div class="swipe-container record-card shadow-lg ${isCompleted ? 'completed-card' : ''}" data-id="${r.id}">
                         <div class="swipe-actions">
+                            ${!isCompleted ? `<div class="swipe-action bg-blue-500" onclick="openEditModal(${r.id})">
+                                <span class="text-lg">✏️</span>
+                                <span>ИЗМЕНИТЬ</span>
+                            </div>` : ''}
                             <div class="swipe-action bg-emerald-500" onclick="toggleComplete(${r.id})">
                                 <span class="text-lg">${isCompleted ? '↩️' : '✓'}</span>
                                 <span>${isCompleted ? 'ОТМЕНА' : 'ГОТОВО'}</span>
@@ -1924,6 +2265,9 @@
 
                             <!-- Desktop action buttons -->
                             <div class="card-actions">
+                                ${!isCompleted ? `<button class="card-action-btn edit" onclick="event.stopPropagation(); openEditModal(${r.id})" title="Изменить заменяющего">
+                                    ✏️
+                                </button>` : ''}
                                 <button class="card-action-btn complete" onclick="event.stopPropagation(); toggleComplete(${r.id})" title="${isCompleted ? 'Отменить' : 'Готово'}">
                                     ${isCompleted ? '↩️' : '✓'}
                                 </button>
@@ -1967,7 +2311,7 @@
 
             if (isSwiping) {
                 e.preventDefault();
-                const moveX = Math.max(-160, Math.min(0, deltaX));
+                const moveX = Math.max(-240, Math.min(0, deltaX));
                 currentSwipeEl.style.transform = `translateX(${moveX}px)`;
             }
         };
@@ -1976,7 +2320,7 @@
             if (selectMode || !currentSwipeEl) return;
             currentSwipeEl.classList.remove('swiping');
             const currentX = parseInt(currentSwipeEl.style.transform.replace(/[^-\d]/g, '')) || 0;
-            currentSwipeEl.style.transform = currentX < -60 ? 'translateX(-160px)' : 'translateX(0)';
+            currentSwipeEl.style.transform = currentX < -60 ? 'translateX(-240px)' : 'translateX(0)';
             if (currentX >= -60) currentSwipeEl = null;
             isSwiping = false;
         };
@@ -2007,7 +2351,7 @@
 
             if (isSwiping) {
                 e.preventDefault();
-                const moveX = Math.max(-160, Math.min(0, deltaX));
+                const moveX = Math.max(-240, Math.min(0, deltaX));
                 currentSwipeEl.style.transform = `translateX(${moveX}px)`;
             }
         };
@@ -2017,7 +2361,7 @@
             isMouseDown = false;
             currentSwipeEl.classList.remove('swiping');
             const currentX = parseInt(currentSwipeEl.style.transform.replace(/[^-\d]/g, '')) || 0;
-            currentSwipeEl.style.transform = currentX < -60 ? 'translateX(-160px)' : 'translateX(0)';
+            currentSwipeEl.style.transform = currentX < -60 ? 'translateX(-240px)' : 'translateX(0)';
             if (currentX >= -60) currentSwipeEl = null;
             isSwiping = false;
         };
@@ -2040,6 +2384,85 @@
                 save(); render();
                 showToast(r.completed ? '✓ Выполнено' : '↩️ Отменено');
             }
+        };
+
+        // ===== EDIT REPLACEMENT =====
+        const openEditModal = (id) => {
+            const r = reps.find(r => r.id === id);
+            if (!r) return;
+
+            // Don't allow editing completed records
+            if (r.completed) {
+                showToast('↩️ Сначала отмените статус "Готово"');
+                return;
+            }
+
+            editingRecordId = id;
+
+            // Fill modal info
+            const d = formatDate(r.date);
+            document.getElementById('editDate').textContent = `${d.day} ${d.month} (${d.weekday})`;
+            document.getElementById('editLesson').textContent = `${r.lesson || 1} урок`;
+            document.getElementById('editClass').textContent = r.class || '—';
+            document.getElementById('editWho').textContent = r.who || '—';
+            document.getElementById('editByInput').value = r.by || '';
+
+            // Fill quick teacher buttons
+            const container = document.getElementById('editQuickTeachers');
+            container.innerHTML = master.teachers.sort().map(t =>
+                `<button type="button" class="edit-quick-btn" onclick="document.getElementById('editByInput').value='${t}'">${t}</button>`
+            ).join('');
+
+            document.getElementById('editModalOverlay').classList.add('active');
+        };
+
+        const closeEditModal = () => {
+            document.getElementById('editModalOverlay').classList.remove('active');
+            editingRecordId = null;
+        };
+
+        const saveEditReplacement = () => {
+            if (!editingRecordId) return;
+
+            const newBy = document.getElementById('editByInput').value.trim();
+            if (!newBy) {
+                showToast('❌ Введите ФИО заменяющего');
+                return;
+            }
+
+            const r = reps.find(r => r.id === editingRecordId);
+            if (r) {
+                r.by = newBy;
+
+                // Auto-add to master if new
+                if (!master.teachers.includes(newBy)) {
+                    master.teachers.push(newBy);
+                }
+
+                save();
+                render();
+                closeEditModal();
+                showToast('✅ Заменяющий изменён');
+            }
+        };
+
+        // ===== WARNING MODAL =====
+        const showWarningModal = (message, callback) => {
+            document.getElementById('warningMessage').innerHTML = message;
+            warningCallback = callback;
+            document.getElementById('warningModalOverlay').classList.add('active');
+        };
+
+        const closeWarningModal = () => {
+            document.getElementById('warningModalOverlay').classList.remove('active');
+            warningCallback = null;
+        };
+
+        const confirmWarning = () => {
+            if (warningCallback) {
+                warningCallback();
+            }
+            closeWarningModal();
         };
 
         // ===== WIZARD =====
@@ -2782,38 +3205,8 @@
             `;
         };
         
-        const saveRecord = () => {
-            // Проверяем что тип выбран
-            if (!selectedType) {
-                showToast('⚠️ Выберите тип оплаты!');
-                return;
-            }
-
-            const date = document.getElementById('wDate').value;
-            const className = document.getElementById('wClass').value.trim().toUpperCase();
-            const subject = document.getElementById('wSubject').value.trim();
-            const who = document.getElementById('wWho').value.trim();
-            const by = document.getElementById('wBy').value.trim();
-
-            // Check for duplicates
-            const duplicates = checkDuplicate(date, className, selectedLessons);
-            if (duplicates.length > 0) {
-                const lessonsStr = duplicates.join(', ');
-                showToast(`⚠️ Урок ${lessonsStr} уже имеет замену!`);
-                return;
-            }
-
-            // Check if lesson exists in schedule
-            const scheduleCheck = checkScheduleExists(date, className, selectedLessons);
-            if (!scheduleCheck.valid) {
-                const invalidStr = scheduleCheck.invalid.join(', ');
-                const maxInfo = scheduleCheck.maxLesson > 0 ? ` (макс. ${scheduleCheck.maxLesson} ур.)` : '';
-                if (!confirm(`⚠️ Урок ${invalidStr} не найден в расписании для ${className}${maxInfo}.\n\nВсё равно добавить замену?`)) {
-                    return;
-                }
-            }
-
-            // Create record for each selected lesson
+        // Helper function to actually create records
+        const createRecords = (date, className, subject, who, by) => {
             let count = 0;
             for (const lesson of selectedLessons) {
                 const data = {
@@ -2840,6 +3233,44 @@
             save(); render(); closeWizard();
             const msg = count > 1 ? `✅ Добавлено ${count} замен!` : '✅ Замена добавлена!';
             showToast(msg);
+        };
+
+        const saveRecord = () => {
+            // Проверяем что тип выбран
+            if (!selectedType) {
+                showToast('⚠️ Выберите тип оплаты!');
+                return;
+            }
+
+            const date = document.getElementById('wDate').value;
+            const className = document.getElementById('wClass').value.trim().toUpperCase();
+            const subject = document.getElementById('wSubject').value.trim();
+            const who = document.getElementById('wWho').value.trim();
+            const by = document.getElementById('wBy').value.trim();
+
+            // Check for duplicates
+            const duplicates = checkDuplicate(date, className, selectedLessons);
+            if (duplicates.length > 0) {
+                const lessonsStr = duplicates.join(', ');
+                showToast(`⚠️ Урок ${lessonsStr} уже имеет замену!`);
+                return;
+            }
+
+            // Check if lesson exists in schedule
+            const scheduleCheck = checkScheduleExists(date, className, selectedLessons);
+            if (!scheduleCheck.valid) {
+                const invalidStr = scheduleCheck.invalid.join(', ');
+                const maxInfo = scheduleCheck.maxLesson > 0 ? `<br><span style="font-size: 0.9rem; color: #64748b;">(максимум ${scheduleCheck.maxLesson} уроков)</span>` : '';
+                const message = `<strong>Урок ${invalidStr}</strong> не найден в расписании для класса <strong>${className}</strong>${maxInfo}<br><br>Всё равно добавить замену?`;
+
+                showWarningModal(message, () => {
+                    createRecords(date, className, subject, who, by);
+                });
+                return;
+            }
+
+            // No warning needed, create records directly
+            createRecords(date, className, subject, who, by);
         };
         
         const updateQuickButtons = () => {
