@@ -25,12 +25,22 @@
             }
         }
         
-        body { 
+        body {
             overscroll-behavior-y: contain;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
         }
-        
+
+        /* Prevent layout shift when modal opens */
+        body.modal-open {
+            overflow: hidden;
+            padding-right: var(--scrollbar-width, 0px);
+        }
+
+        body.modal-open .fab {
+            right: calc(1.5rem + var(--scrollbar-width, 0px));
+        }
+
         .safe-top { padding-top: env(safe-area-inset-top); }
         .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
         
@@ -967,6 +977,17 @@
             transform: none;
         }
 
+        .day-nav-btn.home-btn {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            margin-left: 0.5rem;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+        }
+
+        .day-nav-btn.home-btn:hover {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+        }
+
         .day-display {
             min-width: 180px;
             text-align: center;
@@ -1289,6 +1310,296 @@
             box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
         }
 
+        /* Schedule View Button */
+        .schedule-btn {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+        }
+
+        .schedule-btn:hover {
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+        }
+
+        /* Schedule View Modal */
+        .schedule-view-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 300;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .schedule-view-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .schedule-view-modal {
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            background: white;
+            border-radius: 2rem;
+            width: 95%;
+            max-width: 900px;
+            max-height: 90vh;
+            overflow: hidden;
+            z-index: 301;
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .schedule-view-overlay.active .schedule-view-modal {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+
+        .schedule-view-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e2e8f0;
+            flex-shrink: 0;
+        }
+
+        .schedule-view-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .schedule-view-title h3 {
+            font-size: 1.25rem;
+            font-weight: 900;
+            color: #1e293b;
+        }
+
+        .schedule-view-close {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #f1f5f9;
+            color: #64748b;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .schedule-view-close:hover {
+            background: #e2e8f0;
+            color: #1e293b;
+        }
+
+        .schedule-view-controls {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .schedule-class-select {
+            flex: 1;
+            min-width: 150px;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 1rem;
+            font-size: 1rem;
+            font-weight: 600;
+            background: white;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .schedule-class-select:focus {
+            border-color: #10b981;
+        }
+
+        .schedule-day-tabs {
+            display: flex;
+            gap: 0.25rem;
+            background: #f1f5f9;
+            padding: 0.25rem;
+            border-radius: 1rem;
+        }
+
+        .schedule-day-tab {
+            padding: 0.5rem 0.75rem;
+            border: none;
+            background: transparent;
+            font-weight: 700;
+            font-size: 0.8rem;
+            color: #64748b;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .schedule-day-tab.active {
+            background: white;
+            color: #10b981;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .schedule-view-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem 1.5rem 1.5rem;
+        }
+
+        .schedule-empty {
+            text-align: center;
+            padding: 3rem;
+            color: #94a3b8;
+        }
+
+        .schedule-empty-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .schedule-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .schedule-lesson-card {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: 1rem;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .schedule-lesson-card:hover {
+            border-color: #10b981;
+            transform: translateX(4px);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.15);
+        }
+
+        .schedule-lesson-card.has-replacement {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-color: #f59e0b;
+        }
+
+        .schedule-lesson-card.has-replacement:hover {
+            border-color: #d97706;
+        }
+
+        .schedule-lesson-num {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            font-weight: 900;
+            flex-shrink: 0;
+        }
+
+        .schedule-lesson-card.has-replacement .schedule-lesson-num {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+
+        .schedule-lesson-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .schedule-lesson-subject {
+            font-weight: 800;
+            color: #1e293b;
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .schedule-lesson-teacher {
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
+        .schedule-lesson-time {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-top: 0.25rem;
+        }
+
+        .schedule-lesson-action {
+            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            border-radius: 0.75rem;
+            font-weight: 700;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .schedule-lesson-action:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .schedule-replacement-badge {
+            padding: 0.35rem 0.75rem;
+            background: #f59e0b;
+            color: white;
+            border-radius: 0.5rem;
+            font-size: 0.7rem;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 640px) {
+            .schedule-view-modal {
+                width: 100%;
+                max-width: none;
+                max-height: 100vh;
+                border-radius: 0;
+                top: 0;
+                left: 0;
+                transform: translateY(100%);
+            }
+
+            .schedule-view-overlay.active .schedule-view-modal {
+                transform: translateY(0);
+            }
+
+            .schedule-day-tabs {
+                overflow-x: auto;
+                flex-wrap: nowrap;
+            }
+
+            .schedule-lesson-card {
+                flex-wrap: wrap;
+            }
+
+            .schedule-lesson-action {
+                width: 100%;
+                margin-top: 0.5rem;
+            }
+        }
+
         /* Desktop card actions */
         .card-actions {
             display: none;
@@ -1364,6 +1675,7 @@
                 </div>
             </div>
             <div class="flex gap-1.5">
+                <button onclick="openScheduleView()" class="glass-dark text-white text-xs font-bold px-2.5 py-1.5 rounded-lg schedule-btn" title="Расписание по классам">📅</button>
                 <button onclick="openReference()" class="glass-dark text-white text-xs font-bold px-2.5 py-1.5 rounded-lg" title="Справочники">📚</button>
                 <button onclick="openStats()" class="glass-dark text-white text-xs font-bold px-2.5 py-1.5 rounded-lg" title="Статистика">📈</button>
                 <button onclick="openReport()" class="glass-dark text-white text-xs font-bold px-2.5 py-1.5 rounded-lg" title="Отчёты">📊</button>
@@ -1379,6 +1691,7 @@
                 <div class="day-name" id="dayName">--</div>
             </div>
             <button class="day-nav-btn" onclick="navigateDay(1)" id="nextDayBtn" title="Следующий день">→</button>
+            <button class="day-nav-btn home-btn" onclick="goHome()" title="Сбросить все и вернуться на сегодня">🏠</button>
         </div>
 
         <!-- Stats for selected day -->
@@ -1937,6 +2250,37 @@
         </div>
     </div>
 
+    <!-- Schedule View Modal -->
+    <div id="scheduleViewOverlay" class="schedule-view-overlay no-print" onclick="closeScheduleView()">
+        <div class="schedule-view-modal" onclick="event.stopPropagation()">
+            <div class="schedule-view-header">
+                <div class="schedule-view-title">
+                    <h3>📅 Расписание по классам</h3>
+                    <button class="schedule-view-close" onclick="closeScheduleView()">×</button>
+                </div>
+                <div class="schedule-view-controls">
+                    <select id="scheduleViewClass" class="schedule-class-select" onchange="renderScheduleViewLessons()">
+                        <option value="">— Выберите класс —</option>
+                    </select>
+                    <div class="schedule-day-tabs" id="scheduleDayTabs">
+                        <button class="schedule-day-tab" data-day="Пн" onclick="setScheduleViewDay('Пн')">Пн</button>
+                        <button class="schedule-day-tab" data-day="Вт" onclick="setScheduleViewDay('Вт')">Вт</button>
+                        <button class="schedule-day-tab" data-day="Ср" onclick="setScheduleViewDay('Ср')">Ср</button>
+                        <button class="schedule-day-tab" data-day="Чт" onclick="setScheduleViewDay('Чт')">Чт</button>
+                        <button class="schedule-day-tab" data-day="Пт" onclick="setScheduleViewDay('Пт')">Пт</button>
+                        <button class="schedule-day-tab" data-day="Сб" onclick="setScheduleViewDay('Сб')">Сб</button>
+                    </div>
+                </div>
+            </div>
+            <div class="schedule-view-content" id="scheduleViewContent">
+                <div class="schedule-empty">
+                    <div class="schedule-empty-icon">📅</div>
+                    <p>Выберите класс для просмотра расписания</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Edit Replacement Modal -->
     <div id="editModalOverlay" class="edit-modal-overlay no-print" onclick="closeEditModal()">
         <div class="edit-modal" onclick="event.stopPropagation()">
@@ -2004,6 +2348,18 @@
             localStorage.setItem('v6_master', JSON.stringify(master));
         };
 
+        // ===== SCROLL LOCK (prevents layout shift) =====
+        const lockScroll = () => {
+            const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+            document.documentElement.style.setProperty('--scrollbar-width', scrollbarWidth + 'px');
+            document.body.classList.add('modal-open');
+        };
+
+        const unlockScroll = () => {
+            document.body.classList.remove('modal-open');
+            document.documentElement.style.setProperty('--scrollbar-width', '0px');
+        };
+
         const getToday = () => new Date().toISOString().slice(0, 10);
         
         const formatDate = (dateStr) => {
@@ -2036,6 +2392,29 @@
             selectedDate = getToday();
             updateDayDisplay();
             if (currentTab === 'day') render();
+        };
+
+        const goHome = () => {
+            // Reset date to today
+            selectedDate = getToday();
+            updateDayDisplay();
+
+            // Reset tab to 'day'
+            setTab('day');
+
+            // Clear all filters
+            document.getElementById('search').value = '';
+            document.getElementById('filterClass').value = '';
+            document.getElementById('filterTeacher').value = '';
+            document.getElementById('filterDateFrom').value = '';
+            document.getElementById('filterDateTo').value = '';
+
+            // Close filter panel if open
+            document.querySelector('.filter-toggle').classList.remove('open');
+            document.getElementById('filterContent').classList.remove('open');
+
+            render();
+            showToast('🏠 Всё сброшено');
         };
 
         const updateDayDisplay = () => {
@@ -2446,6 +2825,146 @@
             }
         };
 
+        // ===== SCHEDULE VIEW =====
+        let scheduleViewDay = 'Пн';
+
+        const openScheduleView = () => {
+            // Populate class select
+            const classSelect = document.getElementById('scheduleViewClass');
+            const classes = master.classes.sort();
+            classSelect.innerHTML = '<option value="">— Выберите класс —</option>' +
+                classes.map(c => `<option value="${c}">${c}</option>`).join('');
+
+            // Set day based on selected date
+            const dayMap = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+            const currentDayIdx = new Date(selectedDate).getDay();
+            scheduleViewDay = dayMap[currentDayIdx] || 'Пн';
+            if (scheduleViewDay === 'Вс') scheduleViewDay = 'Пн';
+
+            updateScheduleDayTabs();
+            renderScheduleViewLessons();
+
+            document.getElementById('scheduleViewOverlay').classList.add('active');
+            lockScroll();
+        };
+
+        const closeScheduleView = () => {
+            document.getElementById('scheduleViewOverlay').classList.remove('active');
+            unlockScroll();
+        };
+
+        const setScheduleViewDay = (day) => {
+            scheduleViewDay = day;
+            updateScheduleDayTabs();
+            renderScheduleViewLessons();
+        };
+
+        const updateScheduleDayTabs = () => {
+            document.querySelectorAll('.schedule-day-tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.day === scheduleViewDay);
+            });
+        };
+
+        const renderScheduleViewLessons = () => {
+            const container = document.getElementById('scheduleViewContent');
+            const selectedClass = document.getElementById('scheduleViewClass').value;
+
+            if (!selectedClass) {
+                container.innerHTML = `
+                    <div class="schedule-empty">
+                        <div class="schedule-empty-icon">📅</div>
+                        <p>Выберите класс для просмотра расписания</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Get schedule for this day and class
+            const daySchedule = master.schedule[scheduleViewDay];
+            const classSchedule = daySchedule ? daySchedule[selectedClass] : null;
+
+            if (!classSchedule || classSchedule.length === 0) {
+                container.innerHTML = `
+                    <div class="schedule-empty">
+                        <div class="schedule-empty-icon">📭</div>
+                        <p>Нет расписания для <strong>${selectedClass}</strong> на <strong>${scheduleViewDay}</strong></p>
+                        <p style="font-size: 0.85rem; margin-top: 0.5rem;">Добавьте расписание в Справочниках → Расписание</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Sort by lesson number
+            const sorted = [...classSchedule].sort((a, b) => a.lesson - b.lesson);
+
+            // Check for existing replacements on selected date
+            const dateReps = reps.filter(r => r.date === selectedDate && r.class === selectedClass);
+
+            const html = sorted.map(item => {
+                const existingRep = dateReps.find(r => r.lesson === item.lesson);
+                const hasReplacement = !!existingRep;
+
+                return `
+                    <div class="schedule-lesson-card ${hasReplacement ? 'has-replacement' : ''}" onclick="createReplacementFromSchedule('${selectedClass}', ${item.lesson}, '${item.subject || ''}', '${item.teacher || ''}')">
+                        <div class="schedule-lesson-num">${item.lesson}</div>
+                        <div class="schedule-lesson-info">
+                            <div class="schedule-lesson-subject">${item.subject || 'Предмет не указан'}</div>
+                            <div class="schedule-lesson-teacher">👨‍🏫 ${item.teacher || 'Учитель не указан'}</div>
+                            ${item.time ? `<div class="schedule-lesson-time">🕐 ${item.time}</div>` : ''}
+                        </div>
+                        ${hasReplacement ?
+                            `<div class="schedule-replacement-badge">✓ Замена: ${existingRep.by}</div>` :
+                            `<button class="schedule-lesson-action" onclick="event.stopPropagation(); createReplacementFromSchedule('${selectedClass}', ${item.lesson}, '${item.subject || ''}', '${item.teacher || ''}')">+ Замена</button>`
+                        }
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = `<div class="schedule-grid">${html}</div>`;
+        };
+
+        const createReplacementFromSchedule = (className, lesson, subject, teacher) => {
+            // Check if replacement already exists
+            const existingRep = reps.find(r =>
+                r.date === selectedDate &&
+                r.class === className &&
+                r.lesson === lesson
+            );
+
+            if (existingRep) {
+                showToast('⚠️ Замена на этот урок уже есть');
+                return;
+            }
+
+            // Close schedule view
+            closeScheduleView();
+
+            // Open wizard with prefilled data
+            openWizard();
+
+            // Wait for wizard to initialize, then prefill
+            setTimeout(() => {
+                // Set to manual mode step 2 (class/subject)
+                wizardMode = 'manual';
+                currentStep = 2;
+                selectedLessons = [lesson];
+
+                // Set date
+                document.getElementById('wDate').value = selectedDate;
+
+                // Set lesson buttons
+                updateLessonButtons();
+
+                // Fill class and subject
+                document.getElementById('wClass').value = className;
+                document.getElementById('wSubject').value = subject;
+                document.getElementById('wWho').value = teacher;
+
+                // Update step display
+                updateWizardStep();
+            }, 100);
+        };
+
         // ===== WARNING MODAL =====
         const showWarningModal = (message, callback) => {
             document.getElementById('warningMessage').innerHTML = message;
@@ -2666,7 +3185,7 @@
 
             document.getElementById('modalOverlay').classList.add('active');
             document.getElementById('modalSheet').classList.add('active');
-            document.body.style.overflow = 'hidden';
+            lockScroll();
         };
 
         // ===== WIZARD MODE SELECTION =====
@@ -3069,7 +3588,7 @@
         const closeWizard = () => {
             document.getElementById('modalOverlay').classList.remove('active');
             document.getElementById('modalSheet').classList.remove('active');
-            document.body.style.overflow = '';
+            unlockScroll();
         };
         
         const updateWizardStep = (direction = 'next') => {
@@ -3337,14 +3856,14 @@
         const openReference = () => {
             document.getElementById('refOverlay').classList.add('active');
             document.getElementById('refSheet').classList.add('active');
-            document.body.style.overflow = 'hidden';
+            lockScroll();
             renderReference();
         };
         
         const closeReference = () => {
             document.getElementById('refOverlay').classList.remove('active');
             document.getElementById('refSheet').classList.remove('active');
-            document.body.style.overflow = '';
+            unlockScroll();
         };
         
         const setRefTab = (tab) => {
@@ -3850,13 +4369,13 @@
             
             document.getElementById('reportOverlay').classList.add('active');
             document.getElementById('reportSheet').classList.add('active');
-            document.body.style.overflow = 'hidden';
+            lockScroll();
         };
         
         const closeReport = () => {
             document.getElementById('reportOverlay').classList.remove('active');
             document.getElementById('reportSheet').classList.remove('active');
-            document.body.style.overflow = '';
+            unlockScroll();
         };
         
         const generateReport = () => {
@@ -4099,26 +4618,26 @@
             
             document.getElementById('statsOverlay').classList.add('active');
             document.getElementById('statsSheet').classList.add('active');
-            document.body.style.overflow = 'hidden';
+            lockScroll();
         };
         
         const closeStats = () => {
             document.getElementById('statsOverlay').classList.remove('active');
             document.getElementById('statsSheet').classList.remove('active');
-            document.body.style.overflow = '';
+            unlockScroll();
         };
 
         // ===== SETTINGS =====
         const openSettings = () => {
             document.getElementById('settingsOverlay').classList.add('active');
             document.getElementById('settingsSheet').classList.add('active');
-            document.body.style.overflow = 'hidden';
+            lockScroll();
         };
         
         const closeSettings = () => {
             document.getElementById('settingsOverlay').classList.remove('active');
             document.getElementById('settingsSheet').classList.remove('active');
-            document.body.style.overflow = '';
+            unlockScroll();
         };
 
         function exportJSON() {
